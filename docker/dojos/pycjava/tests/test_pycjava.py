@@ -1,5 +1,5 @@
 from unittest import TestCase
-import negocio.pycjava as pycjava
+import app.pycjava as pycjava
 
 
 # Lula
@@ -83,11 +83,16 @@ class tests_pycjava(TestCase):
 
         self.assertEqual(esperado, vencedor)
         
-    def test_C_batalhando_contra_Java_retorna_ERROR(self):
-        jogador1 = 'C'
-        jogador2 = 'Java'
-        esperado = 'ERROR'
+    def test_opcao_invalida(self):
+        opcao = "Ruby"
+        esperado = False
 
-        vencedor = pycjava.batalhar(jogador1, jogador2)
+        ret = pycjava.verifica_escolha(opcao)
+        self.assertEqual(esperado, ret)
 
-        self.assertEqual(esperado, vencedor)
+    def test_opcao_correta(self):
+        opcao = "c"
+        esperado = True
+
+        ret = pycjava.verifica_escolha(opcao)
+        self.assertEqual(esperado, ret)
