@@ -18,6 +18,11 @@ def to_roman(decimal_number):
 
 def from_roman2(roman_numerl):
 
+    dic = {"I" : 1,"V" : 5, "X" : 10, "L" : 50, "C" : 100, "D" : 500, "M" : 1000}
+    num = "CMXCIX"
+    for i in num:
+        if i in "MX":
+            print(i)
     return
 
 def from_roman(roman_number):
@@ -54,11 +59,14 @@ def printer(number,r, n, p):
         return ("%c%c%c%c" % (n, r, r, r))
     if (number == 9):
         return ("%c%c" % (r, p))
-    return 
+    return ""
 
 
 if (__name__ == "__main__"):
     print("Numeral romano")
-    to_roman(1494)
+    to_roman(999)
+    from_roman2("mcds")
+
+
 
 
