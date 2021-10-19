@@ -24,5 +24,5 @@ jobs:
       with:
         python-version: '3.x'
     - name: Test
-      run: python -m unittest /docker/dojos/pycjava/tests/test_pycjava.py  
+      run: python3 -m unittest docker/dojos/pycjava/tests/test_pycjava.py  
    
