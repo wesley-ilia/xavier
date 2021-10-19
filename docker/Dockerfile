@@ -1,4 +1,4 @@
-# Baixa e usa a Imagem Ubuntu no Dockerhub
+# Baixa e usa a Imagem python no Dockerhub
 FROM python:3.9
 # Copia o arquivo start.sh para a pasta root do container
 COPY start.sh /root/
@@ -11,4 +11,4 @@ COPY dojos /dojos/
 ENTRYPOINT bash /root/start.sh
 
 # Roda o container por tempo indeterminado
-CMD tail -f /dev/null
+#CMD tail -f /dev/null

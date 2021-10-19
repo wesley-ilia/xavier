@@ -1,8 +1,6 @@
 from unittest import TestCase
 import app.roman_numerals as n_romans
 
-# 
-
 class tests_ToRoman(TestCase):
     def test_convert_1_to_I(self):
         decimal = 1
@@ -84,10 +82,6 @@ class tests_ToRoman(TestCase):
 
         self.assertEqual(expected, result)
 
-            
-        
-    
-    
     
 """     def test_convert_3_to_III(self):
         roman = 3

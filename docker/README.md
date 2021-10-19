@@ -45,16 +45,14 @@ Before starting, you need to have [Docker](https://docs.docker.com/get-docker/) 
 
 ```bash
 # Clone this project
-$ git clone https://github.com/cpereira42/API42Labs
+$ git clone https://github.com/wesley-ilia/xavier.git
 
 # Access
-$ cd docker_pycjava
+$ cd docker
 
 # Create a docker image and run docker
 bash run.sh
 
-# Go to the pycjava folder into the container
-cd pycjava
 
 
 ```

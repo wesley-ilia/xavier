@@ -1,5 +1,5 @@
 from unittest import TestCase
-import app.pycjava as pycjava
+import docker.dojos.pycjava.app.pycjava as pycjava
 
 
 # Lula
