@@ -10,7 +10,6 @@
 <p align="center">
   <a href="#about">About</a> &#xa0; | &#xa0;
   <a href="#features">Features</a> &#xa0; | &#xa0;
-  <a href="#libraries">Libraries</a> &#xa0; | &#xa0;
   <a href="#requirements">Requirements</a> &#xa0; | &#xa0;
   <a href="#starting">Starting</a> &#xa0; | &#xa0;
   <a href="#running">Running</a> &#xa0; | &#xa0;
@@ -35,8 +34,6 @@ The application was containerized in an environment with Python 3.9
 ## Features ##
 In this game, the players choice, his options, 
 and after the programa will show the winner.
-
-## Libraries ##
 
 ## Requirements ##
 Before starting, you need to have [Docker](https://docs.docker.com/get-docker/) installed.
