@@ -26,18 +26,20 @@ def verifica_escolha(escolha):
 
 
 def get_escolha(player):
-    if player == 1:
+    if player == 1 or player == 2:
         escolha = input("Player %d : Faça sua escolha, c, py, java ou exit para sair : " % player)
         if (verifica_escolha(escolha) == False):
             print("Opção inválida")
             return (get_escolha(player))
         else:
             return (escolha)
+    '''
     else:
         opcoes = {0 : 'c', 1 : 'py', 2 : 'java'}
         val = randint(0, 2)
         print("Player 2 escolheu %s" % opcoes[val])
         return (opcoes[val])
+    '''
 
 
 if (__name__ == "__main__"):
