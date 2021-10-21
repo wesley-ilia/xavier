@@ -48,7 +48,7 @@ Before starting, you need to have [Docker](https://docs.docker.com/get-docker/) 
 $ git clone https://github.com/wesley-ilia/xavier.git
 
 # Access
-$ cd docker
+$ cd xavier/docker
 
 # Create a docker image and run docker
 bash run.sh
@@ -60,14 +60,14 @@ bash run.sh
 ## Running ##
 ```bash
 # To start the game
-python app/pycjava.py
+python dojos/pycjava/app/pycjava.py
 
 ```
 
 ## Testing ##
 ```bash
 # To run some automatic tests
-python -m unittest tests/test_pycjava.py
+python -m unittest dojos/pycjava/tests/test_pycjava.py
 ```
 
 ## Exiting ##
