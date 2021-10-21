@@ -1,9 +1,9 @@
 from unittest import TestCase
-import docker.dojos.pycjava.app.pycjava as pycjava
+from ..app.pycjava import batalhar, verifica_escolha
 
 
 # Lula
-# Luigi
+# Luigi'''''''''
 # Luiz
 # Gabriel
 # Cezar
@@ -14,7 +14,7 @@ class tests_pycjava(TestCase):
         jogador2 = "py"
         esperado = 'c'
 
-        vencedor = pycjava.batalhar(jogador1, jogador2)
+        vencedor = batalhar(jogador1, jogador2)
 
         self.assertEqual(esperado, vencedor)
 
@@ -24,7 +24,7 @@ class tests_pycjava(TestCase):
         jogador2 = 'java'
         esperado = 'java'
 
-        vencedor = pycjava.batalhar(jogador1, jogador2)
+        vencedor = batalhar(jogador1, jogador2)
 
         self.assertEqual(esperado, vencedor)
 
@@ -33,7 +33,7 @@ class tests_pycjava(TestCase):
         jogador2 = 'c'
         esperado = 'nenhum'
 
-        vencedor = pycjava.batalhar(jogador1, jogador2)
+        vencedor = batalhar(jogador1, jogador2)
 
         self.assertEqual(esperado, vencedor)
 
@@ -42,7 +42,7 @@ class tests_pycjava(TestCase):
         jogador2 = 'c'
         esperado = 'c'
 
-        vencedor = pycjava.batalhar(jogador1, jogador2)
+        vencedor = batalhar(jogador1, jogador2)
 
         self.assertEqual(esperado, vencedor)
 
@@ -52,7 +52,7 @@ class tests_pycjava(TestCase):
         jogador2 = 'py'
         esperado = 'py'
 
-        vencedor = pycjava.batalhar(jogador1, jogador2)
+        vencedor = batalhar(jogador1, jogador2)
 
         self.assertEqual(esperado, vencedor)
 
@@ -61,7 +61,7 @@ class tests_pycjava(TestCase):
         jogador2 = 'c'
         esperado = 'java'
 
-        vencedor = pycjava.batalhar(jogador1, jogador2)
+        vencedor = batalhar(jogador1, jogador2)
 
         self.assertEqual(esperado, vencedor)
 
@@ -70,7 +70,7 @@ class tests_pycjava(TestCase):
         jogador2 = 'java'
         esperado = 'py'
 
-        vencedor = pycjava.batalhar(jogador1, jogador2)
+        vencedor = batalhar(jogador1, jogador2)
 
         self.assertEqual(esperado, vencedor)
 
@@ -79,7 +79,7 @@ class tests_pycjava(TestCase):
         jogador2 = 'java'
         esperado = 'ERROR'
 
-        vencedor = pycjava.batalhar(jogador1, jogador2)
+        vencedor = batalhar(jogador1, jogador2)
 
         self.assertEqual(esperado, vencedor)
         
@@ -87,12 +87,12 @@ class tests_pycjava(TestCase):
         opcao = "Ruby"
         esperado = False
 
-        ret = pycjava.verifica_escolha(opcao)
+        ret = verifica_escolha(opcao)
         self.assertEqual(esperado, ret)
 
     def test_opcao_correta(self):
         opcao = "c"
         esperado = True
 
-        ret = pycjava.verifica_escolha(opcao)
+        ret = verifica_escolha(opcao)
         self.assertEqual(esperado, ret)

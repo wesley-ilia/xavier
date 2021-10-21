@@ -3,7 +3,7 @@
   <!-- <a href="https://desafio_cezar.netlify.app">Demo</a> -->
 </div>
 
-<h1 align="center">Docker Py C Java </h1>
+<h1 align="center">Docker 42 Labs</h1>
 
 </p>
 
@@ -29,7 +29,7 @@ The options are:
 2 - C
 3 - Java
 
-C win to Py, Py win to Java and Jaba win do C. <br>
+C win to Py, Py win to Java and Java win to C. <br>
 The application was containerized in an environment with Python 3.9 
 
 ## Features ##
