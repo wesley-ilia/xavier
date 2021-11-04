@@ -13,19 +13,20 @@ class StackShare(webdriver.Chrome):
         self.implicitly_wait(10)
 
 
-    def __exit__(self):
+    def __exit__(self, exception_type, exception_value, exception_traceback):
         if self.teardown:
             self.quit()
 
 
-    def get_page(self, language=""):
-        self.get("/".join([BASE_URL, language.lower()]))
+    def land_in_page(self, *args):
+        self.get("/".join([BASE_URL, *args]))
 
 
-    def get_companies(self):
-        elements = self.find_elements_by_css_selector(
-                'div[class=css-1t7lufe] > div:nth-child(3) > ul > a'
-                )
-        return [i.get_attribute('title') for i in elements]
-        # print(elements)
+    def click_on(self, css_selector: str):
+        link = self.find_element_by_css_selector(css_selector)
+        link.click()
 
+
+    def get_info(self, css_selector: str, attribute: str):
+        elements = self.find_elements_by_css_selector(css_selector)
+        return [i.get_attribute(attribute) for i in elements]
