@@ -3,15 +3,17 @@ import os
 import sys
 
 class MySQL():
-    def __init__(self, user=os.getenv("USER_DB"), passwd=os.getenv("PASSWD_DB"),
-            host=os.getenv("HOSTNAME")):
+    def __init__(self):
+        self.host = os.getenv("HOSTNAME_DB")
+        self.user = os.getenv("USER_DB")
+        self.passwd = os.getenv("PASSWD")
         try:
             self.con = pymysql.connect(
-                    user=user,
-                    password=passwd,
-                    host=host,
+                    user=self.user,
+                    password=self.passwd,
+                    host=self.host,
                     # port=3306,
-                    database="stackshare"
+                    database="decasoft_xavier"
                     )
             self.cursor = self.con.cursor()
         except Exception as e:
@@ -19,20 +21,24 @@ class MySQL():
             sys.exit(os.EX_OSERR)
 
 
-    def insert_name_lst(self, list: zip, table: str):
+    def insert_in_db(self, query: str):
         """
         INSERT NAMES IN TABLE
-        """""
-        for name, link in list:
-            self.cursor.execute(f"""
-INSERT INTO {table} (name, link) VALUES ('{name}', '{link}')
-            """)
+        """
+        self.cursor.execute(query)
 
+
+    def select_from(self, query: str):
+        """
+        USE QUERY TO SELECT FROM A TABLE
+        """
+        self.cursor.execute(query)
+        return self.cursor.fetchall()
 
     def __del__(self):
         try:
             self.con.commit()
         except Exception as e:
             print(f"ERROR_COMMIT: {e}")
-        self.cursor.close()
+        """ self.cursor.close() """
         self.con.close()
