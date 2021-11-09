@@ -19,14 +19,17 @@ class Log():
 					password=self.password,
 					database="decasoft_xavier"
 				)
-
 		except BaseException:
-			print("Informações erradas")
+			print("Informações de login erradas")
 			sys.exit(os.EX_IOERR)
 
 	def save_to_csv(self, query, con, file):
-		results = pandas.read_sql_query(query, con)
-		results.to_csv(file, index=False)
+		try:
+			results = pandas.read_sql_query(query, con)
+			results.to_csv(file, index=False)
+		except BaseException:
+			print("Informações da query erradas")
+			sys.exit(os.EX_IOERR)
 
 	def insert_into_log(self, query:str, version:str, result_csv:str, obs:str):
 		self.cursor.execute(f"INSERT INTO logs (query, version, result, obs) VALUES ('{query}', '{version}', '{result_csv}', '{obs}')")

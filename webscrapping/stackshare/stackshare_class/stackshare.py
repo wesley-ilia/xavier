@@ -6,12 +6,11 @@ BASE_URL = "https://stackshare.io"
 
 class StackShare(webdriver.Chrome):
     def __init__(self, teardown=False):
-        # self.driver_path = os.getenv("DRIVER_PATH")
+        self.driver_path = os.getenv("DRIVER_PATH")
         self.teardown = teardown
-        os.environ['PATH'] += ":/home/ferrari/SeleniumDrivers"
+        os.environ['PATH'] += self.driver_path
         super(StackShare, self).__init__()
         self.implicitly_wait(10)
-
 
     def __exit__(self, exception_type, exception_value, exception_traceback):
         if self.teardown:
@@ -28,10 +27,8 @@ class StackShare(webdriver.Chrome):
         elements = self.find_elements_by_css_selector(css_selector)
         return [i.get_attribute(attribute) for i in elements]
 
-    def get_stacks_by_company(self, company='nubank', address=r'https://stackshare.io/nubank/nubank', id_ref=0):
-        self.get("{}".format(address))
+    def get_stacks_by_company(self, company, id_ref):
         """ self.implicitly_wait(8) """
-
         stacks = self.find_elements(By.CLASS_NAME, "css-180cglb")
 
         info_company = {"id_ref": id_ref, "name": company}
