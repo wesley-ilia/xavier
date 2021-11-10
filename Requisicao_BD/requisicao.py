@@ -14,6 +14,7 @@ if (__name__ == "__main__"):
 	df = pandas.read_csv(out_csv)
 	result_csv = str(df.to_csv(header=False, index=False)).replace('\'', '')
 
+	query = query.replace('\'', '')
 	obs = input("obs: ")
 	log.insert_into_log(query, version, result_csv, obs)
 	log.con.close()
