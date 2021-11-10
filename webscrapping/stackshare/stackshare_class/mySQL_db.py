@@ -35,6 +35,7 @@ class MySQL():
         self.cursor.execute(query)
         return self.cursor.fetchall()
 
+
     def __del__(self):
         try:
             self.con.commit()
