@@ -5,7 +5,8 @@ $(document).ready(function() {
     });
     $('#execute').click(function()
 		{
-      alert($('#tecnologia').val())
-      window.location.assign("get_by_language/"+$('#tecnologia').val());
+      alert("ff");
+      /* alert($('#tecnologia').val()) */
+      window.location.assign("get_by_language/?search="+$('#tecnologia').val()+"&obs="+$('#obs').val()+"&output_name="+$('#output_name').val());
     });
 })

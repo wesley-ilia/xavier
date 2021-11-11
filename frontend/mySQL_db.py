@@ -34,6 +34,14 @@ class MySQL():
         """
         self.cursor.execute(query)
         return self.cursor.fetchall()
+    
+    def remove_duplicate(self, table: str):
+        """
+        REMOVE DUPLICATE ITENS
+        """
+        self.cursor.execute(f"DELETE S1 FROM {table} AS S1\
+            INNER JOIN stacks AS S2 \
+            WHERE S1.id < S2.id AND S1.name = S2.name")
 
     def __del__(self):
         try:
