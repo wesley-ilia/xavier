@@ -3,14 +3,13 @@
   <!-- <a href="https://desafio_cezar.netlify.app">Demo</a> -->
 </div>
 
-<h1 align="center">Docker 42 Labs</h1>
+<h1 align="center">Docker Py C Java</h1>
 
 </p>
 
 <p align="center">
   <a href="#about">About</a> &#xa0; | &#xa0;
   <a href="#features">Features</a> &#xa0; | &#xa0;
-  <a href="#libraries">Libraries</a> &#xa0; | &#xa0;
   <a href="#requirements">Requirements</a> &#xa0; | &#xa0;
   <a href="#starting">Starting</a> &#xa0; | &#xa0;
   <a href="#running">Running</a> &#xa0; | &#xa0;
@@ -36,8 +35,6 @@ The application was containerized in an environment with Python 3.9
 In this game, the players choice, his options, 
 and after the programa will show the winner.
 
-## Libraries ##
-
 ## Requirements ##
 Before starting, you need to have [Docker](https://docs.docker.com/get-docker/) installed.
 
@@ -48,7 +45,7 @@ Before starting, you need to have [Docker](https://docs.docker.com/get-docker/) 
 $ git clone https://github.com/wesley-ilia/xavier.git
 
 # Access
-$ cd docker
+$ cd xavier/docker
 
 # Create a docker image and run docker
 bash run.sh
@@ -60,14 +57,14 @@ bash run.sh
 ## Running ##
 ```bash
 # To start the game
-python app/pycjava.py
+python dojos/pycjava/app/pycjava.py
 
 ```
 
 ## Testing ##
 ```bash
 # To run some automatic tests
-python -m unittest tests/test_pycjava.py
+python -m unittest dojos/pycjava/tests/test_pycjava.py
 ```
 
 ## Exiting ##
