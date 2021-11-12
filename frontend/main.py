@@ -4,14 +4,14 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from dotenv import load_dotenv
-from mySQL_db import MySQL
+# from mySQL_db import MySQL
 from Log import Log
 from utils import *
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates/")
-load_dotenv(dotenv_path='../login.env')
-db = MySQL()
+load_dotenv(dotenv_path='login.env')
+# db = MySQL()
 log = Log()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
@@ -53,13 +53,13 @@ def get_in_startup_base(state_name: str, output_name: str, obs: str, mercado: st
     query = "SELECT * FROM empresa_completa WHERE"
     if mercado:
         mercado = mercado.replace(",", "%' OR `mercado` LIKE '%")
-        query += f" `mercado` like ('%{mercado}%')"
+        query += f" `mercado` like '%{mercado}%'"
     if state_name:
         if mercado:
             query += " AND"
         state_name = state_name.upper()
         state_name = state_name.replace(" OR ", "%' OR `estado` LIKE '%").replace(" AND ", "%' AND `estado` LIKE '%")
-        query += f" `estado` like ('%{state_name}%')"
+        query += f" `estado` like '%{state_name}%'"
     if not mercado and not state_name:
         return {"error": "search something"}
     """   else:
