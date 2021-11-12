@@ -27,7 +27,11 @@ def startupbase(request: Request):
 def stackshare(request: Request):
     return templates.TemplateResponse('stackshare.html', context={'request': request})
 
-@app.get("/get_by_language/")
+@app.route('/log')
+def show_log(request: Request):
+    return templates.TemplateResponse('log.html', context={'request': request})
+
+@app.get("/get_by_language")
 def get_by_language(*, search: str, obs: str, output_name: str):
     output_csv = output_name + ".csv"
     query = f"SELECT * FROM stacks WHERE \
@@ -72,3 +76,24 @@ def get_in_startup_base(state_name: str, output_name: str, obs: str, mercado: st
     if error:
         return {"error": "search not found"}
     return FileResponse(output_csv, filename=output_csv)
+
+@app.get('/insert_into_log')
+def fill_log(comment: str, feedback: bool, obs: str):
+    log.set_feedback(feedback=feedback,
+                     comment=comment,
+                     obs=obs)
+    return {"message": "sucesso"}
+
+
+
+""" tabela logs
+id
+query
+result
+version
+date_time
+feedback
+obs
+comments
+"""
+

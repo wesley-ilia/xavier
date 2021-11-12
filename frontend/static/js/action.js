@@ -7,4 +7,8 @@ $(document).ready(function() {
 		{
             window.location.assign("startupbase");
     });
+    $('#Log').click(function()
+		{
+            window.location.assign("log");
+    });
 })

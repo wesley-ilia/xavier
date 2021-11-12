@@ -35,11 +35,8 @@ class Log():
 		self.cursor.execute(f"INSERT INTO logs (query, version, result, obs) VALUES ('{query}', '{version}', '{result_csv}', '{obs}')")
 		self.con.commit()
 
-	def set_feedback(self, query="SELECT * FROM logs WHERE opinion IS NULL limit 1"):
-		self.cursor.execute(query)
-		myresult = self.cursor.fetchone()
-		opinion = input("A pesquisa de " + str(myresult[6]) + " foi satisfatoria? ").lower()
-		self.cursor.execute(f"UPDATE logs SET opinion='{opinion}' WHERE id='{myresult[0]}'")
+	def set_feedback(self, feedback: bool, comment: str, obs: str):
+		self.cursor.execute(f"UPDATE logs SET feedback='{feedback}', comments='{comment}' WHERE obs like '%{obs}%'")
 		self.con.commit()
 	
 	def __del__(self):
