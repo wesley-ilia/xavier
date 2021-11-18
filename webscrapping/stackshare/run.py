@@ -1,7 +1,8 @@
 from dotenv import load_dotenv
-from time import sleep
+# from time import sleep
 from stackshare_class.stackshare import StackShare
 from stackshare_class.mySQL_db import MySQL
+
 
 def get_stack_from_companies():
     with StackShare() as bot:
@@ -16,6 +17,7 @@ def get_stack_from_companies():
             db.insert_in_db(f"INSERT INTO stacks ({keys}) VALUES ({values})")
             bot.delete_all_cookies()
 
+
 def get_stack_from_stacks():
     with StackShare() as bot:
         db = MySQL()
@@ -29,6 +31,12 @@ def get_stack_from_stacks():
             bot.delete_all_cookies()
 
 
+load_dotenv(dotenv_path='login.env')
+db = MySQL()
+db.remove_duplicate('stacks')
+
 """
-SELECT * FROM `stacks` WHERE `DevOps` LIKE '%slack%' or `Application and Data` LIKE '%slack%' or `Utilities` LIKE '%slack%' or `Business Tools` LIKE '%slack%'
+SELECT * FROM `stacks` WHERE `DevOps` LIKE '%slack%'
+or `Application and Data` LIKE '%slack%'
+or `Utilities` LIKE '%slack%' or `Business Tools` LIKE '%slack%'
 """
