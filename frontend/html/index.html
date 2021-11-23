@@ -7,7 +7,12 @@
 	<link rel="stylesheet" href="style.css">
 	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-	<script type="text/javascript" src="script.js?t"></script>
+	<script type="text/javascript" src="script.js?st"></script>
+
+ 
+    
+
+
 	<title>	</title>
 </head>
 <body>
@@ -15,30 +20,19 @@
 		<section id="estado">
 			<h2 class="category-title">Estado</h3>
 				<div class="flex-button">
-					<select type="text" id="estados" autocomplete="on">
-						<option value = "ALL">All</option>
-						<option value = "JavaScript">javascript</option>
-						<option value = "Python">python</option>
-						<option value = "AWS">aws server</option>
-						<option value = "four">four</option>
-					</select>
-					<button id= "add_state">+</button>
+          <input id="txt_estados" type="text" name="txt_estados" placeholder="Estados">
+				<button id= "add_estado">+</button>
 				</div>
 				<div id="estado-selecionado"></div>
 		</section>
 
 		<section id="mercado">
 			<h2 class="category-title">Mercado</h3>
-			<div class="flex-button">
-				<select type="text" autocomplete="on">
-					<option>All</option>
-					<option>Tecnologia</option>
-					<option>Agricultura</option>
-					<option>Fejao e arroz e pera e tudo</option>
-					<option>four</option>
-				</select>
-				<button>+</button>
-			</div>
+				<div class="flex-button">
+          <input id="txt_mercado" type="text" name="txt_mercado" placeholder="Mercado">
+				<button id= "add_mercado">+</button>
+				</div>
+				<div id="mercado-selecionado"></div>
 		</section>
 
 		<section id="stacks">
@@ -67,4 +61,5 @@
 	</div>
 	
 </body>
+
 </html>
