@@ -16,51 +16,59 @@ var task_mercado = new Bloodhound({
 
 
 $(document).ready(function() {
-    alert("ola7");
-     $('#add_state').click(function()
-		{
-        valor = $('#estados').value()
-        valor += $('#estados').val()+",";
-        $('#estado_selecionado').append("teste");
-        //alert($('#estados').val());
-    });
- 
-  /*  task_estado.initialize();
-    task_mercado.initialize();
+  alert("ola10");
+   $('#add_state').click(function() {
+      teste = "<input type='button' value='"+$('#estados').val()+"' id='teste' />"
+			$("#estados").find('[value="'+$('#estados').val()+'"]').remove();
+      $('#estado-selecionado').append(teste);
+   });
+  
+   $("teste").on("click", function()
+   {
+      alert(this).val();
+   }
+ );
 
-    var elt = $("#tag1");
-    elt.tagsinput({
-      itemValue: "value",
-      itemText: "text",
-      typeaheadjs: {
-        name: "task",
-        displayKey: "text",
-        source: task_estado.ttAdapter()
-      }
-    });
+  
 
-    //insert data to input in load page
-    elt.tagsinput("add", {
-      value: 1,
-      text: "SP",
-      continent: "Task"
-    });
+    
 
-    var elt_2 = $("#tag2");
-    elt_2.tagsinput({
-      itemValue: "value",
-      itemText: "text",
-      typeaheadjs: {
-        name: "task",
-        displayKey: "text",
-        source: task_mercado.ttAdapter()
-      }
-    });
+/*  task_estado.initialize();
+  task_mercado.initialize();
 
-    //insert data to input in load page
-    elt_2.tagsinput("add", {
-      value: 1,
-      text: "MARAVILHA",
-      continent: "Task"
-    });*/
+  var elt = $("#tag1");
+  elt.tagsinput({
+    itemValue: "value",
+    itemText: "text",
+    typeaheadjs: {
+      name: "task",
+      displayKey: "text",
+      source: task_estado.ttAdapter()
+    }
+  });
+
+  //insert data to input in load page
+  elt.tagsinput("add", {
+    value: 1,
+    text: "SP",
+    continent: "Task"
+  });
+
+  var elt_2 = $("#tag2");
+  elt_2.tagsinput({
+    itemValue: "value",
+    itemText: "text",
+    typeaheadjs: {
+      name: "task",
+      displayKey: "text",
+      source: task_mercado.ttAdapter()
+    }
+  });
+
+  //insert data to input in load page
+  elt_2.tagsinput("add", {
+    value: 1,
+    text: "MARAVILHA",
+    continent: "Task"
+  });*/
 })
