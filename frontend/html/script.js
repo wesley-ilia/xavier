@@ -4,17 +4,24 @@
   //var estado = '[{"value": 1, "text": "AC", "continent": "Task"}, {"value": 2, "text": "AL", "continent": "Task"}, {"value": 3, "text": "AM", "continent": "Task"}, {"value": 4, "text": "AP", "continent": "Task"}, {"value": 5, "text": "BA", "continent": "Task"}, {"value": 6, "text": "CE", "continent": "Task"}, {"value": 7, "text": "DF", "continent": "Task"}, {"value": 8, "text": "ES", "continent": "Task"}, {"value": 9, "text": "GO", "continent": "Task"}, {"value": 10, "text": "MA", "continent": "Task"}, {"value": 11, "text": "MG", "continent": "Task"}, {"value": 12, "text": "MS", "continent": "Task"}, {"value": 13, "text": "MT", "continent": "Task"}, {"value": 14, "text": "PA", "continent": "Task"}, {"value": 15, "text": "PB", "continent": "Task"}, {"value": 16, "text": "PE", "continent": "Task"}, {"value": 17, "text": "PI", "continent": "Task"}, {"value": 18, "text": "PR", "continent": "Task"}, {"value": 19, "text": "RJ", "continent": "Task"}, {"value": 20, "text": "RN", "continent": "Task"}, {"value": 21, "text": "RO", "continent": "Task"}, {"value": 22, "text": "RR", "continent": "Task"}, {"value": 23, "text": "RS", "continent": "Task"}, {"value": 24, "text": "SC", "continent": "Task"}, {"value": 25, "text": "SE", "continent": "Task"}, {"value": 26, "text": "SP", "continent": "Task"}, {"value": 27, "text": "TO", "continent": "Task"}]';
   var estados = ['AC', 'AL', 'AM', 'AP', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MG', 'MS', 'MT', 'PA', 'PB', 'PE', 'PI', 'PR', 'RJ', 'RN', 'RO', 'RR', 'RS', 'SC', 'SE', 'SP', 'TO']
   var mercados = ['Advertising', 'S/N', 'Vendas e Marketing', 'Recursos Humanos', 'Meio Ambiente', 'Indústria', 'Internet', 'Transportes', 'Energia', 'Seguros', 'Infantil', 'Direito', 'Automobilismo', 'Educação', 'E-commerce', 'Gestão', 'Saúde e Bem-estar', 'Produtos de Consumo', 'Cloud Computing', 'Outros', 'Mobile', 'Games', 'TIC e Telecom', 'Logística e Mobilidade Urbana', 'Desenvolvimento de Software', 'Hardware', 'Imobiliário', 'Biotecnologia', 'Finanças', 'Varejo / Atacado', 'Esportes', 'Comunicação e Mídia', 'Agronegócio', 'Serviços Profissionais', 'CRM', 'Nanotecnologia', 'Big Data', 'Pets', 'Construção Civil', 'Segurança e Defesa', 'Casa e Família', 'Entretenimento', 'Eventos e Turismo', 'Moda e Beleza', 'Recrutamento', 'Video'];
+  var stacks = ['arroz', 'feijao', 'batata']
   
   
   $(document).ready(function() {
   
       autocomplete(document.getElementById("txt_estados"), estados);
       autocomplete(document.getElementById("txt_mercado"), mercados);
-  
+      autocomplete(document.getElementById("txt_stacks"), stacks);
+
       $('#add_estado').click(function() {
-        teste = "<input type='button' id='s' value='"+$('#txt_estados').val()+"' />"
-        if ($('#txt_estados').val() != "")
+        teste = "<input type='button' id='e-selecionados' class='selecionados' value='"+$('#txt_estados').val()+"' />"
+        if ($('#txt_estados').val() != "") {
+          const index = estados.indexOf($('#txt_estados').val());
+          if (index > -1) {
+            estados.splice(index, 1);
+          }
           $('#estado-selecionado').append(teste);
+        }
         $('#txt_estados').val("");
         $('#txt_estados').focus();
       });
@@ -22,11 +29,20 @@
         const clickedElement = $(event.target);
         console.log(clickedElement.attr('value'));
         $("#estado-selecionado").find('[value="'+clickedElement.attr('value')+'"]').remove();
+        estados.push(clickedElement.attr('value'));
+        estados.sort();
+        autocomplete(document.getElementById("txt_estados"), estados);
       });
   
       $('#add_mercado').click(function() {
-        teste = "<input type='button' id='s' value='"+$('#txt_mercado').val()+"' />"
-        if ($('#txt_mercado').val() != "")
+        teste = "<input type='button' id='m-selecionados' class='selecionados' value='"+$('#txt_mercado').val()+"' />"
+        if ($('#txt_mercado').val() != "") {
+          const index = estados.indexOf($('#txt_mercado').val());
+          if (index > -1) {
+            estados.splice(index, 1);
+          }
+          $('#mercado-selecionado').append(teste);
+        }
           $('#mercado-selecionado').append(teste);
         $('#txt_mercado').val("");
         $('#txt_mercado').focus();
@@ -36,7 +52,19 @@
         console.log(clickedElement.attr('value'));
         $("#mercado-selecionado").find('[value="'+clickedElement.attr('value')+'"]').remove();
       });
-  
+
+      $('#add_stack').click(function () {
+        teste = "<input type='button' id='s-selecionados' class='selecionados' value='" + $('#txt_stacks').val() + "' />"
+        if ($('#txt_stacks').val() != "")
+          $('#stack-selecionado').append(teste);
+        $('#txt_stacks').val("");
+        $('#txt_stacks').focus();
+      });
+      $("#stack-selecionado").on('click', '', event => {
+        const clickedElement = $(event.target);
+        console.log(clickedElement.attr('value'));
+        $("#stack-selecionado").find('[value="' + clickedElement.attr('value') + '"]').remove();
+      });
   
   
   })
@@ -66,8 +94,9 @@
           if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
             /*create a DIV element for each matching element:*/
             b = document.createElement("DIV");
+            b.setAttribute("class", "tag-items");
             /*make the matching letters bold:*/
-            b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+            b.innerHTML = "<strong'>" + arr[i].substr(0, val.length) + "</strong>";
             b.innerHTML += arr[i].substr(val.length);
             /*insert a input field that will hold the current array item's value:*/
             b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
