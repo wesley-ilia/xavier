@@ -25,12 +25,12 @@ class Log():
             sys.exit(os.EX_IOERR)
 
     def save_to_csv(self, query, con, file):
-        try:
-            results = pandas.read_sql_query(query, con)
-            results.to_csv(file, index=False)
-        except BaseException:
+        
+        results = pandas.read_sql_query(query, con)
+        results.to_csv(file, index=False)
+        """  except BaseException:
             print("Informações da query erradas")
-            sys.exit(os.EX_IOERR)
+            sys.exit(os.EX_IOERR) """
 
     def insert_into_log(self, query: str, version: str,
                         result_csv: str, obs: str):
