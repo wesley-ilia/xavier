@@ -303,8 +303,8 @@
                 $('#add_stack').click()
               //create_button(inp.getAttribute('name'));
             }*/
-      console.log("e",e);
-      console.log("target",e.parentElement);
+      /* console.log("e",e);
+      console.log("target",e.target.parentElement.getElementById(this.id)); */
 
       closeAllLists(e.target);
   });
