@@ -12,16 +12,21 @@ def tester(estados: list, mercados: list, stacks: list, name: str):
         stack_box = bot.find_element(By.ID, "txt_stacks")
         mercado_box = bot.find_element(By.ID, "txt_mercados")
         for estado in estados:
-            estados_box.send_keys(estado, Keys.ENTER)
+            estados_box.send_keys(estado)
+            bot.find_element(By.ID, "add_estado").click()
         for mercado in mercados:
-            mercado_box.send_keys(mercado, Keys.ENTER)
+            mercado_box.send_keys(mercado)
+            bot.find_element(By.ID, "add_mercado").click()
         for stack in stacks:
-            stack_box.send_keys(stack, Keys.ENTER)
+            stack_box.send_keys(stack)
+            bot.find_element(By.ID, "add_stack").click()
 
         csv_name = bot.find_element(By.ID, "file_name")
         csv_name.send_keys(name, Keys.ENTER)
 
         bot.find_element(By.ID, "submit").click()
+        #alert = bot.find_Element(By.xpath,"//*[text()='algo']"))
+       
         time.sleep(2)
 
 """ with test_class.TestSelenium() as bot_1:

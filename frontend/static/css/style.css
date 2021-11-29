@@ -13,7 +13,7 @@
 }
 
 body {
-	background-color: #343434;
+	background-color: #353535;
 	/* background-color: black; */
 	font-family: 'Open Sans';
 	color: white;
@@ -22,7 +22,7 @@ body {
 }
 
 #container {
-	background-color: rgba(0, 0, 0, 0.9);
+	background-color:#a5a5a5;
 	width: 375px;
 	height: 100vh;
 	margin: 0 auto;
@@ -65,7 +65,7 @@ p {
 }
 
 span {
-	color: rgba(255, 255, 255, 0.5)
+	color: black
 }
 
 .selecionados {

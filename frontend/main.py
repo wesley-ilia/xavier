@@ -16,7 +16,6 @@ load_dotenv(dotenv_path='../login.env')
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-
 @app.route("/")
 def choose(request: Request):
     return templates.TemplateResponse('index.html',
@@ -26,10 +25,10 @@ def choose(request: Request):
 def get_info(market: str, stack: str, state: str, file_name: str='untitled'):
     query = "SELECT * FROM empresa_completa3 WHERE "
     if not file_name:
-        file_name = 'untitled'
+        file_name = 'Untitled'
     file_name += '.csv'
 
-    if state:
+    if state and state != 'TODOS':
         state_query = "(`estado`=' " + state.replace(',', "' OR `estado`=' ") + "')"
         query += state_query
         if market:
@@ -52,23 +51,7 @@ def get_info(market: str, stack: str, state: str, file_name: str='untitled'):
         query += stack_query
     else:
         return {"message": "error"}
-    print(query)
+    # print(query)
     log = Log()
     log.save_to_csv(query, log.con, file_name)
     return FileResponse(file_name, filename=file_name)
-
-
-    """
-        SELECT * FROM `empresa_completa3` WHERE (estado='{state_query}') AND (mercado='{market_query}')
-    """
-
-""" tabela logs
-id
-query
-result
-version
-date_time
-feedback
-obs
-comments
-"""
