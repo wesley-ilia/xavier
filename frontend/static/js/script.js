@@ -16,8 +16,9 @@
   {
     if (field == "txt_estados")
     {
-        if ($('#txt_estados').val() != 'TODOS')
+        if ($('#txt_estados').val() != 'TODOS') {
           estados_execute.push($('#txt_estados').val());
+        }
         teste = "<input type='button' id='e-selecionados' class='selecionados' value='"+$('#txt_estados').val()+"' />"
         if ($('#txt_estados').val() != "") {
           const index = estados.indexOf($('#txt_estados').val());
@@ -93,11 +94,12 @@
               estados_execute.splice(index, 1);
             }
           }
+          $('#txt_estados').val("");
           autocomplete(document.getElementById("txt_estados"), estados);
         }
-        else if (estados_execute.indexOf("TODOS") > -1) {
+        else if ($("#estado-selecionado").find('[value="TODOS"]').length > 0) {
           console.log("teste");
-          console.log($("#estados_execute").find('[value="TODOS"]'))
+          console.log($("#estado-selecionado"))
           $("#estado-selecionado").find('[value="TODOS"]').remove();
           estados.push("TODOS");
           estados.sort();
@@ -105,8 +107,10 @@
           const index = estados_execute.indexOf("TODOS");
           if (index > -1)
             estados_execute.splice(index, 1);
+          create_button("txt_estados");
         }
-        create_button("txt_estados");
+        else
+          create_button("txt_estados");
       });
       $("#estado-selecionado").on('click','',  event =>{
         const clickedElement = $(event.target);
