@@ -16,8 +16,8 @@
   {
     if (field == "txt_estados")
     {
-        
-        estados_execute.push($('#txt_estados').val());
+        if ($('#txt_estados').val() != 'TODOS')
+          estados_execute.push($('#txt_estados').val());
         teste = "<input type='button' id='e-selecionados' class='selecionados' value='"+$('#txt_estados').val()+"' />"
         if ($('#txt_estados').val() != "") {
           const index = estados.indexOf($('#txt_estados').val());
@@ -86,13 +86,14 @@
             if (estados_ori.includes(estados_execute[0])) {
               estados.push(estados_execute[0]);
               estados.sort();
-              autocomplete(document.getElementById("txt_estados"), estados);
+              // autocomplete(document.getElementById("txt_estados"), estados);
             }
             const index = estados_execute.indexOf(estados_execute[0]);
             if (index > -1) {
               estados_execute.splice(index, 1);
             }
           }
+          autocomplete(document.getElementById("txt_estados"), estados);
         }
         else if (estados_execute.indexOf("TODOS") > -1) {
           console.log("teste");
@@ -248,7 +249,7 @@
               else if (inp.getAttribute('name') == "txt_mercados")
                 $('#add_mercado').click()
               else if (inp.getAttribute('name') == "txt_stacks")
-                $('#add_sta').click()
+                $('#add_stack').click()
               //create_button(inp.getAttribute('name'));
             }
           }
