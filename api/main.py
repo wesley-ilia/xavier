@@ -7,10 +7,10 @@ from dotenv import load_dotenv
 from Log import Log
 
 app = FastAPI()
-templates = Jinja2Templates(directory="frontend/")
+templates = Jinja2Templates(directory="frontend/html")
 load_dotenv(dotenv_path='../login.env')
 
-app.mount("/frontend", StaticFiles(directory="frontend"), name="static")
+app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
 
 @app.route("/")
 def choose(request: Request):
