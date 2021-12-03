@@ -4,17 +4,13 @@ from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from dotenv import load_dotenv
-# from mySQL_db import MySQL
 from Log import Log
-from utils import insert_log_in_db, make_csv
-import pandas as pd
 
 app = FastAPI()
-templates = Jinja2Templates(directory="html/")
+templates = Jinja2Templates(directory="frontend/")
 load_dotenv(dotenv_path='../login.env')
-# db = MySQL()
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/frontend", StaticFiles(directory="frontend"), name="static")
 
 @app.route("/")
 def choose(request: Request):
