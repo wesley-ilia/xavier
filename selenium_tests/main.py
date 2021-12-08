@@ -1,15 +1,14 @@
-from dotenv import load_dotenv
-import test_class
+from webscrapping import WebScrapping
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
 
-load_dotenv(dotenv_path='../login.env')
+BASE_URL = 'http://localhost:8000'
 
 
 def tester(estados: list, mercados: list, stacks: list, name: str):
-    with test_class.TestSelenium() as bot:
-        bot.get("http://localhost:8000")
+    with WebScrapping(driver_path='./', headless=True) as bot:
+        bot.land_in_page(BASE_URL)
         estados_box = bot.find_element(By.ID, "txt_estados")
         stack_box = bot.find_element(By.ID, "txt_stacks")
         mercado_box = bot.find_element(By.ID, "txt_mercados")
@@ -27,4 +26,4 @@ def tester(estados: list, mercados: list, stacks: list, name: str):
         csv_name.send_keys(name, Keys.ENTER)
 
         bot.find_element(By.ID, "submit").click()
-        time.sleep(2)
+        time.sleep(0.25)
