@@ -7,7 +7,7 @@ BASE_URL = 'http://localhost:8000'
 
 
 def tester(estados: list, mercados: list, stacks: list, name: str):
-    with WebScrapping(driver_path='./', headless=True) as bot:
+    with TestSelenium(driver_path='./', headless=True) as bot:
         bot.land_in_page(BASE_URL)
         estados_box = bot.find_element(By.ID, "txt_estados")
         stack_box = bot.find_element(By.ID, "txt_stacks")

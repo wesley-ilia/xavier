@@ -1,32 +1,27 @@
 from os import environ
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver import ChromeOptions
+from selenium.webdriver.chrome.options import Options
 
 
 class TestSelenium(webdriver.Chrome):
-    def __init__(self):
-        super(TestSelenium, self).__init__()
+    def __init__(self, teardown: bool = False,
+                 implicit_wait: int = 0, driver_path: str = './',
+                 headless: bool = False) -> None:
+        self.teardown = teardown
+        environ['PATH'] += driver_path
+        super(TestSelenium, self).__init__(
+                options=self.__headless_add(Options(), headless))
+        self.implicitly_wait(implicit_wait)
 
-    @staticmethod
-    def download_with_headless_mode(self, )
-
-    @staticmethod
-    def tester(estados: list, mercados: list, stacks: list, name: str):
-        with TestSelenium() as bot:
-            bot.get("http://localhost:8000")
-            estados_box = bot.find_element(By.ID, "txt_estados")
-            stack_box = bot.find_element(By.ID, "txt_stacks")
-            mercado_box = bot.find_element(By.ID, "txt_mercados")
-            for estado in estados:
-                estados_box.send_keys(estado)
-                bot.find_element(By.ID, "add_estado").click()
-            for mercado in mercados:
-                mercado_box.send_keys(mercado)
-                bot.find_element(By.ID, "add_mercado").click()
-            for stack in stacks:
-                stack_box.send_keys(stack)
-                bot.find_element(By.ID, "add_stack").click()
+    def __headless_add(self, options, headless: bool = False):
+        if headless:
+            options.add_argument('--headless')
+            options.add_argument('--no-sandbox')
+            options.add_argument("--disable-dev-shm-usage")
+            options.experimental_options['prefs'] = {
+                    "download.default_directory": r"/home/gvitor-s/Downloads"}
+        return options
 
     def __exit__(self, *args) -> None:
         if self.teardown:
