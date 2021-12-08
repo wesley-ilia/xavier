@@ -3,7 +3,6 @@ import pandas
 import os
 import sys
 
-
 class Log():
     def __init__(self):
         self.host = os.getenv("HOSTNAME_DB")

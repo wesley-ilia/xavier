@@ -27,3 +27,7 @@ class TestSelenium(webdriver.Chrome):
             for stack in stacks:
                 stack_box.send_keys(stack)
                 bot.find_element(By.ID, "add_stack").click()
+
+    def __exit__(self, *args) -> None:
+        if self.teardown:
+            self.quit()

@@ -4,4 +4,8 @@ login.env
 .sql
 .vscode
 *.csv
+<<<<<<< HEAD
 chromedriver
+=======
+env
+>>>>>>> 35ec007281eb03c46e5034029c86c2ce25486288
