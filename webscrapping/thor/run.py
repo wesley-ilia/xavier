@@ -10,7 +10,7 @@ import pandas as pd
 
 if (__name__ == "__main__"):
     load_dotenv(dotenv_path='../../login.env')
-    thor = ThorClass(headless=True)
+    """ thor = ThorClass(headless=True) """
 
     for x in range(599, 600):
         thor.land_in_page("jobs", "page", str(x))
@@ -25,8 +25,8 @@ if (__name__ == "__main__"):
                         "div[class=cell-list-content-icon] > span")
                 stack = element.find_elements(By.CLASS_NAME, 'tag-list')
                 stack = ', '.join([i.text for i in stack])
-                infos_list.append([info[0].text, info[2].text, stack])
+                infos_list.append([info[0].text, info[2].text, stack, link])
             except IndexError:
                 pass
-        df = pd.DataFrame(infos_list, columns=['nome', 'tamanho', 'stack'])
-        df.to_csv('teste.csv', sep=',', mode='a', header=False, index=False)
+        df = pd.DataFrame(infos_list, columns=['nome', 'tamanho', 'stack', 'link'])
+        df.to_csv('../verify_db/scrapping_json/thor.csv', sep=',', mode='a', header=False, index=False)
