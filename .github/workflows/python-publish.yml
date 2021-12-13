@@ -10,7 +10,8 @@ name: Testes
 
 on:
   push:
-
+    branches:
+      - dojo
 
 jobs:
   deploy:
