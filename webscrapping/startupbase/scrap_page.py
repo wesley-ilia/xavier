@@ -133,7 +133,7 @@ def action (driver : object, id: int):
         links = relacao.find_all('a')
         relacoes = ""
         for link in links:
-            relacoes += link.text + " " 
+            relacoes += link.text + " "
     socials = soup.find(class_="publ-social")
     if (socials):
         links = socials.find_all('a')
@@ -173,7 +173,6 @@ def scrap_pag(connection):
     connection.insert_in_db(query="SELECT * FROM control_startupbase WHERE status like '%NOVO%' ")
     return connection.cursor.fetchall()
 
-
 def put_on_data_base(myresult: tuple, connection: object, startupbase: object):
     for x in myresult:
         startupbase.land_in_page(page=x[2])
@@ -184,7 +183,6 @@ def put_on_data_base(myresult: tuple, connection: object, startupbase: object):
             update_status('ERROR', str(x[0]), connection)
             print("xx ERROR", str(x[2]))
 
-
 if (__name__ == "__main__"):
     load_dotenv(dotenv_path='../../login.env')
     log = Log()
@@ -193,4 +191,5 @@ if (__name__ == "__main__"):
         myresult=scrap_pag(log),
         connection=log,
         startupbase=startupbase
-    )
+)
+

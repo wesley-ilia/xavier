@@ -16,4 +16,4 @@ VALUES ('{i['name']}','{i['link']}','NOVO')")
 
 if __name__ == '__main__':
 	load_dotenv(dotenv_path='../../login.env')
-	status_startupbasessss("scrapping_json/startupbase2.json")
+	status_startupbase("scrapping_json/startupbase2.json")

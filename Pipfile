@@ -13,6 +13,8 @@ uvicorn = "*"
 pandas = "*"
 python-dotenv = "*"
 pymysql = "*"
+requests = "*"
+bs4 = "*"
 
 [dev-packages]
 

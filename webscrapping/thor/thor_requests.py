@@ -6,7 +6,8 @@ import json
 
 if (__name__ == "__main__"):
 
-    fd = open("../verify_db/scrapping_json/thor.json", 'w', encoding='utf8')
+    #fd = open("../verify_db/scrapping_json/thor.json", 'w', encoding='utf8')
+    fd = open("thor.json", 'w', encoding='utf8')
     teste = open("teste.txt", 'w', encoding='utf8')
 
     infos_list = []
