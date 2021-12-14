@@ -28,24 +28,9 @@
         teste = "<input type='button' id='e-selecionados_"+n_element+"' class='selecionados' value='"+$('#txt_estados').val()+"'  />"
         n_element ++;
         //const index1 = estados.indexOf($('#txt_estados').val());
-        if (connectors.indexOf($('#txt_estados').val()) > -1) {
-          console.log("blablalabal");
-          i = 0;
-          while (show_estados.length > 0) {
-            show_estados.splice(0, 1);
-          }
-          show_estados.push(...estados);
-        }
-        else if ($('#txt_estados').val() != "" && $('#txt_estados').val() !=  "NOT") {
-          const index = estados.indexOf($('#txt_estados').val());
-          if (index > -1) {
-            estados.splice(index, 1);
-          }
-          i = 0;
-          while (show_estados.length > 0) {
-            show_estados.splice(0, 1);
-          }
-          show_estados.push(...connectors);
+        const index = estados.indexOf($('#txt_estados').val());
+        if (index > -1) {
+          estados.splice(index, 1);
         }
         $('#estado-selecionado').append(teste);
         $('#txt_estados').val("");
@@ -92,7 +77,7 @@
 
   $(document).ready(function() {
 
-      autocomplete(document.getElementById("txt_estados"), show_estados, 'estado');
+      autocomplete(document.getElementById("txt_estados"), estados, 'estado');
       autocomplete(document.getElementById("txt_mercados"), mercados, 'mercado');
       autocomplete(document.getElementById("txt_stacks"), stacks, 'stack');
 
@@ -145,20 +130,7 @@
           estados.sort();
           //autocomplete(document.getElementById("txt_estados"), estados, "estado");
         }
-        if (connectors.indexOf(clickedElement.attr('value')) > -1) {
-          i = 0;
-          while (show_estados.length > 0) {
-            show_estados.splice(0, 1);
-          }
-          show_estados.push(...connectors);
-        }
-        else if (clickedElement.attr('value') != 'NOT') {
-          i = 0;
-          while (show_estados.length > 0) {
-            show_estados.splice(0, 1);
-          }
-          show_estados.push(...estados);
-        }
+
         const index = estados_execute.indexOf(clickedElement.attr('value'));
         //console.log(index)
         if (index > -1) {
