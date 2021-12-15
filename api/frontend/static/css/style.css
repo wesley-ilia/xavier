@@ -120,8 +120,27 @@ span {
 	cursor: pointer;
 }
  */
-#submit {
-	margin-left: 30px;
-	margin-top: 10px;
-	padding: 5px;
+.dowload_preview {
+	display: flex;
+	padding: 10px;
+	margin-left: 20px;
+	margin-right: 20px;
+	justify-content: space-between;
+}
+
+/* .flex-child {
+	flex: 1;
+} */
+
+#download {
+	width: 80px;
+	height: 30px;
+}
+
+#preview {
+	background: aliceblue;
+	color: black;
+	width: 120px;
+	height: 30px;
+	vertical-align: middle;
 }

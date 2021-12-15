@@ -8,7 +8,6 @@
   var not = ['NOT'];
 
   var estados = [...estados_ori];
-  estados.push(...not);
   var mercados = [...mercados_ori];
   var stacks = [...stacks_ori];
 
@@ -68,6 +67,11 @@
         $('#txt_stacks').val("");
         $('#txt_stacks').focus();
     }
+
+    $.getJSON("/search?get_csv=false&market="+mercados_execute+"&stack="+stacks_execute+"&state="+estados_execute+"&file_name="+$('#file_name').val(), function(dados) {
+      $('#preview').empty();
+      $('#preview').append("Preview :"+ dados);
+    });
   }
   
   var teste1 = "mercado_teste";
@@ -76,19 +80,53 @@
 
 
   $(document).ready(function() {
+   
+      /*
+        $.getJSON('/dropdown', function(dados) {
+          $('#t_mercados').append("teste");
+        });
+        stacks_ori = dados.stacks;
+        stacks = [...stacks_ori];
+        mercados_ori = dados.mercados;
+        mercados = [...mercados_ori];
+        mercados.push(...not);
+        show_mercados = [...mercados];
+        autocomplete(document.getElementById("txt_mercados"), show_mercados);
+        autocomplete(document.getElementById("txt_stacks"), stacks);
+      });
+      */
+
 
       autocomplete(document.getElementById("txt_estados"), estados, 'estado');
       autocomplete(document.getElementById("txt_mercados"), mercados, 'mercado');
       autocomplete(document.getElementById("txt_stacks"), stacks, 'stack');
 
-      $('#submit').click(function() {
+      $('#bt_list_estados').click(function () {
+        window.open('/dropdown', 'marcados','width=100, height=500');
+      })
+      $('#bt_list_mercados').click(function () {
+        window.open('/dropdown', 'marcados','width=100, height=500');
+      })
+      $('#bt_list_stacks').click(function () {
+        window.open('/dropdown', 'marcados','width=100, height=500');
+      })
+     
+      $('#bt_preview').click(function(){
+        $.getJSON("/search?get_csv=false&market="+mercados_execute+"&stack="+stacks_execute+"&state="+estados_execute+"&file_name="+$('#file_name').val(), function(dados) {
+          $('#preview').empty();
+          $('#preview').append("Preview :"+ dados);
+        });
+      });
+
+      $('#download').click(function() {
         if (mercados_execute.length == 0 && estados_execute.length == 0 && stacks_execute.length == 0)
           alert("Preencher algo");
         else
-          window.location.assign("/search?market="+mercados_execute+"&stack="+stacks_execute+"&state="+estados_execute+"&file_name="+$('#file_name').val());
+          window.location.assign("/search?get_csv=True&market="+mercados_execute+"&stack="+stacks_execute+"&state="+estados_execute+"&file_name="+$('#file_name').val());
       });
       $('#add_estado').click(function() {
         if ($("#txt_estados").val() === "TODOS"){
+          
           while (estados_execute.length > 0) {
             console.log(estados_execute[0]);
             $("#estado-selecionado").find('[value="'+estados_execute[0]+'"]').remove();
@@ -101,6 +139,11 @@
             if (index > -1) {
               estados_execute.splice(index, 1);
             }
+
+            $.getJSON("/search?get_csv=false&market="+mercados_execute+"&stack="+stacks_execute+"&state="+estados_execute+"&file_name="+$('#file_name').val(), function(dados) {
+              $('#preview').empty();
+              $('#preview').append("Preview :"+ dados);
+            });
           }
           $('#txt_estados').val("");
           //autocomplete(document.getElementById("txt_estados"), estados, "estado");
@@ -111,6 +154,7 @@
           $("#estado-selecionado").find('[value="TODOS"]').remove();
           estados.push("TODOS");
           estados.sort();
+          
           //autocomplete(document.getElementById("txt_estados"), estados, "estado");
           const index = estados_execute.indexOf("TODOS");
           if (index > -1)
@@ -130,12 +174,18 @@
           estados.sort();
           //autocomplete(document.getElementById("txt_estados"), estados, "estado");
         }
+        
 
         const index = estados_execute.indexOf(clickedElement.attr('value'));
         //console.log(index)
         if (index > -1) {
           estados_execute.splice(index, 1);
         }
+
+        $.getJSON("/search?get_csv=false&market="+mercados_execute+"&stack="+stacks_execute+"&state="+estados_execute+"&file_name="+$('#file_name').val(), function(dados) {
+          $('#preview').empty();
+          $('#preview').append("Preview :"+ dados);
+        });
       });
   
       $('#add_mercado').click(function() {
@@ -155,6 +205,10 @@
         if (index > -1) {
           mercados_execute.splice(index, 1);
         }
+        $.getJSON("/search?get_csv=false&market="+mercados_execute+"&stack="+stacks_execute+"&state="+estados_execute+"&file_name="+$('#file_name').val(), function(dados) {
+          $('#preview').empty();
+          $('#preview').append("Preview :"+ dados);
+        });
       });
 
       $('#add_stack').click(function () {
@@ -174,6 +228,10 @@
         if (index > -1) {
           stacks_execute.splice(index, 1);
         }
+        $.getJSON("/search?get_csv=false&market="+mercados_execute+"&stack="+stacks_execute+"&state="+estados_execute+"&file_name="+$('#file_name').val(), function(dados) {
+          $('#preview').empty();
+          $('#preview').append("Preview :"+ dados);
+        });
       });
   })
   

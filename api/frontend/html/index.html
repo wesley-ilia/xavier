@@ -11,12 +11,14 @@
 	<title>	</title>
 </head>
 <body>
+	
 	<div id="container">
 		<section id="estado">
 			<h2 class="category-title">Estado</h2>
 				<div class="flex-button">
 				<input class="drop-select" id="txt_estados" type="text" name="txt_estados" placeholder="Estados">
 				<button class="add" id= "add_estado">+</button>
+				<button type="button" id='bt_list_estados' class="add">?</button>
 				</div>
 				<div id="estado-selecionado"></div>
 			</section>
@@ -26,6 +28,7 @@
 				<div class="flex-button">
           		<input class="drop-select" id="txt_mercados" type="text" name="txt_mercados" placeholder="Mercado">
 				<button class="add" id="add_mercado">+</button>
+				<button type="button" id='bt_list_mercados' class="add">?</button>
 				</div>
 				<div id="mercado-selecionado"></div>
 			</section>
@@ -35,6 +38,7 @@
 			<div class="flex-button">
           		<input class="drop-select" id="txt_stacks" type="text" name="txt_stacks" placeholder="Stacks">
 				<button class="add" id='add_stack'>+</button>
+				<button type="button" id='bt_list_stacks' class="add">?</button>
 			</div>
 			<div id="stack-selecionado"></div>
 
@@ -45,7 +49,11 @@
 			<h3 class="input-header">Nome do arquivo</h3>
 			<input type="text" id="file_name"><span> .csv</span>
 		</section>
-		<button type="button" id='submit'>Submit</button>
+
+		<div class="dowload_preview">
+			<div id="preview" class="flex-child">Preview:</div>
+			<div><button type="button" id='download' class="flex-child">Download</button></div>
 		</div>
+	</div>
 	</body>
 </html>

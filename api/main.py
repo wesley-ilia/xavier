@@ -5,10 +5,14 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from dotenv import load_dotenv
 from Log import Log
+import pandas as pd
+
+load_dotenv(dotenv_path='../login.env')
+log = Log()
+db = pd.read_sql_query("SELECT * FROM empresa_completa3 WHERE 1", log.con)
 
 app = FastAPI()
 templates = Jinja2Templates(directory="frontend/html")
-load_dotenv(dotenv_path='../login.env')
 
 app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
 
@@ -17,37 +21,52 @@ def choose(request: Request):
     return templates.TemplateResponse('index.html',
                                       context={'request': request})
 
+@app.get("/dropdown")
+def dropdown():
+    return "teste2<br>teste3"
+
 @app.get("/search")
-def get_info(market: str, stack: str, state: str, file_name: str='untitled'):
-    query = "SELECT * FROM empresa_completa3 WHERE "
+def get_info(market: str, stack: str, state: str, file_name: str='untitled', get_csv : bool = False):
+    query = ""
     if not file_name:
         file_name = 'Untitled'
     file_name += '.csv'
 
     if state and state != 'TODOS':
-        state_query = "(`estado`=' " + state.replace(',', "' OR `estado`=' ") + "')"
+        state_query = "(estado==' " + state.replace(',', "' or estado==' ") + "')"
         query += state_query
         if market:
-            query += ' AND '
-            market_query = "(`mercado`='" + market.replace(',', "' OR `mercado`='") + "')"
+            query += ' and '
+            market_query = "(mercado=='" + market.replace(',', "' or mercado=='") + "')"
             query += market_query
         if stack:
-            query += ' AND '
-            stack_query = "(`stacks` like '%" + stack.replace(',', "%' OR `stacks` like '%") + "%')"
-            query += stack_query
+            query += ' and '
+            stacks = stack.split(',')
+            for i in range(len(stacks)):
+                query += f'stacks.str.contains("{stacks[i]}", na=False).values'
+                if i < len(stacks) - 1:
+                    query += ' or '
     elif market:
-        market_query =  "(`mercado`='" + market.replace(',', "' OR `mercado`='") + "')"
+        market_query = "(mercado=='" + market.replace(',', "' or mercado=='") + "')"
         query += market_query
         if stack:
-            query += ' AND '
-            stack_query = "(`stacks` like '%" + stack.replace(',', "%' OR `stacks` like '%") + "%')"
-            query += stack_query
+            query += ' and '
+            stacks = stack.split(',')
+            for i in range(len(stacks)):
+                query += f'stacks.str.contains("{stacks[i]}", na=False).values'
+                if i < len(stacks) - 1:
+                    query += ' or '
     elif stack:
-        stack_query = "(`stacks` like '%" + stack.replace(',', "%' OR `stacks` like '%") + "%')"
-        query += stack_query
+        stacks = stack.split(',')
+        for i in range(len(stacks)):
+            query += f'stacks.str.contains("{stacks[i]}", na=False).values'
+            if i < len(stacks) - 1:
+                query += ' or '
     else:
-        return {"message": "error"}
-    # print(query)
-    log = Log()
-    log.save_to_csv(query, log.con, file_name)
-    return FileResponse(file_name, filename=file_name)
+        return 0
+    df = db.query(query)
+    if get_csv:
+        df.to_csv(file_name, sep=',', index=False)
+        return FileResponse(file_name, filename=file_name)
+    else:
+        return len(df.index)
