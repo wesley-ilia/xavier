@@ -36,7 +36,6 @@ def choose(request: Request):
                                   context={'request': request})
 @app.route("/mercados_list")
 def get_mercados(request: Request):
-    dropdown_list['mercados'].append("blablabla")
     return templates.TemplateResponse('list.html',
                                       context={'request': request, 
                                       "lists": dropdown_list['mercados'], "name": "Mercados"})
