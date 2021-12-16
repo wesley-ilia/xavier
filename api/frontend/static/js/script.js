@@ -111,21 +111,14 @@
       autocomplete(document.getElementById("txt_stacks"), stacks, 'stack');
 
       $('#bt_list_estados').click(function () {
-        window.open('/mercados_list', 'marcados','width=200, height=500');
+        window.open('/estados_list', 'ajuda','width=220, height=500');
       })
       $('#bt_list_mercados').click(function () {
-        $.getJSON("/dropdown", function(dados) {
-          $('#teste_m').empty();
-          $('#teste_m').append(dados);
-        });
-
-
-        /*$('').append()
-        window.open('/dropdown', 'marcados','width=100, height=500');*/
+        window.open('/mercados_list', 'ajuda','width=220, height=500');
       })
       $('#bt_list_stacks').click(function () {
-        window.open('/dropdown', 'marcados','width=200, height=500');
-      })
+        window.open('/stacks_list', 'ajuda','width=220, height=500');
+      });
 
       $('#download').click(function() {
         if (mercados_execute.length == 0 && estados_execute.length == 0 && stacks_execute.length == 0)

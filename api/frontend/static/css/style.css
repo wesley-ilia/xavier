@@ -144,3 +144,17 @@ span {
 	height: 30px;
 	vertical-align: middle;
 }
+
+table tr td {
+	width: 200px;
+	height: 20px;
+	color: #000000;
+	border: solid rgb(85, 85, 85) 1px;
+  }
+  
+  table tr:nth-child(even) {
+	background: rgba(168, 168, 168, 0.836);
+  }
+  table tr:nth-child(odd) {
+	background: rgb(255, 255, 255);
+  }
