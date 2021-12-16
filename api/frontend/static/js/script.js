@@ -67,17 +67,26 @@
         $('#txt_stacks').val("");
         $('#txt_stacks').focus();
     }
-
-    $.getJSON("/search?get_csv=false&market="+mercados_execute+"&stack="+stacks_execute+"&state="+estados_execute+"&file_name="+$('#file_name').val(), function(dados) {
-      $('#preview').empty();
-      $('#preview').append("Preview :"+ dados);
-    });
+    
+    get_preview()
   }
   
   var teste1 = "mercado_teste";
   var teste2 = "stack_teste";
   var teste3 = "state_teste";
 
+  function get_preview() {
+    stacks_execute2 = [...stacks_execute];
+    console.log(stacks_execute2);
+    stacks_execute2.forEach(function(part, index, theArray) {
+      theArray[index] = theArray[index].replace("C++", "Cpp");
+      theArray[index] = theArray[index].replace("C#", "Csharp");
+    });
+    $.getJSON("/search?get_csv=false&market="+mercados_execute+"&stack="+stacks_execute2+"&state="+estados_execute+"&file_name="+$('#file_name').val(), function(dados) {
+      $('#preview').empty();
+      $('#preview').append("Preview :"+ dados);
+    });
+  }
 
   $(document).ready(function() {
    
@@ -102,27 +111,35 @@
       autocomplete(document.getElementById("txt_stacks"), stacks, 'stack');
 
       $('#bt_list_estados').click(function () {
-        window.open('/dropdown', 'marcados','width=100, height=500');
+        window.open('/mercados_list', 'marcados','width=200, height=500');
       })
       $('#bt_list_mercados').click(function () {
-        window.open('/dropdown', 'marcados','width=100, height=500');
+        $.getJSON("/dropdown", function(dados) {
+          $('#teste_m').empty();
+          $('#teste_m').append(dados);
+        });
+
+
+        /*$('').append()
+        window.open('/dropdown', 'marcados','width=100, height=500');*/
       })
       $('#bt_list_stacks').click(function () {
-        window.open('/dropdown', 'marcados','width=100, height=500');
+        window.open('/dropdown', 'marcados','width=200, height=500');
       })
-     
-      $('#bt_preview').click(function(){
-        $.getJSON("/search?get_csv=false&market="+mercados_execute+"&stack="+stacks_execute+"&state="+estados_execute+"&file_name="+$('#file_name').val(), function(dados) {
-          $('#preview').empty();
-          $('#preview').append("Preview :"+ dados);
-        });
-      });
 
       $('#download').click(function() {
         if (mercados_execute.length == 0 && estados_execute.length == 0 && stacks_execute.length == 0)
           alert("Preencher algo");
-        else
-          window.location.assign("/search?get_csv=True&market="+mercados_execute+"&stack="+stacks_execute+"&state="+estados_execute+"&file_name="+$('#file_name').val());
+        else {
+          stacks_execute2 = [...stacks_execute];
+          console.log(stacks_execute2);
+          stacks_execute2.forEach(function(part, index, theArray) {
+            theArray[index] = theArray[index].replace("C++", "Cpp");
+            theArray[index] = theArray[index].replace("C#", "Csharp");
+          });
+          console.log(stacks_execute2);
+          window.location.assign("/search?get_csv=True&market="+mercados_execute+"&stack="+stacks_execute2+"&state="+estados_execute+"&file_name="+$('#file_name').val());
+        }
       });
       $('#add_estado').click(function() {
         if ($("#txt_estados").val() === "TODOS"){
@@ -140,10 +157,7 @@
               estados_execute.splice(index, 1);
             }
 
-            $.getJSON("/search?get_csv=false&market="+mercados_execute+"&stack="+stacks_execute+"&state="+estados_execute+"&file_name="+$('#file_name').val(), function(dados) {
-              $('#preview').empty();
-              $('#preview').append("Preview :"+ dados);
-            });
+            get_preview();
           }
           $('#txt_estados').val("");
           //autocomplete(document.getElementById("txt_estados"), estados, "estado");
@@ -182,12 +196,9 @@
           estados_execute.splice(index, 1);
         }
 
-        $.getJSON("/search?get_csv=false&market="+mercados_execute+"&stack="+stacks_execute+"&state="+estados_execute+"&file_name="+$('#file_name').val(), function(dados) {
-          $('#preview').empty();
-          $('#preview').append("Preview :"+ dados);
-        });
+        get_preview()
       });
-  
+
       $('#add_mercado').click(function() {
         create_button("txt_mercados");
       });
@@ -205,10 +216,7 @@
         if (index > -1) {
           mercados_execute.splice(index, 1);
         }
-        $.getJSON("/search?get_csv=false&market="+mercados_execute+"&stack="+stacks_execute+"&state="+estados_execute+"&file_name="+$('#file_name').val(), function(dados) {
-          $('#preview').empty();
-          $('#preview').append("Preview :"+ dados);
-        });
+        get_preview();
       });
 
       $('#add_stack').click(function () {
@@ -228,10 +236,7 @@
         if (index > -1) {
           stacks_execute.splice(index, 1);
         }
-        $.getJSON("/search?get_csv=false&market="+mercados_execute+"&stack="+stacks_execute+"&state="+estados_execute+"&file_name="+$('#file_name').val(), function(dados) {
-          $('#preview').empty();
-          $('#preview').append("Preview :"+ dados);
-        });
+        get_preview();
       });
   })
   

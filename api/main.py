@@ -19,14 +19,24 @@ app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
 @app.route("/")
 def choose(request: Request):
     return templates.TemplateResponse('index.html',
-                                      context={'request': request})
+    
+                                  context={'request': request})
+"""@app.route("/mercados_list")
+def get_mercados(request: Request):
+    print("teste")
+    return templates.TemplateResponse('mercados.html',
+                                      context={'list': 'Ola mundo'})"""
 
 @app.get("/dropdown")
 def dropdown():
-    return "teste2<br>teste3"
-
+    #return ", ".join(['Advertising', 'S/N', 'Vendas e Marketing', 'Recursos Humanos', 'Meio Ambiente', 'Indústria', 'Internet', 'Transportes', 'Energia', 'Seguros', 'Infantil', 'Direito', 'Automobilismo', 'Educação', 'E-commerce', 'Gestão', 'Saúde e Bem-estar', 'Produtos de Consumo', 'Cloud Computing', 'Outros', 'Mobile', 'Games', 'TIC e Telecom', 'Logística e Mobilidade Urbana', 'Desenvolvimento de Software', 'Hardware', 'Imobiliário', 'Biotecnologia', 'Finanças', 'Varejo / Atacado', 'Esportes', 'Comunicação e Mídia', 'Agronegócio', 'Serviços Profissionais', 'CRM', 'Nanotecnologia', 'Big Data', 'Pets', 'Construção Civil', 'Segurança e Defesa', 'Casa e Família', 'Entretenimento', 'Eventos e Turismo', 'Moda e Beleza', 'Recrutamento', 'Video'])
+    return 'ola<br>ola3/nteste\nteste2</br>oi'
 @app.get("/search")
 def get_info(market: str, stack: str, state: str, file_name: str='untitled', get_csv : bool = False):
+    stack = stack.replace("Cpp","C\+\+")
+    stack = stack.replace("Csharp","C#")
+    print(stack)
+
     query = ""
     if not file_name:
         file_name = 'Untitled'
@@ -64,6 +74,7 @@ def get_info(market: str, stack: str, state: str, file_name: str='untitled', get
                 query += ' or '
     else:
         return 0
+    print(query)
     df = db.query(query)
     if get_csv:
         df.to_csv(file_name, sep=',', index=False)
