@@ -106,7 +106,6 @@
       autocomplete(document.getElementById("txt_stacks"), stacks);
     });
     autocomplete(document.getElementById("txt_estados"), estados);
-    alert("teste2");
 
       $('#bt_list_estados').click(function () {
         window.open('/estados_list', 'ajuda','width=220, height=500');
