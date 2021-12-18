@@ -13,47 +13,20 @@ log = Log()
 db = pd.read_sql_query("SELECT * FROM empresa_completa3 WHERE 1", log.con)
 
 app = FastAPI()
-templates = Jinja2Templates(directory="frontend/html")
 
-app.mount("/static", StaticFiles(directory="frontend/static"), name="static")
+db['mercado'].replace(np.nan, "", inplace=True)
+mercados = [x for x in list(set(db['mercado'].to_list())) if x]
+mercados.sort()
+db['stacks'].replace(np.nan, "", inplace=True)
+total_stacks = db['stacks'].to_list()
+stacks = []
+for stack in total_stacks:
+    if stack:
+        stacks.extend([s.strip() for s in stack.split(',')])
+stacks = [x for x in list(set(stacks)) if x]
+stacks.sort()
 
-@app.route("/")
-def choose(request: Request):
-    db['mercado'].replace(np.nan, "", inplace=True)
-    mercados = [x for x in list(set(db['mercado'].to_list())) if x]
-    mercados.sort()
-    db['stacks'].replace(np.nan, "", inplace=True)
-    total_stacks = db['stacks'].to_list()
-    stacks = []
-    for stack in total_stacks:
-        if stack:
-            stacks.extend([s.strip() for s in stack.split(',')])
-    stacks = [x for x in list(set(stacks)) if x]
-    stacks.sort()
-    global dropdown_list
-    dropdown_list = {"mercados": mercados, "stacks": stacks}
-    return templates.TemplateResponse('index.html',    
-                                  context={'request': request})
-@app.route("/mercados_list")
-def get_mercados(request: Request):
-    return templates.TemplateResponse('list.html',
-                                      context={'request': request, 
-                                      "lists": dropdown_list['mercados'], "name": "Mercados"})
-
-@app.route("/estados_list")
-def get_mercados(request: Request):
-    estados_ori = ['AC', 'AL', 'AM', 'AP', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MG', 'MS', 'MT', 'PA', 'PB', 'PE', 'PI', 'PR', 'RJ', 'RN', 'RO', 'RR', 'RS', 'SC', 'SE', 'SP', 'TO', 'TODOS'];
-    
-    return templates.TemplateResponse('list.html',
-                                      context={'request': request, 
-                                      "lists": estados_ori, "name": "Estados"})
-
-@app.route("/stacks_list")
-def get_mercados(request: Request):
-    return templates.TemplateResponse('list.html',
-                                      context={'request': request, 
-                                      "lists": dropdown_list['stacks'], "name":"Stacks"})
-
+dropdown_list = {"mercados": mercados, "stacks": stacks}
 
 @app.get("/dropdown")
 def dropdown():
@@ -61,10 +34,14 @@ def dropdown():
 
 @app.get("/search")
 def get_info(market: str, stack: str, state: str, file_name: str='untitled', get_csv : bool = False):
+    print("mercado = " + market)
+    print("estado = " + state)
+    print("stack = " + stack)
+    
     stack = stack.replace("Cpp","C\+\+")
     stack = stack.replace("Csharp","C#")
-    print(stack)
 
+    print(get_csv)
     query = ""
     if not file_name:
         file_name = 'Untitled'
@@ -101,10 +78,12 @@ def get_info(market: str, stack: str, state: str, file_name: str='untitled', get
             if i < len(stacks) - 1:
                 query += ' or '
     else:
-        return 0
-    print(query)
+        return '0'
+
+    print("teste" + str(get_csv))
     df = db.query(query)
     if get_csv:
+        print(query)
         df.to_csv(file_name, sep=',', index=False)
         return FileResponse(file_name, filename=file_name)
     else:
