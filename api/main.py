@@ -3,16 +3,28 @@ from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from Log import Log
 import pandas as pd
 import numpy as np
+
+origins = [
+    "http://ec2-18-118-198-27.us-east-2.compute.amazonaws.com:3000",
+]
 
 load_dotenv(dotenv_path='../login.env')
 log = Log()
 db = pd.read_sql_query("SELECT * FROM empresa_completa3 WHERE 1", log.con)
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 db['mercado'].replace(np.nan, "", inplace=True)
 mercados = [x for x in list(set(db['mercado'].to_list())) if x]

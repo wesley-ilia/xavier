@@ -32,7 +32,7 @@ class App extends React.Component {
     const req_options = {
       method: "GET",
     }
-    const response = await fetch("/dropdown", req_options);
+    const response = await fetch("http://ec2-18-118-198-27.us-east-2.compute.amazonaws.com:8000/dropdown", req_options);
     const data = response.json();
     var that = this;
     data.then(function(resp) {
@@ -67,7 +67,7 @@ class App extends React.Component {
       alert("Preencha algum campo");
       return;
     }
-    await fetch("/search?get_csv=true&market="+this.mercadosExecute
+    await fetch("http://ec2-18-118-198-27.us-east-2.compute.amazonaws.com:8000/search?get_csv=true&market="+this.mercadosExecute
     +"&stack="+this.stacksExecute+"&state="+this.estadosExecute, req_options)
     .then((response) => response.blob())
     .then((blob) => {
@@ -98,7 +98,7 @@ class App extends React.Component {
     const req_options = {
       method: "GET",
     }
-    const response = await fetch("/search?get_csv=false&market="+this.mercadosExecute
+    const response = await fetch("http://ec2-18-118-198-27.us-east-2.compute.amazonaws.com:8000/search?get_csv=false&market="+this.mercadosExecute
     +"&stack="+this.stacksExecute+"&state="+this.estadosExecute, req_options);
     
     const data = response.json();
