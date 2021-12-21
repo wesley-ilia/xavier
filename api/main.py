@@ -10,7 +10,7 @@ import pandas as pd
 import numpy as np
 
 origins = [
-    "http://ec2-18-118-198-27.us-east-2.compute.amazonaws.com:3000",
+    "http://localhost:3000",
 ]
 
 load_dotenv(dotenv_path='../login.env')
@@ -45,10 +45,8 @@ def dropdown():
     return dropdown_list
 
 @app.get("/search")
-def get_info(market: str, stack: str, state: str, file_name: str='untitled', get_csv : bool = False):
-    print("mercado = " + market)
-    print("estado = " + state)
-    print("stack = " + stack)
+def get_info(market: str, stack: str, state: str, file_name: str='untitled', get_csv : bool = False,
+             extension: str = "csv"):
     
     stack = stack.replace("Cpp","C\+\+")
     stack = stack.replace("Csharp","C#")
@@ -57,7 +55,7 @@ def get_info(market: str, stack: str, state: str, file_name: str='untitled', get
     query = ""
     if not file_name:
         file_name = 'Untitled'
-    file_name += '.csv'
+    file_name += '.' + extension
 
     if state and state != 'TODOS':
         state_query = "(estado==' " + state.replace(',', "' or estado==' ") + "')"
@@ -92,11 +90,13 @@ def get_info(market: str, stack: str, state: str, file_name: str='untitled', get
     else:
         return '0'
 
-    print("teste" + str(get_csv))
     df = db.query(query)
     if get_csv:
         print(query)
-        df.to_csv(file_name, sep=',', index=False)
+        if extension == 'csv':
+            df.to_csv(file_name, sep=',', index=False)
+        elif extension == 'xlsx':
+            df.to_excel(file_name, index=False)
         return FileResponse(file_name, filename=file_name)
     else:
         return len(df.index)

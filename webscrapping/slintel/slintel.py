@@ -57,7 +57,7 @@ class SlintelScrap():
         self.get_address_by_letter(letter, 1, size + 1)
         self.search_links()
 
-    def get_address_by_letter(self, letter : str, start : int, stop : int):        
+    def get_address_by_letter(self, letter : str, start : int, stop : int):
         for i in range(start, stop):
             if self.terminated:
                 break
