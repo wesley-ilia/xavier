@@ -45,11 +45,13 @@ def dropdown():
     return dropdown_list
 
 @app.get("/search")
-def get_info(market: str, stack: str, state: str, file_name: str='untitled', get_csv : bool = False,
-             extension: str = "csv"):
+def get_info(market: str, stack: str, state: str, cidade: str = "", file_name: str='untitled',
+             get_csv : bool = False, extension: str = "csv", get_cidades: bool = False):
     
     stack = stack.replace("Cpp","C\+\+")
     stack = stack.replace("Csharp","C#")
+
+    print("cidade = " + cidade)
 
     print(get_csv)
     query = ""
@@ -71,6 +73,10 @@ def get_info(market: str, stack: str, state: str, file_name: str='untitled', get
                 query += f'stacks.str.contains("{stacks[i]}", na=False).values'
                 if i < len(stacks) - 1:
                     query += ' or '
+        if cidade:
+            query += ' and '
+            cidade_query = "(cidade=='" + cidade.replace(',', " ' or cidade=='") + " ')"
+            query += cidade_query
     elif market:
         market_query = "(mercado=='" + market.replace(',', "' or mercado=='") + "')"
         query += market_query
@@ -87,10 +93,15 @@ def get_info(market: str, stack: str, state: str, file_name: str='untitled', get
             query += f'stacks.str.contains("{stacks[i]}", na=False).values'
             if i < len(stacks) - 1:
                 query += ' or '
-    else:
+    elif not get_cidades:
         return '0'
+    else:
+        return ""
 
+    print(query)
     df = db.query(query)
+    if get_cidades:
+        return (list(set(df['cidade'].to_list())))
     if get_csv:
         print(query)
         if extension == 'csv':

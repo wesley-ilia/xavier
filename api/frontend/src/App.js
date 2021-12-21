@@ -34,6 +34,7 @@ class App extends React.Component {
     this.stacks = [];
     this.state = {
       preview: "0",
+      cidades: [],
     }
     this.fileName = "Untitled";
     this.extension = "csv"
@@ -80,7 +81,8 @@ class App extends React.Component {
       return;
     }
     await fetch("http://localhost:8000/search?get_csv=true&market="+this.mercadosExecute
-    +"&stack="+this.stacksExecute+"&state="+this.estadosExecute+"&extension="+this.extension,
+    +"&stack="+this.stacksExecute+"&state="+this.estadosExecute+"&extension="+this.extension
+    +"&cidade="+this.cidadesExecute,
     req_options)
     .then((response) => response.blob())
     .then((blob) => {
@@ -112,7 +114,8 @@ class App extends React.Component {
       method: "GET",
     }
     const response = await fetch("http://localhost:8000/search?get_csv=false&market="+this.mercadosExecute
-    +"&stack="+this.stacksExecute+"&state="+this.estadosExecute, req_options);
+    +"&stack="+this.stacksExecute+"&state="+this.estadosExecute+"&cidade="+this.cidadesExecute,
+    req_options);
     
     const data = response.json();
     var that = this;
@@ -121,13 +124,22 @@ class App extends React.Component {
     })
   };
 
-  /* getCidades = async () => {
+  getCidades = async () => {
     const req_options = {
       method: "GET",
     }
-    const response = await fetch("http://localhost:8000/search?get_csv=false&market="+this.mercadosExecute
-    +"&stack="+this.stacksExecute+"&state="+this.estadosExecute, req_options);
-  } */
+    const response = await fetch("http://localhost:8000/search?get_cidades=True&market=&stack=&state="+this.estadosExecute, req_options);
+    const data = response.json();
+    var that = this;
+    data.then(function(resp) {
+      var opt = []
+      for (i = 0; i < resp.length; i++) {
+        opt.push({label: resp[i], value: resp[i]})
+      }
+      that.setState({cidades: opt});
+    })
+    console.log(this.state.cidades);
+  }
 
   handleChangeEstados = e => {
     var values = [];
@@ -136,6 +148,15 @@ class App extends React.Component {
     this.estadosExecute = [...values];
     this.getPreview();
     this.getCidades();
+  }
+
+  handleChangeCidades = e => {
+    var values = [];
+    for (i = 0; i < e.length; i++)
+      values.push(e[i].value);
+    this.cidadesExecute = [...values];
+    console.log(this.cidadesExecute);
+    this.getPreview();
   }
 
   handleChangeMercados = e => {
@@ -194,7 +215,7 @@ class App extends React.Component {
               <Row>
                 <Col>
                   <Select
-                  options={this.cidades}
+                  options={ this.state.cidades }
                   isMulti
                   onChange={ this.handleChangeCidades }
                   />
