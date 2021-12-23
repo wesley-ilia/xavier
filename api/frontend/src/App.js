@@ -4,7 +4,7 @@ import Select from 'react-select';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
-import Stack from 'react-bootstrap/Stack';
+// import Stack from 'react-bootstrap/Stack';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 
@@ -13,6 +13,7 @@ import Col from 'react-bootstrap/esm/Col';
 
 var estados_ori = ['AC', 'AL', 'AM', 'AP', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MG', 'MS', 'MT', 'PA', 'PB', 'PE', 'PI', 'PR', 'RJ', 'RN', 'RO', 'RR', 'RS', 'SC', 'SE', 'SP', 'TO', 'TODOS'];
 
+var BASE_URL = "http://localhost:8000"
 /* var fileOptions = [
   {label: ".csv", value: ".csv"},
   {label: ".xml", value: ".xml"}
@@ -27,6 +28,7 @@ class App extends React.Component {
     this.mercadosExecute = [];
     this.stacksExecute = [];
     this.cidadesExecute = [];
+    this.capitais = 'sim';
     this.preview = '0';
     this.estados = [];
     this.mercados = [];
@@ -35,6 +37,7 @@ class App extends React.Component {
     this.state = {
       preview: "0",
       cidades: [],
+      showCidades: false,
     }
     this.fileName = "Untitled";
     this.extension = "csv"
@@ -45,7 +48,7 @@ class App extends React.Component {
     const req_options = {
       method: "GET",
     }
-    const response = await fetch("http://localhost:8000/dropdown", req_options);
+    const response = await fetch(BASE_URL + "/dropdown", req_options);
     const data = response.json();
     var that = this;
     data.then(function(resp) {
@@ -80,9 +83,9 @@ class App extends React.Component {
       alert("Preencha algum campo");
       return;
     }
-    await fetch("http://localhost:8000/search?get_csv=true&market="+this.mercadosExecute
+    await fetch(BASE_URL + "/search?get_csv=true&market="+this.mercadosExecute
     +"&stack="+this.stacksExecute+"&state="+this.estadosExecute+"&extension="+this.extension
-    +"&cidade="+this.cidadesExecute,
+    +"&cidade="+this.cidadesExecute+"&capitais="+this.capitais,
     req_options)
     .then((response) => response.blob())
     .then((blob) => {
@@ -113,8 +116,9 @@ class App extends React.Component {
     const req_options = {
       method: "GET",
     }
-    const response = await fetch("http://localhost:8000/search?get_csv=false&market="+this.mercadosExecute
-    +"&stack="+this.stacksExecute+"&state="+this.estadosExecute+"&cidade="+this.cidadesExecute,
+    const response = await fetch(BASE_URL + "/preview?market="+this.mercadosExecute
+    +"&stack="+this.stacksExecute+"&state="+this.estadosExecute+"&cidade="+this.cidadesExecute
+    +"&capitais="+this.capitais,
     req_options);
     
     const data = response.json();
@@ -128,7 +132,7 @@ class App extends React.Component {
     const req_options = {
       method: "GET",
     }
-    const response = await fetch("http://localhost:8000/search?get_cidades=True&market=&stack=&state="+this.estadosExecute, req_options);
+    const response = await fetch(BASE_URL + "/cidades?state="+this.estadosExecute, req_options);
     const data = response.json();
     var that = this;
     data.then(function(resp) {
@@ -147,7 +151,8 @@ class App extends React.Component {
       values.push(e[i].value);
     this.estadosExecute = [...values];
     this.getPreview();
-    this.getCidades();
+    if (this.state.showCidades)
+      this.getCidades();
   }
 
   handleChangeCidades = e => {
@@ -188,6 +193,19 @@ class App extends React.Component {
     this.extension = e.value;
   }
 
+  handleCidadesRadio = e => {
+    this.capitais = e.target.value;
+    if (e.target.value === "esp") {
+      this.setState({showCidades: true});
+      this.getCidades();
+    }
+    else {
+      this.setState({showCidades: false});
+      console.log(this.cidadesExecute);
+    }
+    this.getPreview();
+  }
+
   /* useEffect(() => {
     getDropdown();
   }, []) */
@@ -214,13 +232,27 @@ class App extends React.Component {
               </Row>
               <Row>
                 <Col>
+                 <input type="radio" value="sim" name="capitais" defaultChecked
+                 onChange={ this.handleCidadesRadio }/> Com Capitais
+                </Col>
+                <Col>
+                  <input type="radio" value="nao" name="capitais"
+                  onChange={ this.handleCidadesRadio }/> Sem Capitais
+                </Col>
+                <Col>
+                  <input type="radio" value="esp" name="capitais"
+                  onChange={ this.handleCidadesRadio }/> Específicas
+                </Col>
+              </Row>
+              {this.state.showCidades && <Row>
+                <Col>
                   <Select
                   options={ this.state.cidades }
                   isMulti
                   onChange={ this.handleChangeCidades }
                   />
                 </Col>
-              </Row>
+              </Row>}
               <Row>
                 <Col><h2>Mercados</h2></Col>
               </Row>

@@ -1,13 +1,13 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 # from fastapi.params import Query
-from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from Log import Log
 import pandas as pd
 import numpy as np
+
+todas_capitais = ["Rio Branco", "Maceió", "Macapá", "Manaus", "Salvador", "Fortaleza", "Brasília", "Vitória", "Goiânia", "São Luís", "Cuiabá", "Campo Grande", "Belo Horizonte", "Belém", "João Pessoa", "Curitiba", "Recife", "Teresina", "Rio de Janeiro", "Natal", "Porto Alegre", "Porto Velho", "Boa Vista", "Florianópolis", "São Paulo", "Aracaju", "Palmas"]
 
 origins = [
     "http://localhost:3000",
@@ -45,15 +45,17 @@ def dropdown():
     return dropdown_list
 
 @app.get("/search")
-def get_info(market: str, stack: str, state: str, cidade: str = "", file_name: str='untitled',
-             get_csv : bool = False, extension: str = "csv", get_cidades: bool = False):
+def get_info(market: str, stack: str, state: str, capitais: str, cidade: str = "", file_name: str='Untitled',
+             extension: str = "csv"):
+    if capitais == "sim":
+        cidade = ""
+    elif capitais == "nao":
+        capitais_juntas = " ' and cidade!='".join(todas_capitais)
+        cidade = "(cidade!='" + capitais_juntas + " ')"
     
     stack = stack.replace("Cpp","C\+\+")
     stack = stack.replace("Csharp","C#")
 
-    print("cidade = " + cidade)
-
-    print(get_csv)
     query = ""
     if not file_name:
         file_name = 'Untitled'
@@ -75,8 +77,12 @@ def get_info(market: str, stack: str, state: str, cidade: str = "", file_name: s
                     query += ' or '
         if cidade:
             query += ' and '
-            cidade_query = "(cidade=='" + cidade.replace(',', " ' or cidade=='") + " ')"
-            query += cidade_query
+            if capitais == 'nao':
+                query += cidade
+            else:
+                cidade_query = "(cidade=='" + cidade.replace(',', "' or cidade=='") + "')"
+                print(cidade_query)
+                query += cidade_query
     elif market:
         market_query = "(mercado=='" + market.replace(',', "' or mercado=='") + "')"
         query += market_query
@@ -93,21 +99,80 @@ def get_info(market: str, stack: str, state: str, cidade: str = "", file_name: s
             query += f'stacks.str.contains("{stacks[i]}", na=False).values'
             if i < len(stacks) - 1:
                 query += ' or '
-    elif not get_cidades:
-        return '0'
     else:
-        return ""
+        return '0'
+
+    df = db.query(query)
 
     print(query)
-    df = db.query(query)
-    if get_cidades:
-        return (list(set(df['cidade'].to_list())))
-    if get_csv:
-        print(query)
-        if extension == 'csv':
-            df.to_csv(file_name, sep=',', index=False)
-        elif extension == 'xlsx':
-            df.to_excel(file_name, index=False)
-        return FileResponse(file_name, filename=file_name)
+    if extension == 'csv':
+        df.to_csv(file_name, sep=',', index=False)
+    elif extension == 'xlsx':
+        df.to_excel(file_name, index=False)
+    return FileResponse(file_name, filename=file_name)
+
+@app.get("/cidades")
+def get_cidades(state: str):
+    state_query = "(estado==' " + state.replace(',', "' or estado==' ") + "')"
+
+    df = db.query(state_query)
+    cididades = list(set(df['cidade'].to_list()))
+    cididades.sort()
+    return (cididades)
+
+@app.get("/preview")
+def get_preview(state: str, cidade: str, market:str, stack: str, capitais: str):
+    if capitais == "sim":
+        cidade = ""
+    elif capitais == "nao":
+        capitais_juntas = " ' and cidade!='".join(todas_capitais)
+        cidade = "(cidade!='" + capitais_juntas + " ')"
+
+    query = ""
+
+    stack = stack.replace("Cpp","C\+\+")
+    stack = stack.replace("Csharp","C#")
+
+    if state and state != 'TODOS':
+        state_query = "(estado==' " + state.replace(',', "' or estado==' ") + "')"
+        query += state_query
+        if market:
+            query += ' and '
+            market_query = "(mercado=='" + market.replace(',', "' or mercado=='") + "')"
+            query += market_query
+        if stack:
+            query += ' and '
+            stacks = stack.split(',')
+            for i in range(len(stacks)):
+                query += f'stacks.str.contains("{stacks[i]}", na=False).values'
+                if i < len(stacks) - 1:
+                    query += ' or '
+        if cidade:
+            query += ' and '
+            if capitais == 'nao':
+                query += cidade
+            else:
+                cidade_query = "(cidade=='" + cidade.replace(',', "' or cidade=='") + "')"
+                print(cidade_query)
+                query += cidade_query
+    elif market:
+        market_query = "(mercado=='" + market.replace(',', "' or mercado=='") + "')"
+        query += market_query
+        if stack:
+            query += ' and '
+            stacks = stack.split(',')
+            for i in range(len(stacks)):
+                query += f'stacks.str.contains("{stacks[i]}", na=False).values'
+                if i < len(stacks) - 1:
+                    query += ' or '
+    elif stack:
+        stacks = stack.split(',')
+        for i in range(len(stacks)):
+            query += f'stacks.str.contains("{stacks[i]}", na=False).values'
+            if i < len(stacks) - 1:
+                query += ' or '
     else:
-        return len(df.index)
+        return '0'
+    
+    df = db.query(query)
+    return len(df.index)
