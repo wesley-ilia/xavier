@@ -8,6 +8,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Dropdown, { BASE_URL } from './Dropdown'
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { getCidades } from './Utils'
 
 var i;
 
@@ -19,8 +20,6 @@ class App extends React.Component {
     this.stacksExecute = [];
     this.cidadesExecute = [];
     this.capitais = 'sim';
-    this.preview = '0';
-    this.cidades = [];
     this.state = {
       preview: "0",
       cidades: [],
@@ -40,7 +39,7 @@ class App extends React.Component {
       alert("Preencha algum campo");
       return;
     }
-    await fetch(BASE_URL + "/search?get_csv=true&market="+this.mercadosExecute
+    await fetch(BASE_URL + "/search?market="+this.mercadosExecute
     +"&stack="+this.stacksExecute+"&state="+this.estadosExecute+"&extension="+this.extension
     +"&cidade="+this.cidadesExecute+"&capitais="+this.capitais,
     req_options)
@@ -82,19 +81,6 @@ class App extends React.Component {
     this.setState({preview: data})
   };
 
-  getCidades = async () => {
-    const req_options = {
-      method: "GET",
-    }
-    const response = await fetch(BASE_URL + "/cidades?state="+this.estadosExecute, req_options);
-    const data = await response.json();
-    var opt = []
-    for (i = 0; i < data.length; i++) {
-      opt.push({ label: data[i], value: data[i] })
-    }
-    this.setState({ cidades: opt} );
-  }
-
   handleChangeEstados = e => {
     var values = [];
     for (i = 0; i < e.length; i++)
@@ -102,7 +88,7 @@ class App extends React.Component {
     this.estadosExecute = [...values];
     this.getPreview();
     if (this.state.showCidades)
-      this.getCidades();
+      getCidades(this);
   }
 
   handleChangeCidades = e => {
@@ -144,9 +130,11 @@ class App extends React.Component {
     this.capitais = e.target.value;
     if (e.target.value === "esp") {
       this.setState({showCidades: true});
-      this.getCidades();
+      getCidades(this);
     }
     else {
+      for (i = 0; this.cidadesExecute.length > 0; i++)
+        this.cidadesExecute.splice(0, 1);
       this.setState({showCidades: false});
     }
     this.getPreview();
@@ -172,9 +160,8 @@ class App extends React.Component {
                 </form>
                 </Col>
               </Row>
-              <Row >
-                <Col><h2>Cidades</h2></Col>
-              </Row>
+              <form data-testid="form-cidades">
+              <label htmlFor="cidades"><h2>Cidades</h2></label>
               <Row>
                 <Col>
                  <input type="radio" value="sim" name="capitais" defaultChecked
@@ -190,9 +177,7 @@ class App extends React.Component {
                 </Col>
               </Row>
               { this.state.showCidades && <Row>
-                <Col>
-                <form data-testid="form-cidades">
-                  <label htmlFor="cidades"></label>
+                <Col data-testid="cidades-drop">
                   <Select
                   name="cidades"
                   inputId="cidades"
@@ -200,9 +185,9 @@ class App extends React.Component {
                   isMulti
                   onChange={ this.handleChangeCidades }
                   />
-                </form>
                 </Col>
               </Row>}
+              </form>
               <Row>
                 <Col>
                 <form data-testid="form-mercados">
@@ -224,7 +209,6 @@ class App extends React.Component {
                   <Select
                     name="stacks"
                     inputId="stacks"
-                    data-testid="stacks_drop"
                     options={this.dropdown.stacks}
                     isMulti
                     onChange={ this.handleChangeStacks }
@@ -234,7 +218,7 @@ class App extends React.Component {
               </Row>
               <Row>
                 <Col>
-                  <div style={{marginTop: "10px", marginBottom: "10px"}}>
+                  <div id="preview" style={{marginTop: "10px", marginBottom: "10px"}}>
                     <div>Preview: { this.state.preview }</div>
                   </div>
                 </Col>
@@ -244,21 +228,29 @@ class App extends React.Component {
               </Row>
               <Row>
                 <Col xs lg="7" >
-                  <Form.Control placeholder="Nome do arquivo"
+                  <Form.Control name="teste" placeholder="Nome do arquivo" value = "oi"
                   onChange={ this.handleChangeFile }/>
                 </Col>
                 <Col xs lg="4">
-                  <Select
-                  options={[{label: ".csv", value: "csv"}, {label: ".xlsx", value: "xlsx"}]}
-                  defaultValue={{ label: ".csv", value: "csv" }}
-                  onChange={ this.handleChangeExtension }
-                  style={{width: "50%"}}
-                  />
+                <form data-testid='file-Type'>
+                  <label hidden data-testid='label-type' htmlFor='fileType'>type</label>
+                    <Select
+                    name='fileType'
+                    inputId='fileType'
+                    options={[{label: ".csv", value: "csv"}, {label: ".xlsx", value: "xlsx"}]}
+                    defaultValue={{ label: ".csv", value: "csv" }}
+                    onChange={ this.handleChangeExtension }
+                    style={{width: "50%"}}
+                    />
+                  </form>
                 </Col>
               </Row>
               <Row>
                 <Col style={{marginTop:"10px"}}>
-                  <Button variant="primary" style={{marginLeft: "0px"}}
+                  <Button
+                  data-testid="download"
+                  variant="primary"
+                  style={{marginLeft: "0px"}}
                   onClick={ this.download }>
                     Download
                   </Button>

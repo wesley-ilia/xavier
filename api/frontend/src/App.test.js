@@ -3,8 +3,11 @@ import Dropdown from './Dropdown';
 import { render, screen, cleanup, fireEvent } from '@testing-library/react';
 import React from 'react';
 import selectEvent from 'react-select-event'
+import { getCidades } from './Utils';
 import { act } from 'react-dom/test-utils';
+
 jest.mock('./Dropdown');
+jest.mock('./Utils');
 
 afterEach(cleanup);
 
@@ -76,7 +79,7 @@ test('select C++ and C# from stacks dropdown', async () => {
 
 test('check if cidades does not render before especificas clicked', () => {
   render(<App/>);
-  expect(screen.queryByTestId("form-cidades")).toBeFalsy();
+  expect(screen.queryByTestId("cidades-drop")).toBeFalsy();
 });
 
 test('check if cidades render when especificas clicked', async () => {
@@ -87,4 +90,32 @@ test('check if cidades render when especificas clicked', async () => {
 
     expect(screen.getByTestId("form-cidades")).toBeTruthy();
   });
+});
+
+test('select São Paulo and Campinas from cidades dropdown', async () => {
+  await act(async () => {
+    render(<App/>);
+    const radio = screen.getAllByRole('radio');
+    await fireEvent.click(radio[2]);
+    
+    await selectEvent.select(screen.getByLabelText('Cidades'), ['São Paulo', 'Campinas']);
+
+    expect(screen.getByTestId('form-cidades')).toHaveFormValues({cidades: ['São Paulo', 'Campinas']})
+  });
+});
+
+test('select file type from ... dropdown', async () => {
+  await act(async () => {
+    render(<App/>);
+    await selectEvent.select(screen.getByLabelText('type'), ['.xlsx']);
+    expect(screen.getByTestId('file-Type')).toHaveFormValues({fileType: 'xlsx'})
+  });
+});
+
+test('expect download to render', () => {
+  render(<App/>);
+
+  const download = screen.getByTestId("download");
+
+  expect(download).toBeTruthy();
 });

@@ -1,29 +1,30 @@
-from webscrapping import WebScrapping
+from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-import time
+import os
 
-BASE_URL = 'http://localhost:8000'
+os.environ['PATH'] += r"C:/home/felipe/Desktop/scrapping/drivers"
+drive = webdriver.Chrome()
 
+# def test_change_preview_based_on_acre():
+#     drive.get('http://localhost:3000')
+#     drive.find_element(By.CLASS_NAME, 'css-319lph-ValueContainer').click()
+#     options = drive.find_element(By.ID, 'react-select-3-listbox')
+#     options.find_element(By.ID, 'react-select-3-option-0').click()
+#     preview = drive.find_element(By.ID, 'preview')
+#     assert preview.text != 'Preview: 0'
 
-def tester(estados: list, mercados: list, stacks: list, name: str):
-    with TestSelenium(driver_path='./', headless=True) as bot:
-        bot.land_in_page(BASE_URL)
-        estados_box = bot.find_element(By.ID, "txt_estados")
-        stack_box = bot.find_element(By.ID, "txt_stacks")
-        mercado_box = bot.find_element(By.ID, "txt_mercados")
-        for estado in estados:
-            estados_box.send_keys(estado)
-            bot.find_element(By.ID, "add_estado").click()
-        for mercado in mercados:
-            mercado_box.send_keys(mercado)
-            bot.find_element(By.ID, "add_mercado").click()
-        for stack in stacks:
-            stack_box.send_keys(stack)
-            bot.find_element(By.ID, "add_stack").click()
+def test_box_for_specifics_cities():
+    drive.get('http://localhost:3000')
 
-        csv_name = bot.find_element(By.ID, "file_name")
-        csv_name.send_keys(name, Keys.ENTER)
+    drive.find_element(By.CLASS_NAME, 'css-319lph-ValueContainer').click()
+    options = drive.find_element(By.ID, 'react-select-3-listbox')
+    options.find_element(By.ID, 'react-select-3-option-0').click()
 
-        bot.find_element(By.ID, "submit").click()
-        time.sleep(0.25)
+    drive.find_element(By.CSS_SELECTOR, 'div.col:nth-child(3) > input:nth-child(1)').click()
+    drive.find_element(By.CSS_SELECTOR, "div.css-b62m3t-container:nth-child(1) > div:nth-child(3) > div:nth-child(1)").click()
+    # options = drive.find_element(By.CLASS_NAME, 'css-26l3qy-menu')
+    # options.find_element(By.CLASS_NAME, 'react-select-11-option-0').click()
+    testing = drive.find_element(By.NAME, 'teste')
+    print(testing.get_attribute('innerHTML'))
+
+test_box_for_specifics_cities()
