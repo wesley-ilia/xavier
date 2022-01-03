@@ -1,23 +1,13 @@
 import React from 'react';
 import Select from 'react-select';
-/* import { Button } from 'react-native'; */
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
-// import Stack from 'react-bootstrap/Stack';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
-
+import Col from 'react-bootstrap/Col';
+import Dropdown, { BASE_URL } from './Dropdown'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Col from 'react-bootstrap/esm/Col';
-
-var estados_ori = ['AC', 'AL', 'AM', 'AP', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MG', 'MS', 'MT', 'PA', 'PB', 'PE', 'PI', 'PR', 'RJ', 'RN', 'RO', 'RR', 'RS', 'SC', 'SE', 'SP', 'TO', 'TODOS'];
-
-var BASE_URL = "http://localhost:8000"
-/* var fileOptions = [
-  {label: ".csv", value: ".csv"},
-  {label: ".xml", value: ".xml"}
-] */
 
 var i;
 
@@ -30,49 +20,16 @@ class App extends React.Component {
     this.cidadesExecute = [];
     this.capitais = 'sim';
     this.preview = '0';
-    this.estados = [];
-    this.mercados = [];
     this.cidades = [];
-    this.stacks = [];
     this.state = {
       preview: "0",
       cidades: [],
       showCidades: false,
     }
     this.fileName = "Untitled";
-    this.extension = "csv"
-    this.getDropdown()
+    this.extension = "csv";
+    this.dropdown = new Dropdown();
   }
-
-  getDropdown = async () => {
-    const req_options = {
-      method: "GET",
-    }
-    const response = await fetch(BASE_URL + "/dropdown", req_options);
-    const data = response.json();
-    var that = this;
-    data.then(function(resp) {
-      for (i = 0; i < resp.mercados.length; i++) {
-        that.mercados.push({
-          label: resp.mercados[i],
-          value: resp.mercados[i]
-        });
-      }
-
-      for (i = 0; i < resp.stacks.length; i++) {
-        that.stacks.push({
-          label: resp.stacks[i],
-          value: resp.stacks[i]
-        });
-      }
-      for (i = 0; i < estados_ori.length; i++) {
-        that.estados.push({
-          label: estados_ori[i],
-          value: estados_ori[i]
-        });
-      }
-    })
-  };
 
   download = async () => {
     const req_options = {
@@ -121,11 +78,8 @@ class App extends React.Component {
     +"&capitais="+this.capitais,
     req_options);
     
-    const data = response.json();
-    var that = this;
-    data.then(function(resp) {
-      that.setState({preview: resp});
-    })
+    const data = await response.json();
+    this.setState({preview: data})
   };
 
   getCidades = async () => {
@@ -133,16 +87,12 @@ class App extends React.Component {
       method: "GET",
     }
     const response = await fetch(BASE_URL + "/cidades?state="+this.estadosExecute, req_options);
-    const data = response.json();
-    var that = this;
-    data.then(function(resp) {
-      var opt = []
-      for (i = 0; i < resp.length; i++) {
-        opt.push({label: resp[i], value: resp[i]})
-      }
-      that.setState({cidades: opt});
-    })
-    console.log(this.state.cidades);
+    const data = await response.json();
+    var opt = []
+    for (i = 0; i < data.length; i++) {
+      opt.push({ label: data[i], value: data[i] })
+    }
+    this.setState({ cidades: opt} );
   }
 
   handleChangeEstados = e => {
@@ -160,7 +110,6 @@ class App extends React.Component {
     for (i = 0; i < e.length; i++)
       values.push(e[i].value);
     this.cidadesExecute = [...values];
-    console.log(this.cidadesExecute);
     this.getPreview();
   }
 
@@ -168,7 +117,6 @@ class App extends React.Component {
     var values = [];
     for (i = 0; i < e.length; i++)
       values.push(e[i].value);
-    console.log(values)
     this.mercadosExecute = [...values];
     this.getPreview();
   }
@@ -177,7 +125,6 @@ class App extends React.Component {
     var values = [];
     for (i = 0; i < e.length; i++)
       values.push(e[i].value.replace("C++", "Cpp").replace("C#", "Csharp"));
-    console.log(values)
     this.stacksExecute = [...values];
     this.getPreview();
   }
@@ -201,30 +148,28 @@ class App extends React.Component {
     }
     else {
       this.setState({showCidades: false});
-      console.log(this.cidadesExecute);
     }
     this.getPreview();
   }
 
-  /* useEffect(() => {
-    getDropdown();
-  }, []) */
   render () {
     return (
       <div className="App">
-        <Card style={{ width: '35%', height: "100%", marginLeft: "auto", marginRight: "auto" }}>
+        <Card data-testid="card" style={{ width: '35%', height: "100%", marginLeft: "auto", marginRight: "auto" }}>
           <Card.Body style={{height: "100%"}}>
             <Container fluid style={{height: "inherit"}}>
-              <Row >
-                <Col><h2>Estados</h2></Col>
-              </Row>
               <Row>
                 <Col>
+                <form data-testid="form-estados">
+                  <label htmlFor="estados"><h2>Estados</h2></label>
                   <Select
-                  options={this.estados}
+                  name="estados"
+                  inputId="estados"
+                  options={this.dropdown.estados}
                   isMulti
                   onChange={ this.handleChangeEstados }
                   />
+                </form>
                 </Col>
               </Row>
               <Row >
@@ -244,44 +189,54 @@ class App extends React.Component {
                   onChange={ this.handleCidadesRadio }/> Específicas
                 </Col>
               </Row>
-              {this.state.showCidades && <Row>
+              { this.state.showCidades && <Row>
                 <Col>
+                <form data-testid="form-cidades">
+                  <label htmlFor="cidades"></label>
                   <Select
+                  name="cidades"
+                  inputId="cidades"
                   options={ this.state.cidades }
                   isMulti
                   onChange={ this.handleChangeCidades }
                   />
+                </form>
                 </Col>
               </Row>}
               <Row>
-                <Col><h2>Mercados</h2></Col>
-              </Row>
-              <Row>
                 <Col>
+                <form data-testid="form-mercados">
+                  <label htmlFor="mercados"><h2>Mercados</h2></label>
                   <Select
-                    options={this.mercados}
-                    isMulti
-                    onChange={ this.handleChangeMercados }
+                  name="mercados"
+                  inputId="mercados"
+                  options={ this.dropdown.mercados }
+                  isMulti
+                  onChange={ this.handleChangeMercados }
                   />
+                </form>
                 </Col>
               </Row>
               <Row>
-                <Col><h2>Stacks</h2></Col>
-              </Row>
-              <Row>
                 <Col>
+                <form data-testid="form-stacks">
+                  <label htmlFor="stacks"><h2>Stacks</h2></label>
                   <Select
-                    options={this.stacks}
+                    name="stacks"
+                    inputId="stacks"
+                    data-testid="stacks_drop"
+                    options={this.dropdown.stacks}
                     isMulti
                     onChange={ this.handleChangeStacks }
                   />
+                </form>
                 </Col>
               </Row>
               <Row>
                 <Col>
-                  {this.preview && <div style={{marginTop: "10px", marginBottom: "10px"}}>
+                  <div style={{marginTop: "10px", marginBottom: "10px"}}>
                     <div>Preview: { this.state.preview }</div>
-                  </div>}
+                  </div>
                 </Col>
               </Row>
               <Row>
