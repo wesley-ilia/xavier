@@ -151,6 +151,7 @@ class App extends React.Component {
                 <form data-testid="form-estados">
                   <label htmlFor="estados"><h2>Estados</h2></label>
                   <Select
+                  classNamePrefix='estados'
                   name="estados"
                   inputId="estados"
                   options={this.dropdown.estados}
@@ -179,6 +180,7 @@ class App extends React.Component {
               { this.state.showCidades && <Row>
                 <Col data-testid="cidades-drop">
                   <Select
+                  classNamePrefix='cidades'
                   name="cidades"
                   inputId="cidades"
                   options={ this.state.cidades }
@@ -193,6 +195,7 @@ class App extends React.Component {
                 <form data-testid="form-mercados">
                   <label htmlFor="mercados"><h2>Mercados</h2></label>
                   <Select
+                  classNamePrefix='mercados'
                   name="mercados"
                   inputId="mercados"
                   options={ this.dropdown.mercados }
@@ -207,11 +210,12 @@ class App extends React.Component {
                 <form data-testid="form-stacks">
                   <label htmlFor="stacks"><h2>Stacks</h2></label>
                   <Select
-                    name="stacks"
-                    inputId="stacks"
-                    options={this.dropdown.stacks}
-                    isMulti
-                    onChange={ this.handleChangeStacks }
+                  classNamePrefix='stacks'
+                  name="stacks"
+                  inputId="stacks"
+                  options={this.dropdown.stacks}
+                  isMulti
+                  onChange={ this.handleChangeStacks }
                   />
                 </form>
                 </Col>
@@ -228,13 +232,14 @@ class App extends React.Component {
               </Row>
               <Row>
                 <Col xs lg="7" >
-                  <Form.Control name="teste" placeholder="Nome do arquivo" value = "oi"
+                  <Form.Control name="teste" placeholder="Nome do arquivo"
                   onChange={ this.handleChangeFile }/>
                 </Col>
                 <Col xs lg="4">
                 <form data-testid='file-Type'>
                   <label hidden data-testid='label-type' htmlFor='fileType'>type</label>
                     <Select
+                    classNamePrefix='fileType'
                     name='fileType'
                     inputId='fileType'
                     options={[{label: ".csv", value: "csv"}, {label: ".xlsx", value: "xlsx"}]}
