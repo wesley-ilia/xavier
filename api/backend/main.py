@@ -2,7 +2,7 @@ from fastapi import FastAPI
 # from fastapi.params import Query
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 from Log import Log
 import pandas as pd
 import numpy as np
@@ -13,7 +13,7 @@ origins = [
     "http://localhost:3000",
 ]
 
-load_dotenv(dotenv_path='../login.env')
+# load_dotenv(dotenv_path='../login.env')
 log = Log()
 db = pd.read_sql_query("SELECT * FROM empresa_completa3 WHERE 1", log.con)
 

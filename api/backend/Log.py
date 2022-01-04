@@ -3,28 +3,25 @@ import pandas
 import os
 import sys
 
+
 class Log():
     def __init__(self):
-        self.host = os.getenv("HOSTNAME_DB")
-        self.user = os.getenv("USER_DB")
-        self.password = os.getenv("PASSWD")
-        self.connect_db()
-        self.cursor = self.con.cursor()
-
-    def connect_db(self):
+        self.host = os.getenv("DB_HOST")
+        self.user = os.getenv("DB_USER")
+        self.password = os.getenv("DB_PASSWD")
         try:
             self.con = pymysql.connect(
                     host=self.host,
                     user=self.user,
                     password=self.password,
-                    database="decasoft_xavier"
+                    database="decasoft_xavier",
                     )
         except BaseException:
             print("Informações de login erradas")
             sys.exit(os.EX_IOERR)
+        self.cursor = self.con.cursor()
 
     def save_to_csv(self, query, con, file):
-        
         results = pandas.read_sql_query(query, con)
         results.to_csv(file, index=False)
         """  except BaseException:
