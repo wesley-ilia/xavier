@@ -4,6 +4,8 @@ login.env
 .sql
 .vscode
 *.csv
+*.xlsx
+
 <<<<<<< HEAD
 chromedriver
 =======
