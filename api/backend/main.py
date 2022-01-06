@@ -1,11 +1,15 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
+import shutil
 # from fastapi.params import Query
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 from Log import Log
 import pandas as pd
 import numpy as np
+import os
+
+
 
 todas_capitais = ["Rio Branco", "Maceió", "Macapá", "Manaus", "Salvador", "Fortaleza", "Brasília", "Vitória", "Goiânia", "São Luís", "Cuiabá", "Campo Grande", "Belo Horizonte", "Belém", "João Pessoa", "Curitiba", "Recife", "Teresina", "Rio de Janeiro", "Natal", "Porto Alegre", "Porto Velho", "Boa Vista", "Florianópolis", "São Paulo", "Aracaju", "Palmas"]
 
@@ -13,9 +17,10 @@ origins = [
     "http://localhost:3000",
 ]
 
-# load_dotenv(dotenv_path='../login.env')
-log = Log()
-db = pd.read_sql_query("SELECT * FROM empresa_completa3 WHERE 1", log.con)
+load_dotenv(dotenv_path='login.env')
+
+with open("../frontend/src/modelo.csv", 'w') as f:
+    f.write("nome,estado,cidade,mercado,stacks")
 
 app = FastAPI()
 app.add_middleware(
@@ -26,19 +31,56 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-db['mercado'].replace(np.nan, "", inplace=True)
-mercados = [x for x in list(set(db['mercado'].to_list())) if x]
-mercados.sort()
-db['stacks'].replace(np.nan, "", inplace=True)
-total_stacks = db['stacks'].to_list()
-stacks = []
-for stack in total_stacks:
-    if stack:
-        stacks.extend([s.strip() for s in stack.split(',')])
-stacks = [x for x in list(set(stacks)) if x]
-stacks.sort()
+def initialize():
+    log = Log()
+    global db
+    db = pd.read_sql_query("SELECT * FROM empresa_completa3 WHERE 1", log.con)
 
-dropdown_list = {"mercados": mercados, "stacks": stacks}
+    db['mercado'].replace(np.nan, "", inplace=True)
+    mercados = [x for x in list(set(db['mercado'].to_list())) if x]
+    mercados.sort()
+    db['stacks'].replace(np.nan, "", inplace=True)
+    total_stacks = db['stacks'].to_list()
+    stacks = []
+    for stack in total_stacks:
+        if stack:
+            stacks.extend([s.strip() for s in stack.split(',')])
+    stacks = [x for x in list(set(stacks)) if x]
+    stacks.sort()
+
+    global dropdown_list
+    dropdown_list = {"mercados": mercados, "stacks": stacks}
+
+initialize()
+
+def importFile (NomeArquivo):
+    arquivo = pd.read_csv(NomeArquivo)
+    if 'nome' not in arquivo.columns:
+        print("veio errado")
+
+    columns = ['estado', 'cidade', 'mercado', 'stacks']
+    for i in range(len(arquivo.index)):
+        if arquivo['nome'].isna:
+            print("veio errado")
+        index = db.index[db['nome'] == arquivo['nome'][i]].tolist()
+        if index:
+            index = index[0]
+            for col in columns:
+                if col in arquivo.columns:
+                    print(db[col][index])
+                    print(arquivo[col][i])
+                    arquivo[col] = ", ".join(set((db[col][index] + " " + arquivo[col][i]).split()))
+            
+    print(arquivo)
+    os.remove(NomeArquivo)
+
+
+@app.post("/api/uploadfile")
+async def upload(file: UploadFile=File(...)):
+    with open(f"{file.filename}","wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    importFile(file.filename)
+    return{"File_name" : file.filename}
 
 @app.get("/dropdown")
 def dropdown():
