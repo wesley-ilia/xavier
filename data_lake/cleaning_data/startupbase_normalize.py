@@ -12,6 +12,7 @@ def normalize(column_name:str ,df: pd.DataFrame):
     df[column_name] = [unidecode(one) for one in df[column_name]]
 
 df['name'] = df['name'].str.lower().str.strip()
+df['momento'] = df['momento'].str.lower().str.strip()
 
 normalize('cidade_estado', df)
 normalize('segmento', df)
@@ -28,8 +29,6 @@ df.loc[df['tamanho'] == 'n/d', 'tamanho'] = None
 df.loc[df['modelo de receita'] == 's/n', 'modelo de receita'] = None
 df.loc[df['segmento'] == 's/n', 'segmento'] = None
 df.loc[df['tamanho'] == '(nao informado)', 'tamanho'] = None
-
-df['momento'] = df['momento'].str.lower().str.strip()
 
 df['estado'] = ['' for row in df['name']]
 df['cidade'] = ['' for row in df['name']]
