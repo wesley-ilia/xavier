@@ -5,4 +5,5 @@ login.env
 .vscode
 *.csv
 *.xlsx
+*.parquet
 env
