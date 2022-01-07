@@ -1,8 +1,0 @@
-__pycache__/
-*.pyc
-login.env
-.sql
-.vscode
-*.csv
-chromedriver
-env
