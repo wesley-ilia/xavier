@@ -12,10 +12,11 @@ def narray_colunm_to_list(column) -> None:
 
 df = pd.read_parquet('./raw_data/slintel.parquet')
 
+df['name'] = df['name'].str.strip()
 for index, lst in enumerate(df['stacks']):
-    df['stacks'][index] = [str.lower() for str in lst]
+    df['stacks'][index] = list(set([string.lower().strip() for string in lst]))
 
-load_dotenv(dotenv_path='login.env')
+load_dotenv(dotenv_path='../login.env')
 host = getenv('DBHOST')
 user = getenv('DBUSER')
 passwd = getenv('DBPASS')
