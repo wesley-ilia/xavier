@@ -4,6 +4,17 @@ from dotenv import load_dotenv
 from os import getenv
 import json
 
+
+def init_companies(**kwargs):
+    return {
+        'mercado': kwargs['mercado'],
+        'estado': kwargs['estado'],
+        'modelo de receita': kwargs['modelo_de_receita'],
+        'website': kwargs['website'],
+        'cidade': kwargs['cidade'],
+        'stacks': kwargs['stacks']
+    }
+
 load_dotenv(dotenv_path='../login.env')
 host = getenv('DBHOST')
 user = getenv('DBUSER')
@@ -32,17 +43,92 @@ for i, company in enumerate(df_startup['name']):
 
 df_slintel = pd.read_sql(sql='slintel_test', con=engine)
 
-
-# print(df_slintel)
 def convert_str_to_list(strin: str) -> list:
     strin = strin.strip("{\}")
     return strin.split(sep=',')
 
 for i, company in enumerate(df_slintel['name']):
     data[company]['stacks'] = convert_str_to_list(df_slintel['stacks'][i])
-    print(data[company]['stacks'])
 
-# print(json.dumps(data, indent=4))
+
+df_thor = pd.read_sql(sql='programathor', con=engine)
+for i, company in enumerate(df_thor['name']):
+    if company in data.keys():
+        data[company]['stacks'] = list(set(data[company]['stacks'] + convert_str_to_list(df_thor['stacks'][i])))
+    else:
+        data[company] = dict()
+        data[company]['stacks'] = list(set(convert_str_to_list(df_thor['stacks'][i])))
+
+
+df_codesh = pd.read_sql(sql='codesh', con=engine)
+
+for i, company in enumerate(df_codesh['name']):
+    if company in data.keys():
+        if 'mercado' not in data[company].keys():
+            data[company]['mercado'] = []
+        data[company]['mercado'] = list(set(data[company]['mercado'] + [df_codesh['mercado'][i]]))
+        data[company]['stacks'] = list(set(data[company]['stacks']
+        + convert_str_to_list(df_codesh['stacks'][i])))
+        data[company]['website'] = df_codesh['website'][i]
+        data[company]['cidade'] = df_codesh['cidade'][i]
+        data[company]['estado'] = df_codesh['estado'][i]
+        data[company]['tamanho'] = df_codesh['tamanho'][i]
+    else:
+        # data[company] = init_companies(
+        #     mercado=[df_codesh['mercado'][i]],
+        #     stacks=convert_str_to_list(df_codesh['stacks'][i]),
+        #     cidade=df_codesh['cidade'][i],
+        #     estado=df_codesh['estado'][i],
+        #     website=df_codesh['website'][i],
+        #     modelo_de_receita=None
+        # )
+        data[company] = {
+            'mercado'   :   [df_codesh['mercado'][i]],
+            'stacks'    :   convert_str_to_list(df_codesh['stacks'][i]),
+            'cidade'    :   df_codesh['cidade'][i],
+            'estado'    :   df_codesh['estado'][i],
+            'tamanho'   :   df_codesh['tamanho'][i],
+            'website'   :   df_codesh['website'][i]
+        }
+
+# stacks_tmp = []
+# for i, company in enumerate(data['name']):
+#     stacks_tmp.append(data[company]['stacks'])
+
+
+# data_to_df = {
+#     'nome': data.keys(),
+#     'stacks': stacks_tmp
+# }
+
+def if_not_exists(data: dict, text:str):
+    
+    if text in data.keys():
+        back = data[text]
+    else:
+        back = ''
+    return back
+
+real = list()
+
+for i, company in enumerate(data):
+    mercado = if_not_exists(data[company], 'mercado')
+    stacks = if_not_exists(data[company], 'stacks')
+    cidade = if_not_exists(data[company], 'cidade')
+    estado = if_not_exists(data[company], 'estado')
+    tamanho = if_not_exists(data[company], 'tamanho')
+    receita = if_not_exists(data[company], 'modelo de receita')
+    momento = if_not_exists(data[company], 'momento')
+    website = if_not_exists(data[company], 'website')
+    real.append([company, stacks, cidade, estado, tamanho, receita, momento, website])
+
+
+df = pd.DataFrame(real, columns=['company', 'stacks', 'cidade', 'estado', 'tamanho', 'receita', 'momento', 'website'])
+print(df)
+
+df.to_sql("main", engine, if_exists='replace', index=False)
+
+
 # print(data['kapsula']['stacks'])
 
 # df = pd.DataFrame(data=[[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ']],
