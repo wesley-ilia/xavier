@@ -6,28 +6,20 @@ from dotenv import load_dotenv
 
 df = pd.read_parquet('./raw_data/startup.parquet')
 
+
+def normalize(column_name:str ,df: pd.DataFrame):
+    df[column_name] = df[column_name].str.lower().str.strip()
+    df[column_name] = [unidecode(one) for one in df[column_name]]
+
 df['name'] = df['name'].str.lower().str.strip()
 
-df['cidade_estado'] = df['cidade_estado'].str.lower().str.strip()
-df['cidade_estado'] = [unidecode(one) for one in df['cidade_estado']]
-
-df['mercado'] = df['mercado'].str.lower().str.strip()
-df['mercado'] = [unidecode(mercado) for mercado in df['mercado']]
-
-df['modelo'] = df['modelo'].str.lower().str.strip()
-df['modelo'] = [unidecode(modelo) for modelo in df['modelo']]
-
-df['momento'] = df['momento'].str.lower().str.strip()
-df['momento'] = [unidecode(momento) for momento in df['momento']]
-
-df['tamanho'] = df['tamanho'].str.lower().str.strip()
-df['tamanho'] = [unidecode(tamanho) for tamanho in df['tamanho']]
-
-df['modelo de receita'] = df['modelo de receita'].str.lower().str.strip()
-df['modelo de receita'] = [unidecode(modelo_receita) for modelo_receita in df['modelo de receita']]
-
-df['segmento'] = df['segmento'].str.lower().str.strip()
-df['segmento'] = [unidecode(segmento) for segmento in df['segmento']]
+normalize('cidade_estado', df)
+normalize('segmento', df)
+normalize('mercado', df)
+normalize('modelo', df)
+normalize('momento', df)
+normalize('tamanho', df)
+normalize('modelo de receita', df)
 
 df.loc[df['mercado'] == 's/n', 'mercado'] = None
 df.loc[df['modelo'] == 's/n', 'modelo'] = None
@@ -59,4 +51,4 @@ port = getenv('DBPORT')
 database = getenv('DBNAME')
 
 engine = create_engine(f'postgresql://{user}:{passwd}@{host}:{port}/{database}')
-df.to_sql("startupBase", engine, if_exists='replace', index=False)
+df.to_sql("startupbase", engine, if_exists='replace', index=False)

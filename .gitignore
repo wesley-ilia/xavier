@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+login.env
+.sql
+.vscode
+*.csv
+*.xlsx
+env
