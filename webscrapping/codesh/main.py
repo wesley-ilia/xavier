@@ -1,7 +1,7 @@
 from selenium_bot import Codesh
 from beautiful_bot import get_perfil_infos, get_cidade_second_page
 import pandas as pd
-
+from s3 import S3
 
 BASE_URL = "https://coodesh.com/vagas"
 
@@ -22,7 +22,6 @@ def convert_to_list(companies: dict):
 
 
 bot = Codesh(
-    driver_path=':/home/luigi/selenium_drivers/',
     implicit_wait=10,
 )
 bot.land_in_page(BASE_URL)
@@ -42,4 +41,8 @@ df = pd.DataFrame(
             'mercado', 'tamanho',
             'redes', 'website'])
 
-df.to_parquet('../data_files/codesh.parquet')
+send = S3(df=df)
+send.send_to_s3(
+        bucker_name='ilia-ecole42-xavier',
+        destination='raw_data/codesh.parquet'
+        )

@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup
 from slintel_bot import Slintel
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
-from time import sleep
+from s3 import S3
 
 
 def get_links(soup: BeautifulSoup):
@@ -73,7 +73,9 @@ data = list()
 for i in range(len(df['name'])):
     name = df['name'][i]
     website = format_website(df['website'][i])
-    soup = requests.get(f'https://www.slintel.com/directory/company?searchTerm={name})').content
+    soup = requests.get(
+        f'https://www.slintel.com/directory/company?searchTerm={name})'
+    ).content
     soup = BeautifulSoup(soup, 'html.parser')
     stacks = get_stacks(soup, website)
     data.append([name, stacks])
@@ -85,6 +87,8 @@ df = pd.DataFrame(
     columns=[
             'name', 'stacks'])
 
-df.to_parquet('../data_files/slintel.parquet')
-
-print(df)
+send = S3(df=df)
+send.send_to_s3(
+        bucker_name='ilia-ecole42-xavier',
+        destination='raw_data/slintel.parquet'
+        )

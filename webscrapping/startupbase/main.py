@@ -2,6 +2,7 @@ from selenium_bot import startupbase
 from beautiful_bot import get_all_infos
 import pandas as pd
 import numpy as np
+from s3 import S3
 
 
 def get_all_pages_data(bodys: list):
@@ -29,6 +30,8 @@ df = pd.DataFrame(
             'modelo', 'modelo de receita',
             'momento', 'tamanho', 'segmento', 'redes', 'website'])
 
-df.to_parquet('../data_files/startup.parquet')
-
-print(df)
+send = S3(df=df)
+send.send_to_s3(
+        bucker_name='ilia-ecole42-xavier',
+        destination='raw_data/startupbase.parquet'
+        )

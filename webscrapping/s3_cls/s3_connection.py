@@ -3,12 +3,14 @@ import boto3
 import os
 import configparser
 
+
 def upload_file_to_s3(name: str) -> None:
     s3.upload_file(
             f'data_files/{name}.parquet',
             'ilia-ecole42-xavier',
             f'raw_data/{name}.parquet')
     return None
+
 
 # analisando o arquivo credentials que está na pasta .aws abaixo do home dir
 config = configparser.ConfigParser()
