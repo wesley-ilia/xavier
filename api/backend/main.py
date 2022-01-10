@@ -9,6 +9,10 @@ import pandas as pd
 import numpy as np
 import os
 from unidecode import unidecode
+from sqlalchemy import create_engine
+from mysql import connector
+import time
+
 
 todas_capitais = ["Rio Branco", "Maceió", "Macapá", "Manaus", "Salvador", "Fortaleza", "Brasília", "Vitória", "Goiânia", "São Luís", "Cuiabá", "Campo Grande", "Belo Horizonte", "Belém", "João Pessoa", "Curitiba", "Recife", "Teresina", "Rio de Janeiro", "Natal", "Porto Alegre", "Porto Velho", "Boa Vista", "Florianópolis", "São Paulo", "Aracaju", "Palmas"]
 
@@ -35,7 +39,6 @@ def agg(a):
     # a.dropna(inplace=True)
     a.reset_index(drop=True, inplace=True)
     ret = ", ".join(set(", ".join(a).split(', ')))
-    print('ret = ' + ret)
     return ret
 
 def initialize():
@@ -79,7 +82,6 @@ def importFile (NomeArquivo):
     erradas = arquivo.loc[arquivo['nome'].isnull()]
     adicionar = arquivo.loc[arquivo['nome'].notnull()]
 
-    print(adicionar.columns)
 
     columns = ['estado', 'cidade', 'mercado', 'stacks']
     for col in columns:
@@ -87,24 +89,59 @@ def importFile (NomeArquivo):
             adicionar[col] = np.full(len(adicionar.index), np.nan)
 
     adicionar['nome'] = adicionar['nome'].str.strip()
+    adicionar2 = adicionar.copy(deep=True)
     aggregation_functions = {'estado': 'first', 'cidade': 'first', 'mercado': agg, 'stacks': agg}
-    adicionar = adicionar.groupby(['nome'], as_index=False).aggregate(aggregation_functions)
-    print(adicionar)
+    adicionar2 = adicionar2.groupby(['nome'], as_index=False).aggregate(aggregation_functions)
     
     log = Log()
-    df = pd.read_sql_query("SELECT * FROM tb_usuario WHERE 1", log.con)
+    df = pd.read_sql_query("SELECT * FROM tb_usuario4 WHERE 1", log.con)
     adicionar = pd.concat([df, adicionar], axis=0, ignore_index=True)
     adicionar = adicionar.groupby(['nome'], as_index=False).aggregate(aggregation_functions)
 
     adicionar.reset_index(drop=True, inplace=True)
-    print(adicionar['mercado'])
+
+    host = os.getenv("DB_HOST")
+    user = os.getenv("DB_USER")
+    password = os.getenv("DB_PASSWD")
+
+    t0 = time.time()
+    sql = f'mysql+pymysql://{user}:{password}@{host}:3306/decasoft_xavier'
+    engine = create_engine(sql, echo=False)
+
+
+    adicionar['id'] = adicionar.index
+    adicionar.to_sql("tb_usuario3", engine, if_exists='replace', index=False)
+    with engine.connect() as con:
+        con.execute('ALTER TABLE `tb_usuario3` ADD PRIMARY KEY (id);')
+    t1 = time.time()
+    total = t1-t0
+    print("total time 1 = " + str(total))
+    
+
+
+
+    t0 = time.time()
+
+    log2 = Log()
+    for i in range(len(adicionar2.index)):
+        ind = df.index[df['nome'] == adicionar2['nome'][i]].tolist()
+        if ind:
+            novo_mercado = ", ".join(set((adicionar2['mercado'][i] + ", " + df['mercado'][ind[0]]).split(', ')))
+            novo_stacks = ", ".join(set((adicionar2['stacks'][i] + ", " + df['stacks'][ind[0]]).split(', ')))
+            log2.cursor.execute(f"UPDATE `tb_usuario4` SET `mercado` = '{novo_mercado}', stacks = '{novo_stacks}' WHERE `nome` = '{adicionar2['nome'][i]}';")
+        else:
+            log2.cursor.execute(f"INSERT INTO `tb_usuario4` (`nome`, `estado`, `cidade`, `mercado`, `stacks`) VALUES ('{adicionar2['nome'][i]}', '{adicionar2['estado'][i]}', '{adicionar2['cidade'][i]}', '{adicionar2['mercado'][i]}', '{adicionar2['stacks'][i]}');")
+    log2.con.commit()
+    t1 = time.time()
+    total = t1-t0
+    print("total time 2 = " + str(total))
 
     """ df = pd.concat([db, adicionar], axis=0, ignore_index=True)
     aggregation_functions = {'estado': 'first', 'cidade': 'first', 'mercado': agg}
     df = df.groupby(['nome'], as_index=False).aggregate(aggregation_functions)
     df.reset_index(drop=True, inplace=True) """
     
-    adicionar.replace(np.nan, "", inplace=True)
+    """ adicionar.replace(np.nan, "", inplace=True)
 
     adicionar_list = adicionar[['nome', 'estado', 'cidade', 'mercado', 'stacks']].values.tolist()
 
@@ -120,7 +157,7 @@ def importFile (NomeArquivo):
     log.cursor.executemany(stmt, adicionar_list)
     log.con.commit()
 
-    print(adicionar)
+    print(adicionar) """
     os.remove(NomeArquivo)
     initialize()
 
