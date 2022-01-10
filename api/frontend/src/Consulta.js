@@ -140,9 +140,9 @@ class Consulta extends React.Component {
     this.getPreview();
   }
 
-  voltar = () => {
+  upload = () => {
 		const link = document.createElement('a');
-		link.href = '/';
+		link.href = '/upload';
 
 		// Append to html link element page
 		document.body.appendChild(link);
@@ -278,10 +278,10 @@ class Consulta extends React.Component {
               <Row>
                 <Col style ={{ paddingTop: "10px" }}>
                   <Button
-                  data-testid="download"
+                  data-testid="upload"
                   variant="primary"
-                  onClick={this.voltar}>
-                    Voltar
+                  onClick={this.upload}>
+                    Upload...
                   </Button>
                 </Col>
               </Row>

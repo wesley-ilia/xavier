@@ -35,6 +35,7 @@ def agg(a):
     # a.dropna(inplace=True)
     a.reset_index(drop=True, inplace=True)
     ret = ", ".join(set(", ".join(a).split(', ')))
+    print('ret = ' + ret)
     return ret
 
 def initialize():
@@ -78,40 +79,30 @@ def importFile (NomeArquivo):
     erradas = arquivo.loc[arquivo['nome'].isnull()]
     adicionar = arquivo.loc[arquivo['nome'].notnull()]
 
-    adicionar['nome'] = adicionar['nome'].str.strip()
-    aggregation_functions = {'estado': 'first', 'cidade': 'first', 'mercado': agg}
-    adicionar = adicionar.groupby(['nome'], as_index=False).aggregate(aggregation_functions)
+    print(adicionar.columns)
 
-    adicionar.reset_index(drop=True, inplace=True)
-    
     columns = ['estado', 'cidade', 'mercado', 'stacks']
-
-    print(db)
-
-    df = pd.concat([db, adicionar], axis=0, ignore_index=True)
-    print("mercado = " + df['mercado'][6498])
-    aggregation_functions = {'estado': 'first', 'cidade': 'first', 'mercado': agg}
-    df = df.groupby(['nome'], as_index=False).aggregate(aggregation_functions)
-    df.reset_index(drop=True, inplace=True)
-    print(df)
-
-    """ for i in adicionar.index:
-        index = db.index[db['nome'] == adicionar['nome'][i]].tolist()
-        print(index)
-        if index:
-            index = index[0]
-            for col in columns:
-                if col in adicionar.columns and col not in ['estado', 'cidade']:
-                    temp = unidecode(adicionar[col][i].strip().lower())
-                    print("temp = ")
-                    print(temp)
-                    temp = ' '.join(temp.split())
-                    print(temp)
-                    adicionar[col][i] = ", ".join(set((db[col][index] + ", " + temp).split(", "))).strip() """
-
     for col in columns:
         if col not in adicionar.columns:
             adicionar[col] = np.full(len(adicionar.index), np.nan)
+
+    adicionar['nome'] = adicionar['nome'].str.strip()
+    aggregation_functions = {'estado': 'first', 'cidade': 'first', 'mercado': agg, 'stacks': agg}
+    adicionar = adicionar.groupby(['nome'], as_index=False).aggregate(aggregation_functions)
+    print(adicionar)
+    
+    log = Log()
+    df = pd.read_sql_query("SELECT * FROM tb_usuario WHERE 1", log.con)
+    adicionar = pd.concat([df, adicionar], axis=0, ignore_index=True)
+    adicionar = adicionar.groupby(['nome'], as_index=False).aggregate(aggregation_functions)
+
+    adicionar.reset_index(drop=True, inplace=True)
+    print(adicionar['mercado'])
+
+    """ df = pd.concat([db, adicionar], axis=0, ignore_index=True)
+    aggregation_functions = {'estado': 'first', 'cidade': 'first', 'mercado': agg}
+    df = df.groupby(['nome'], as_index=False).aggregate(aggregation_functions)
+    df.reset_index(drop=True, inplace=True) """
     
     adicionar.replace(np.nan, "", inplace=True)
 
