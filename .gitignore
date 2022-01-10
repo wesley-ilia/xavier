@@ -7,3 +7,5 @@ login.env
 *.xlsx
 *.parquet
 env
+raw_data/
+chromedriver
