@@ -12,6 +12,7 @@ export default class Dropdown extends React.Component {
     this.estados = [];
     this.mercados = [];
     this.stacks = [];
+    this.colunas = [];
     this.getDropdown();
   }
 
@@ -41,6 +42,13 @@ export default class Dropdown extends React.Component {
         that.stacks.push({
           label: resp.stacks[i],
           value: resp.stacks[i]
+        });
+      }
+
+      for (i = 0; i < resp.colunas.length; i++) {
+        that.colunas.push({
+          label: resp.colunas[i],
+          value: resp.colunas[i]
         });
       }
     })

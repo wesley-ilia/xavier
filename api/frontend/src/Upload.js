@@ -8,15 +8,17 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import modelo from './modelo.csv';
+import ProgressBar from 'react-bootstrap/ProgressBar'
+import UploadService from "./upload-files.service";
  
 import React, { Component } from 'react';
  
 class Upload extends Component {
   
     state = {
- 
-      // Initially, no file is selected
-      selectedFile: null
+		progress: 0,
+		message: "",
+    	selectedFile: null
     };
     
     // On file select (from the pop up)
@@ -28,7 +30,44 @@ class Upload extends Component {
     };
     
     // On file upload (click the upload button)
-    onFileUpload = () => {
+	onFileUpload = () => {
+		let currentFile = this.state.selectedFile;
+	
+		this.setState({
+		  progress: 0,
+		  currentFile: currentFile,
+		});
+	
+		UploadService.upload(currentFile, (event) => {
+		  this.setState({
+			progress: Math.round((100 * event.loaded) / event.total),
+		  });
+		  console.log(this.state.progress);
+		})
+		  /* .then((response) => {
+			this.setState({
+			  message: response.data.message,
+			});
+			return UploadService.getFiles();
+		  }) */
+		  .then((files) => {
+			this.setState({
+			  fileInfos: files.data,
+			});
+		  })
+		  .catch(() => {
+			this.setState({
+			  progress: 0,
+			  message: "Could not upload the file!",
+			  currentFile: undefined,
+			});
+		  });
+	
+		this.setState({
+		  selectedFiles: undefined,
+		});
+	  }
+    /* onFileUpload = async () => {
     
       // Create an object of formData
       const formData = new FormData();
@@ -45,8 +84,28 @@ class Upload extends Component {
     
       // Request made to the backend api
       // Send formData object
-      axios.post(BASE_URL + "/api/uploadfile", formData);
-    };
+		axios.post(BASE_URL + "/api/uploadfile", formData, (event) => {
+			this.setState({
+				progress: Math.round((100 * event.loaded) / event.total),
+			});
+			console.log(this.state.progress);
+			})
+			  .then((response) => {
+				this.setState({
+				  message: response.data.message,
+				});
+			  })
+			  .catch(() => {
+				this.setState({
+				  progress: 0,
+				  message: "Could not upload the file!",
+				  currentFile: undefined,
+				});
+			  });
+			this.setState({
+			selectedFiles: undefined,
+			});
+	} */
 
 	download = async () => {
 		const link = document.createElement('a');
@@ -124,6 +183,7 @@ class Upload extends Component {
                                 Upload!
                             </Button>
 						</Col>
+						<ProgressBar striped variant="success" now={this.state.progress} />
 					</Row>
 					<Row style={{paddingTop: '10px'}}>
 						<Col>

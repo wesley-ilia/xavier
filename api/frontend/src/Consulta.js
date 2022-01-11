@@ -9,6 +9,7 @@ import Col from 'react-bootstrap/Col';
 import Dropdown, { BASE_URL } from './Dropdown'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { getCidades } from './Utils'
+import ProgressBar from 'react-bootstrap/ProgressBar'
 
 var i;
 
@@ -19,6 +20,7 @@ class Consulta extends React.Component {
     this.mercadosExecute = [];
     this.stacksExecute = [];
     this.cidadesExecute = [];
+    this.colunasExecute = ['nome', 'estado', 'cidade', 'mercado', 'stacks'];
     this.capitais = 'sim';
     this.state = {
       preview: "0",
@@ -41,7 +43,7 @@ class Consulta extends React.Component {
     }
     await fetch(BASE_URL + "/search?market="+this.mercadosExecute
     +"&stack="+this.stacksExecute+"&state="+this.estadosExecute+"&extension="+this.extension
-    +"&cidade="+this.cidadesExecute+"&capitais="+this.capitais,
+    +"&cidade="+this.cidadesExecute+"&capitais="+this.capitais+"&colunas="+this.colunasExecute,
     req_options)
     .then((response) => response.blob())
     .then((blob) => {
@@ -105,6 +107,14 @@ class Consulta extends React.Component {
       values.push(e[i].value);
     this.mercadosExecute = [...values];
     this.getPreview();
+  }
+  
+
+  handleChangeColunas = e => {
+    var values = [];
+    for (i = 0; i < e.length; i++)
+      values.push(e[i].value);
+    this.colunasExecute = [...values];
   }
 
   handleChangeStacks = e => {
@@ -227,9 +237,31 @@ class Consulta extends React.Component {
                   classNamePrefix='stacks'
                   name="stacks"
                   inputId="stacks"
-                  options={this.dropdown.stacks}
+                  options={ this.dropdown.stacks }
                   isMulti
                   onChange={ this.handleChangeStacks }
+                  />
+                </form>
+                </Col>
+              </Row>
+              <Row>
+                <Col>
+                <form data-testid="form-colunas">
+                  <label htmlFor="colunas"><h2>Colunas</h2></label>
+                  <Select
+                  defaultValue={[
+                    { label: "nome" , value: "nome" },
+                    { label: "estado", value: "estado" },
+                    { label: "cidade", value: "cidade" },
+                    { label: "mercado", value: "mercado" },
+                    { label: "stacks", value: "stacks" }
+                  ]}
+                  classNamePrefix='colunas'
+                  name="colunas"
+                  inputId="colunas"
+                  options={ this.dropdown.colunas }
+                  isMulti
+                  onChange={ this.handleChangeColunas }
                   />
                 </form>
                 </Col>
