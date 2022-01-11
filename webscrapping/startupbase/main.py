@@ -33,5 +33,5 @@ df = pd.DataFrame(
 send = S3(df=df)
 send.send_to_s3(
         bucker_name='ilia-ecole42-xavier',
-        destination='raw_data/startupbase.parquet'
+        destination='raw_data/startup.parquet'
         )

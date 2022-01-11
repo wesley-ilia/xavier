@@ -79,14 +79,13 @@ for i in range(len(df['name'])):
     soup = BeautifulSoup(soup, 'html.parser')
     stacks = get_stacks(soup, website)
     data.append([name, stacks])
-    if i > 10:
-        break
 
 df = pd.DataFrame(
     data,
     columns=[
             'name', 'stacks'])
 
+print(df)
 send = S3(df=df)
 send.send_to_s3(
         bucker_name='ilia-ecole42-xavier',

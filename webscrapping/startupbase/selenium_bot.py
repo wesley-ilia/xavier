@@ -22,14 +22,19 @@ class startupbase(webdriver.Chrome):
 
     def scroll_down(self) -> None:
         SCROLL_PAUSE_TIME = 0.1
+        last_element = self.find_elements(By.CLASS_NAME, "org__body")[-1]
         i = 0
-        while True:
-            last_one = self.find_elements(By.CLASS_NAME, "org__body")[-1]
+        while i < 10:
+            self.execute_script("arguments[0].scrollIntoView();", last_element)
             sleep(SCROLL_PAUSE_TIME)
-            self.execute_script("arguments[0].scrollIntoView();", last_one)
-            i += 1
-            if (i > 10):
-                break
+            new_element = self.find_elements(By.CLASS_NAME, "org__body")[-1]
+            if new_element == last_element:
+                i += 1
+                print("time:", i)
+                print(new_element)
+                print(last_element)
+            else:
+                last_element = new_element
         return None
 
     def get_page_links(self) -> list:

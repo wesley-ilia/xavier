@@ -1,7 +1,6 @@
 from selenium import webdriver
-from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 from os import environ
-from time import sleep
 
 class Slintel(webdriver.Chrome):
     def __init__(
@@ -14,7 +13,12 @@ class Slintel(webdriver.Chrome):
 
         self.teardown = teardown
         environ['PATH'] += driver_path
-        super(Slintel, self).__init__()
+        chrome_options = Options()
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--headless')
+        super(Slintel, self).__init__(
+            options=chrome_options
+        )
         self.implicitly_wait(implicit_wait)
 
     def land_in_page(self, page: str = None):
