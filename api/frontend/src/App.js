@@ -17,7 +17,7 @@ class App extends Component {
     	<Router>
 			<div>
 			<Routes>
-				<Route exact path="/" element={<Home/>}/>
+				<Route exact path="/" element={<Consulta/>}/>
 				<Route exact path="/consulta" element={<Consulta/>}/>
 				<Route exact path="/upload" element={<Upload/>}/>
 			</Routes>
