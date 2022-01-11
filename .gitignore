@@ -3,7 +3,6 @@ __pycache__/
 login.env
 .sql
 .vscode
-*.csv
 *.xlsx
 chromedriver
 env
