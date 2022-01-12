@@ -9,7 +9,13 @@ import Col from 'react-bootstrap/Col';
 import Dropdown, { BASE_URL } from './Dropdown'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { getCidades } from './Utils'
-import ProgressBar from 'react-bootstrap/ProgressBar'
+import { ThemeProvider } from "styled-components";
+
+const darkTheme = {
+	pageBackground: "#111",  
+	titleColor: "#fafafa",  
+	tagLineColor: "#6B8096"
+}; 
 
 var i;
 
@@ -23,6 +29,7 @@ class Consulta extends React.Component {
     this.colunasExecute = ['nome', 'estado', 'cidade', 'mercado', 'stacks'];
     this.capitais = 'sim';
     this.state = {
+      theme: 'light',
       preview: "0",
       cidades: [],
       showCidades: false,
@@ -164,8 +171,19 @@ class Consulta extends React.Component {
 		link.parentNode.removeChild(link);
 	};
 
+  toggleTheme = () => {
+    if (this.state.theme === "light") {
+      window.localStorage.setItem("theme", "dark");
+      this.setState({theme: "dark"});
+    } else {
+      window.localStorage.setItem("theme", "light");
+      this.setState({theme: "light"});
+    }
+  };
+
   render () {
     return (
+      <ThemeProvider theme={darkTheme}>
       <div className="Consulta">
         <Card data-testid="card" style={{ width: '35%', height: "100%", marginLeft: "auto", marginRight: "auto" }}>
           <Card.Body style={{height: "100%"}}>
@@ -321,6 +339,7 @@ class Consulta extends React.Component {
         </Card.Body>
       </Card>
       </div>
+    </ThemeProvider>
     );
   }
 }

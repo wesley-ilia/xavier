@@ -9,10 +9,10 @@ import pandas as pd
 import numpy as np
 import os
 from unidecode import unidecode
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from mysql import connector
 import time
-
+from io import StringIO
 
 todas_capitais = ["Rio Branco", "Maceió", "Macapá", "Manaus", "Salvador", "Fortaleza", "Brasília", "Vitória", "Goiânia", "São Luís", "Cuiabá", "Campo Grande", "Belo Horizonte", "Belém", "João Pessoa", "Curitiba", "Recife", "Teresina", "Rio de Janeiro", "Natal", "Porto Alegre", "Porto Velho", "Boa Vista", "Florianópolis", "São Paulo", "Aracaju", "Palmas"]
 
@@ -22,9 +22,6 @@ origins = [
 
 load_dotenv(dotenv_path='login.env')
 
-with open("../frontend/src/modelo.csv", 'w') as f:
-    f.write("nome,estado,cidade,mercado,stacks")
-
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -33,6 +30,20 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+log = Log()
+db = pd.read_sql_query("SELECT * FROM empresa_completa3 WHERE 1", log.con)
+
+host = os.getenv("DB_HOST")
+user = os.getenv("DB_USER")
+password = os.getenv("DB_PASSWD")
+sql = f'mysql+pymysql://{user}:{password}@{host}:3306/decasoft_xavier'
+engine = create_engine(sql, echo=False)
+
+@event.listens_for(engine, 'before_cursor_execute')
+def receive_before_cursor_execute(conn, cursor, statement, params, context, executemany):
+    if executemany:
+        cursor.fast_executemany = True
 
 def agg(a):
     a = a.replace(np.nan, "")
@@ -45,12 +56,6 @@ def agg(a):
     return ret
 
 def initialize():
-    global df
-    log = Log()
-    global db
-    db = pd.read_sql_query("SELECT * FROM empresa_merge_teste WHERE 1", log.con)
-    df = db
-
     db['mercado'].replace(np.nan, "", inplace=True)
     total_mercados = db['mercado'].to_list()
     mercados = []
@@ -74,39 +79,8 @@ def initialize():
 
 initialize()
 
-
 def update_db(adicionar):
-    #stmt = f"UPDATE tb_usuario (`estado`, `cidade`, `mercado`, `stacks`) VALUES (%s, %s, %s, %s), WHERE nome={adc[0]}"
-    frase = "INSERT INTO empresa_merge_teste (nome,estado,cidade,mercado,stacks) values(%s,%s,%s,%s,%s)"
-    frase2 = "UPDATE empresa_merge_teste SET `stacks` = %s, mercado = %s  WHERE id = %s;"
-    # frase2 = " UPDATE empresa_merge_teste (mercado, stacks) VALUES (%s, %s), WHERE nome=%s"
     t0 = time.time()
-    """ update = []
-    insert = []
-    df = db.replace(np.nan, "")
-    print(df['id'])
-    adicionar = adicionar.replace(np.nan, "")
-    for i, n in enumerate(adicionar['nome']):
-        index = df.index[df['nome'] == n].tolist()
-        if not index:
-            insert.append(adicionar.iloc[i][['nome', 'estado', 'cidade', 'mercado', 'stacks']].tolist())
-        else:
-            for col in adicionar.columns:
-                if col != 'nome' and col != 'estado' and col != 'cidade' and col != 'id':
-                    adicionar[col][i] = ", ".join(set((adicionar[col][i] + ', ' + df[col][index[0]]).split(', ')))
-            up = adicionar.iloc[i][['mercado', 'stacks']].tolist()
-            up.append(df['id'][index[0]])
-            update.append(up)
-        if i == 20:
-            break
-    
-    print(update[0],len(update))
-    log = Log()
-    log.cursor.executemany(frase, insert)
-    teste = []
-    for i in range (0,50):
-        teste.append(['mercado','stacsksss',i])
-    log.cursor.executemany(frase2, teste) """
 
     aggregation_db = {'estado': 'first', 'cidade': 'first', 'mercado': agg, 'stacks': agg}
     for col in db.columns:
@@ -117,21 +91,18 @@ def update_db(adicionar):
     adicionar = adicionar.groupby(['nome'], as_index=False).aggregate(aggregation_db)
     adicionar.reset_index(drop=True, inplace=True)
 
-    host = os.getenv("DB_HOST")
-    user = os.getenv("DB_USER")
-    password = os.getenv("DB_PASSWD")
-
-    sql = f'mysql+pymysql://{user}:{password}@{host}:3306/decasoft_xavier'
-    engine = create_engine(sql, echo=False)
-
-
     adicionar['id'] = adicionar.index
+    cols = adicionar.columns.tolist()
+    nome = cols.index('nome')
+    cols = [cols[nome]] + cols[:nome] + cols[nome + 1:]
+    adicionar = adicionar[cols]
     adicionar.to_sql("empresa_merge_teste", engine, if_exists='replace', index=False)
     with engine.connect() as con:
         con.execute('ALTER TABLE `empresa_merge_teste` ADD PRIMARY KEY (id);')
     t1 = time.time()
     total = t1-t0
     print("total time 2 = " + str(total))
+    return adicionar
 
 def importFile (NomeArquivo):
     arquivo = pd.read_csv(NomeArquivo)
@@ -160,15 +131,11 @@ def importFile (NomeArquivo):
 
     adicionar.reset_index(drop=True, inplace=True)
 
-    host = os.getenv("DB_HOST")
-    user = os.getenv("DB_USER")
-    password = os.getenv("DB_PASSWD")
-
-    sql = f'mysql+pymysql://{user}:{password}@{host}:3306/decasoft_xavier'
-    engine = create_engine(sql, echo=False)
-
-
     adicionar['id'] = adicionar.index
+    cols = adicionar.columns.tolist()
+    nome = cols.index('nome')
+    cols = [cols[nome]] + cols[:nome] + cols[nome + 1:]
+    adicionar = adicionar[cols]
     adicionar.to_sql("tb_usuario3", engine, if_exists='replace', index=False)
     with engine.connect() as con:
         con.execute('ALTER TABLE `tb_usuario3` ADD PRIMARY KEY (id);')
@@ -176,12 +143,12 @@ def importFile (NomeArquivo):
     total = t1-t0
     print("total time 1 = " + str(total))
 
-    update_db(adicionar)
+    global db
+    db = update_db(adicionar)
     
     os.remove(NomeArquivo)
     initialize()
     return True, erradas
-
 
 @app.post("/api/uploadfile")
 async def upload(file: UploadFile=File(...)):

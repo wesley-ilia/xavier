@@ -8,14 +8,28 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Table from 'react-bootstrap/Table';
 import modelo from './modelo.csv';
-import ProgressBar from 'react-bootstrap/ProgressBar'
 import UploadService from "./upload-files.service";
- 
+import Spinner from 'react-bootstrap/Spinner'
+import ProgressBar from 'react-bootstrap/ProgressBar'
 import React, { Component } from 'react';
+/* import {
+	progressBarFetch,
+	setOriginalFetch,
+	ProgressBar
+  } from "react-fetch-progressbar"; */
+
+  setTimeout(() => {
+	console.log('Hello, World!')
+  }, 10);
+  
+
  
 class Upload extends Component {
-  
+	
+	
     state = {
+		isLoading: false,
+		val:0,
 		progress: 0,
 		message: "",
     	selectedFile: null
@@ -28,6 +42,21 @@ class Upload extends Component {
       this.setState({ selectedFile: event.target.files[0] });
     
     };
+
+	onFileUpload2 = async () => {
+		this.setState({ isLoading: true , val : 0});
+		let currentFile = this.state.selectedFile;
+	
+		let formData = new FormData();
+
+    	formData.append("file", currentFile);
+		
+		axios.post(BASE_URL + "/api/uploadfile", formData)
+		.then(response => {
+			this.setState({ isLoading: false , val : 100})
+
+		});
+	}
     
     // On file upload (click the upload button)
 	onFileUpload = () => {
@@ -42,7 +71,10 @@ class Upload extends Component {
 		  this.setState({
 			progress: Math.round((100 * event.loaded) / event.total),
 		  });
+		  console.log("processando arquivo aguarde")
 		  console.log(this.state.progress);
+
+		  
 		})
 		  /* .then((response) => {
 			this.setState({
@@ -51,6 +83,8 @@ class Upload extends Component {
 			return UploadService.getFiles();
 		  }) */
 		  .then((files) => {
+			  console.log("feito")
+			  
 			this.setState({
 			  fileInfos: files.data,
 			});
@@ -179,11 +213,20 @@ class Upload extends Component {
                             <Button
                             data-testid="download"
                             variant="primary"
-                            onClick={this.onFileUpload}>
-                                Upload!
+                            onClick={ this.onFileUpload2 }>
+                                {this.state.isLoading && <Spinner
+									as="span"
+									animation="grow"
+									size="sm"
+									role="status"
+									aria-hidden="true"
+									/>}
+							Upload!
                             </Button>
+							<ProgressBar now={this.state.val} />
 						</Col>
-						<ProgressBar striped variant="success" now={this.state.progress} />
+						<Spinner type="Circles" color="#00BFFF" height={80} width={80}/>
+						{/* <ProgressBar striped variant="success" now={this.state.progress} /> */}
 					</Row>
 					<Row style={{paddingTop: '10px'}}>
 						<Col>
