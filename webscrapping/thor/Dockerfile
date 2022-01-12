@@ -1,11 +1,11 @@
 FROM python:3.8.12-bullseye
 
-WORKDIR /codesh
+WORKDIR /thor
 
 COPY requirements.txt /tmp/requirements.txt
+
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
-#Download chromedriver version
 RUN apt-get update -y;\
 	apt-get install -y wget unzip chromium
 
@@ -20,9 +20,11 @@ RUN wget -O $CHROMIUM_DRIVER_ZIP $CHROMIUM_VERSION;\
 
 #setup aws credentials
 
-COPY . /codesh
-
-RUN chmod +x /codesh/aws_script.sh
-
+COPY aws_script.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/aws_script.sh
 ENTRYPOINT ["aws_script.sh"]
+
+COPY ["main.py", "s3.py", "thor_bot.py", "/thor/"]
+
 CMD ["python", "main.py"]
+
