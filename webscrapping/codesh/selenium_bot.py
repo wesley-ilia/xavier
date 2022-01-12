@@ -1,6 +1,7 @@
 from os import environ
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 from time import sleep
 
 
@@ -14,8 +15,12 @@ class Codesh(webdriver.Chrome):
             ) -> None:
 
         self.teardown = teardown
+        options = Options()
+        if headless is True:
+            options.add_argument('--no-sandbox')
+            options.add_argument('--headless')
         environ['PATH'] += driver_path
-        super(Codesh, self).__init__()
+        super(Codesh, self).__init__(options=options)
         self.implicitly_wait(implicit_wait)
 
     def land_in_page(self, page: str = None):

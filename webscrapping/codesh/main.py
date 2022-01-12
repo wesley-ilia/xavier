@@ -22,8 +22,9 @@ def convert_to_list(companies: dict):
 
 
 bot = Codesh(
-    implicit_wait=10,
-)
+        headless=True,
+        implicit_wait=10,
+        )
 bot.land_in_page(BASE_URL)
 bot.scroll_site(sleep_time=1)
 companies = bot.get_first_page_infos()
