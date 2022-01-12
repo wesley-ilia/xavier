@@ -6,6 +6,6 @@ login.env
 *.csv
 *.xlsx
 *.parquet
-env
+*.env
 raw_data/
 chromedriver
