@@ -6,6 +6,10 @@ services:
       - ../environments_variables/backend.env
     ports:
       - "8000:8000"
+    volumes:
+    - type: bind
+      source: ${PWD}/backend
+      target: /backend
   frontend:
     build: ./frontend/
     ports:
