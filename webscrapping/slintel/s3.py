@@ -41,3 +41,10 @@ class S3:
                     Body=buffer.getvalue()
                     )
         return response.get("ResponseMetadata", {}).get("HTTPStatusCode")
+
+    def download_from_s3(self, bucket_name: str, name: str) -> None:
+        self.client.download_file(
+            bucket_name,
+            f'raw_data/{name}.parquet',
+            f'./{name}.parquet'
+            )
