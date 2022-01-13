@@ -1,13 +1,19 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-import os
 from time import sleep
+from selenium.webdriver.chrome.options import Options
+import os
 
 
 class startupbase(webdriver.Chrome):
     def __init__(self) -> None:
-        os.environ['PATH'] += ':/home/luigi/selenium_drivers'
-        super(startupbase, self).__init__()
+        os.environ['PATH'] += './'
+        chrome_options = Options()
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--headless')
+        super(startupbase, self).__init__(
+            options=chrome_options
+        )
         self.implicitly_wait(5)
 
     def __exit__(
@@ -30,11 +36,10 @@ class startupbase(webdriver.Chrome):
             new_element = self.find_elements(By.CLASS_NAME, "org__body")[-1]
             if new_element == last_element:
                 i += 1
-                print("time:", i)
-                print(new_element)
-                print(last_element)
             else:
                 last_element = new_element
+            if (i > 2):
+                break
         return None
 
     def get_page_links(self) -> list:
