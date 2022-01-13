@@ -6,6 +6,11 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from s3 import S3
 
+S3(df=None).download_from_s3(
+        bucket_name='ilia-ecole42-xavier',
+        name='startup'
+        )
+
 
 def get_links(soup: BeautifulSoup):
     box = soup.select_one('div[class="row show_intial_data_subcall"]')
@@ -35,7 +40,8 @@ def get_stacks(soup: BeautifulSoup, website: str):
     if match == '':
         return []
     bot = Slintel(
-        driver_path=':/home/luigi/selenium_drivers/',
+        headless=True,
+        driver_path='./',
         implicit_wait=10
         )
     bot.land_in_page(match)
@@ -57,7 +63,8 @@ def get_stacks(soup: BeautifulSoup, website: str):
     stacks = []
     for i in ids:
         try:
-            drop.find_element(By.CSS_SELECTOR, f'option[data-id="{i}"').click()
+            drop.find_element(
+                    By.CSS_SELECTOR, f'option[data-id="{i}"').click()
         except NoSuchElementException:
             continue
         soup = BeautifulSoup(info.get_attribute('innerHTML'), 'html.parser')
@@ -76,7 +83,7 @@ def format_website(website: str) -> str:
     return website
 
 
-df = pd.read_parquet('../data_files/startup.parquet')
+df = pd.read_parquet('./startup.parquet')
 df['name'] = df['name'].str.lower()
 
 data = list()
@@ -94,11 +101,12 @@ for i in range(len(df['name'])):
 df = pd.DataFrame(
     data,
     columns=[
-            'name', 'stacks'])
+            'name',
+            'stacks'
+            ]
+    )
 
-print(df)
-send = S3(df=df)
-send.send_to_s3(
+S3(df=df).send_to_s3(
         bucker_name='ilia-ecole42-xavier',
         destination='raw_data/slintel.parquet'
         )
