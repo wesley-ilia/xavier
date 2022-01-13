@@ -12,6 +12,6 @@ services:
       - "3000:3000"
     volumes:
     - type: bind
-      source: /home/gvitor-s/Documents/xavier/api/frontend/
+      source: ${PWD}/frontend
       target: /frontend
     depends_on: [backend]
