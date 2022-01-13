@@ -5,6 +5,7 @@ from slintel_bot import Slintel
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from s3 import S3
+import os
 
 S3(df=None).download_from_s3(
         bucket_name='ilia-ecole42-xavier',
@@ -41,15 +42,18 @@ def get_stacks(soup: BeautifulSoup, website: str):
         return []
     bot = Slintel(
         headless=True,
-        driver_path='./',
+        driver_path=os.getcwd(),
         implicit_wait=10
         )
     bot.land_in_page(match)
 
     info = bot.find_element(
             By.CSS_SELECTOR, 'div[class="teck_stack_section st-48"]')
-    drop = info.find_element(
-            By.CSS_SELECTOR, 'select[class="techstack_select"]')
+    try:
+        drop = info.find_element(
+                By.CSS_SELECTOR, 'select[class="techstack_select"]')
+    except NoSuchElementException:
+        return []
 
     ids = ['Programming_Languages_And_Frameworks',
            'Devops_And_Development',
