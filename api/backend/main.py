@@ -78,6 +78,54 @@ def initialize():
     dropdown_list = {"mercados": mercados, "stacks": stacks, "colunas": db.columns.tolist()}
 
 initialize()
+""" DELETE FROM `empresa_merge_teste` WHERE `nome` like '%Cleimes%' or `nome` like '%JR%INFORMATICA%' """
+ 
+def update_db_2(adicionar):
+    values = ""
+    query = "INSERT INTO empresa_merge_teste ("
+    for i, col in enumerate(db.columns):
+        if col != 'id':
+            query += col
+            values += '%s'
+            if i < len(db.columns) - 1 and db.columns[i + 1] != 'id':
+                query += ','
+                values += ','
+    query += f') values ({values})'
+
+    delete = "DELETE FROM `empresa_merge_teste` WHERE "
+
+    query_insert = 'INSERT INTO empresa_merge_teste (nome, estado, cidade, mercado, stacks) VALUES ("%s", "%s", "%s", "%s", "%s")'
+    update = []
+    insert = []
+    for i, el in enumerate(adicionar['nome']):
+        index = db.index[db['nome'] == el].tolist()
+        if index:
+            index = index[0]
+            if delete != "DELETE FROM `empresa_merge_teste` WHERE ":
+                delete += " or "
+            delete += f' `nome` like "%{el}%" '
+            update.append(db.iloc[index].tolist()[:-1])
+        else:
+            insert.append(adicionar.iloc[i][['nome', 'estado', 'cidade', 'mercado', 'stacks']].tolist())
+
+    print("iniciando")
+    log = Log()
+    if update:
+        log.cursor.execute(delete)
+        t2 = time.time()
+        total = t2-t0
+        print("delete = " + str(total))
+        log.cursor.executemany(query,update)
+        t3 = time.time()
+        total = t3-t2
+        print("update = " + str(total))
+    if insert:
+        log.cursor.executemany(query_insert,insert)
+        t4 = time.time()
+        total = t4-t3
+        print("insert = " + str(total))
+    if insert or update:
+        log.con.commit()
 
 def update_db(adicionar):
     t0 = time.time()

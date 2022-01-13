@@ -8,14 +8,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Dropdown, { BASE_URL } from './Dropdown'
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { getCidades } from './Utils'
-import { ThemeProvider } from "styled-components";
-
-const darkTheme = {
-	pageBackground: "#111",  
-	titleColor: "#fafafa",  
-	tagLineColor: "#6B8096"
-}; 
+import { getCidades } from './Utils';
+import { darkSelect, lightSelect, darkGeneric, lightGeneric } from './themes';
 
 var i;
 
@@ -30,6 +24,7 @@ class Consulta extends React.Component {
     this.capitais = 'sim';
     this.state = {
       theme: 'light',
+      cardTheme: "card bg-light mb-3",
       preview: "0",
       cidades: [],
       showCidades: false,
@@ -183,16 +178,16 @@ class Consulta extends React.Component {
 
   render () {
     return (
-      <ThemeProvider theme={darkTheme}>
       <div className="Consulta">
-        <Card data-testid="card" style={{ width: '35%', height: "100%", marginLeft: "auto", marginRight: "auto" }}>
-          <Card.Body style={{height: "100%"}}>
+        {/* <Card data-testid="card"  style={{ width: '35%', height: "100%", marginLeft: "auto", marginRight: "auto" }}>
+          <Card.Body style={{height: "100%"}}> */}
             <Container fluid style={{height: "inherit"}}>
               <Row>
                 <Col>
                 <form data-testid="form-estados">
                   <label htmlFor="estados"><h2>Estados</h2></label>
                   <Select
+                  styles={ this.props.theme === 'light' ? lightSelect: darkSelect }
                   classNamePrefix='estados'
                   name="estados"
                   inputId="estados"
@@ -208,7 +203,7 @@ class Consulta extends React.Component {
               <Row>
                 <Col>
                  <input type="radio" value="sim" name="capitais" defaultChecked
-                 onChange={ this.handleCidadesRadio }/> Com Capitais
+                 style={ this.props.theme === 'light' ? lightSelect: darkSelect } onChange={ this.handleCidadesRadio }/> Com Capitais
                 </Col>
                 <Col>
                   <input type="radio" value="nao" name="capitais"
@@ -222,6 +217,7 @@ class Consulta extends React.Component {
               { this.state.showCidades && <Row>
                 <Col data-testid="cidades-drop">
                   <Select
+                  styles={ this.props.theme === 'light' ? lightSelect: darkSelect }
                   classNamePrefix='cidades'
                   name="cidades"
                   inputId="cidades"
@@ -237,6 +233,7 @@ class Consulta extends React.Component {
                 <form data-testid="form-mercados">
                   <label htmlFor="mercados"><h2>Mercados</h2></label>
                   <Select
+                  styles={ this.props.theme === 'light' ? lightSelect: darkSelect }
                   classNamePrefix='mercados'
                   name="mercados"
                   inputId="mercados"
@@ -252,6 +249,7 @@ class Consulta extends React.Component {
                 <form data-testid="form-stacks">
                   <label htmlFor="stacks"><h2>Stacks</h2></label>
                   <Select
+                  styles={ this.props.theme === 'light' ? lightSelect: darkSelect }
                   classNamePrefix='stacks'
                   name="stacks"
                   inputId="stacks"
@@ -267,6 +265,7 @@ class Consulta extends React.Component {
                 <form data-testid="form-colunas">
                   <label htmlFor="colunas"><h2>Colunas</h2></label>
                   <Select
+                  styles={ this.props.theme === 'light' ? lightSelect: darkSelect }
                   defaultValue={[
                     { label: "nome" , value: "nome" },
                     { label: "estado", value: "estado" },
@@ -287,7 +286,7 @@ class Consulta extends React.Component {
               <Row>
                 <Col>
                   <div id="preview" style={{marginTop: "10px", marginBottom: "10px"}}>
-                    <div>Preview: { this.state.preview }</div>
+                    <label htmlFor="previer"><h5>Preview: { this.state.preview } </h5></label>
                   </div>
                 </Col>
               </Row>
@@ -297,12 +296,13 @@ class Consulta extends React.Component {
               <Row>
                 <Col xs lg="7" >
                   <Form.Control name="teste" placeholder="Nome do arquivo"
-                  onChange={ this.handleChangeFile }/>
+                  onChange={ this.handleChangeFile } style={ this.props.theme === 'light' ? lightGeneric : darkGeneric }/>
                 </Col>
                 <Col xs lg="4">
                 <form data-testid='file-Type'>
                   <label hidden data-testid='label-type' htmlFor='fileType'>type</label>
                     <Select
+                    styles={ this.props.theme === 'light' ? lightSelect: darkSelect }
                     classNamePrefix='fileType'
                     name='fileType'
                     inputId='fileType'
@@ -330,16 +330,13 @@ class Consulta extends React.Component {
                   <Button
                   data-testid="upload"
                   variant="primary"
-                  onClick={this.upload}>
+                  onClick={ this.upload }>
                     Upload...
                   </Button>
                 </Col>
               </Row>
             </Container>
-        </Card.Body>
-      </Card>
       </div>
-    </ThemeProvider>
     );
   }
 }

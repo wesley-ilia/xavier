@@ -2,17 +2,12 @@ import React, { Component } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Consulta from './Consulta';
 import Upload from './Upload';
-import Home from './Home';
+import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-// import { lightTheme, darkTheme } from "./themes";
+import Figure from 'react-bootstrap/Figure'
 import './App.css'
-import { ThemeProvider } from "styled-components";
-// import useLocalStorage from 'use-local-storage'
-const darkTheme = {
-	pageBackground: "#111",  
-	titleColor: "#fafafa",  
-	tagLineColor: "#6B8096"
-}; 
+import { ThemeProvider } from 'styled-components';
+import { GlobalStyle } from './themes'
 
 class App extends Component {
   
@@ -21,7 +16,7 @@ class App extends Component {
     
     super();
     this.state = {
-      theme: 'dark',
+      theme: 'light',
       name: 'React'
     };
   }
@@ -45,26 +40,41 @@ class App extends Component {
   
   render() {
     return (
-      <ThemeProvider theme={darkTheme}>
+      <ThemeProvider theme={{ mode: this.state.theme }}>
+      <>
+        <GlobalStyle />
       <Button
       data-testid="download"
       variant="primary"
       onClick={ this.toggleTheme }>
         Theme
       </Button>
+      <Card data-testid="card"  style={{ width: '35%', height: "100%", marginLeft: "auto", marginRight: "auto" }}>
+          <Card.Body style={{height: "100%"}}>
+              <center>
+                  <Figure>
+                  <Figure.Image
+                    width={200}
+                    height={200}
+                    src="./Xavier_1_1.png"
+                  />
+                  </Figure>
+              </center>
       <Router>
 			<div className='app'>
 			<Routes>
-				<Route exact path="/" element={<Consulta/>}/>
-				<Route exact path="/consulta" element={<Consulta/>}/>
-				<Route exact path="/upload" element={<Upload/>}/>
+				<Route exact path="/" element={<Consulta theme={this.state.theme}/>}/>
+				<Route exact path="/consulta" element={<Consulta theme={this.state.theme}/>}/>
+				<Route exact path="/upload" element={<Upload theme={this.state.theme}/>}/>
 			</Routes>
 			</div>
 		</Router>
+    </Card.Body>
+    </Card>
+    </>
     </ThemeProvider>
     );
   }
 }
 
 export default App;
-  
