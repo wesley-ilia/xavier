@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from os import environ
 
+
 class Slintel(webdriver.Chrome):
     def __init__(
         self,
@@ -14,8 +15,9 @@ class Slintel(webdriver.Chrome):
         self.teardown = teardown
         environ['PATH'] += driver_path
         chrome_options = Options()
-        chrome_options.add_argument('--no-sandbox')
-        chrome_options.add_argument('--headless')
+        if headless is True:
+            chrome_options.add_argument('--no-sandbox')
+            chrome_options.add_argument('--headless')
         super(Slintel, self).__init__(
             options=chrome_options
         )
