@@ -13,6 +13,7 @@ def get_links(soup: BeautifulSoup):
     links = [link['href'] for link in links]
     return links
 
+
 def match_web(links: list, website: str):
     for link in links:
         link = f'https://www.slintel.com/{link}'
@@ -25,6 +26,7 @@ def match_web(links: list, website: str):
             return link
     return ''
 
+
 def get_stacks(soup: BeautifulSoup, website: str):
     links = get_links(soup)
     if links == []:
@@ -32,18 +34,26 @@ def get_stacks(soup: BeautifulSoup, website: str):
     match = match_web(links, website)
     if match == '':
         return []
-    
     bot = Slintel(
-    driver_path=':/home/luigi/selenium_drivers/',
-    implicit_wait=10)
+        driver_path=':/home/luigi/selenium_drivers/',
+        implicit_wait=10
+        )
     bot.land_in_page(match)
 
-    info = bot.find_element(By.CSS_SELECTOR, 'div[class="teck_stack_section st-48"]')
-    drop = info.find_element(By.CSS_SELECTOR, 'select[class="techstack_select"]')
+    info = bot.find_element(
+            By.CSS_SELECTOR, 'div[class="teck_stack_section st-48"]')
+    drop = info.find_element(
+            By.CSS_SELECTOR, 'select[class="techstack_select"]')
 
-    ids = ['Programming_Languages_And_Frameworks', 'Devops_And_Development', 'IT_Security',
-    'IT_Management', 'Platform_And_Storage', 'Computer_Networks', 'Operations_Software',
-    'Testing_And_QA']
+    ids = ['Programming_Languages_And_Frameworks',
+           'Devops_And_Development',
+           'IT_Security',
+           'IT_Management',
+           'Platform_And_Storage',
+           'Computer_Networks',
+           'Operations_Software',
+           'Testing_And_QA'
+           ]
     stacks = []
     for i in ids:
         try:
@@ -54,9 +64,9 @@ def get_stacks(soup: BeautifulSoup, website: str):
         s = soup.select('a[class="techstack-media-title"]')
         stacks.extend([x.text.strip() for x in s])
     return stacks
-# selenium.common.exceptions.NoSuchElementException
-# techstack-media-title
-def format_website(website: str)-> str:
+
+
+def format_website(website: str) -> str:
     website = website.strip()
     website = website.replace('www.', '')
     website = website.replace('https://', '')
@@ -64,6 +74,7 @@ def format_website(website: str)-> str:
     if website[-1] == '/':
         website = website[:-1]
     return website
+
 
 df = pd.read_parquet('../data_files/startup.parquet')
 df['name'] = df['name'].str.lower()
