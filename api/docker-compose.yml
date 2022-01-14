@@ -6,12 +6,16 @@ services:
       - ../environments_variables/backend.env
     ports:
       - "8000:8000"
+    volumes:
+    - type: bind
+      source: ${PWD}/backend
+      target: /backend
   frontend:
     build: ./frontend/
     ports:
       - "3000:3000"
     volumes:
     - type: bind
-      source: /home/gvitor-s/Documents/xavier/api/frontend/
+      source: ${PWD}/frontend
       target: /frontend
     depends_on: [backend]
