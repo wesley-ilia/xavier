@@ -1,0 +1,12 @@
+pycache/
+*.pyc
+login.env
+.sql
+.vscode
+*.csv
+*.xlsx
+*.parquet
+*.env
+env/
+raw_data/
+chromedriver
