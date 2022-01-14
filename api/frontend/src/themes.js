@@ -1,22 +1,13 @@
-import { createGlobalStyle } from 'styled-components';
 
-const lightColor = "#EEE"
-const darkColor = "#111"
+import { createGlobalStyle } from 'styled-components';
+import { lightMode } from './light-mode.js';
+import { darkMode } from './dark-mode.js';
+
+const lightColor = "#fff"
+const darkColor = "#303030"
 
 export var GlobalStyle = createGlobalStyle`
-body {
-  background-color: ${props =>
-    props.theme.mode === 'light' ? lightColor : darkColor};
-  color: ${props =>
-    props.theme.mode === 'light' ? darkColor : lightColor};
-};
-
-.card {
-  background-color: ${props =>
-    props.theme.mode === 'light' ? lightColor : darkColor};
-  color: ${props =>
-      props.theme.mode === 'light' ? darkColor : lightColor};
-};
+  ${props => props.theme.mode === 'light' ? lightMode : darkMode};
 `;
 
 export var lightSelect = {
@@ -47,16 +38,16 @@ export var darkSelect = {
 	valueContainer: (provided, state) => ({
 		...provided,
 		background: darkColor,
-		color: 'red',
+		color: 'darkblue',
 	}),
 	multiValueLabel: (provided, state) => ({
 		...provided,
-		background: darkColor,
+		background: "grey",
 		color: lightColor,
 	}),
 	multiValue: (provided, state) => ({
 		...provided,
-		background: darkColor,
+		background: "grey",
 		color: lightColor,
 	}),
 	singleValueLabel: (provided, state) => ({
@@ -84,11 +75,11 @@ export var darkSelect = {
   export var lightGeneric = {
 	background: lightColor,
 	color: darkColor,
-	// border: '2px solid blue'
+	border: 'solid 1px lightgrey'
   }
   
   export var darkGeneric = {
 	background: darkColor,
 	color: lightColor,
-	// border: '2px solid black'
+	border: 'solid 1px white'
   }
