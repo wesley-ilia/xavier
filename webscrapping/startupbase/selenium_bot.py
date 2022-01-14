@@ -7,7 +7,7 @@ import os
 
 class startupbase(webdriver.Chrome):
     def __init__(self) -> None:
-        os.environ['PATH'] += './'
+        os.environ['PATH'] += ':/home/luigi/selenium_drivers'
         chrome_options = Options()
         chrome_options.add_argument('--no-sandbox')
         chrome_options.add_argument('--headless')
@@ -38,7 +38,8 @@ class startupbase(webdriver.Chrome):
                 i += 1
             else:
                 last_element = new_element
-            if (i > 2):
+            i += 1
+            if (i > 4):
                 break
         return None
 

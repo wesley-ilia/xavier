@@ -5,24 +5,31 @@ from unidecode import unidecode
 import os
 
 
-# 'name', 'cidade', 'contato', 'stacks', 'mercado', 'tamanho', 'redes', 'website'
+def narray_colunm_to_list(column: pd) -> None:
+    for i in range(len(column)):
+        column[i] = column[i].tolist()
+    return None
+
+
+# 'name', 'cidade', 'contato', 'stacks',
+# 'mercado', 'tamanho', 'redes', 'website'
 df = pd.read_parquet('./raw_data/codesh.parquet')
+
+narray_colunm_to_list(df['stacks'])
+narray_colunm_to_list(df['redes'])
 
 df['name'] = df['name'].str.lower().str.strip()
 
-# cidades = ['sao paulo', 'Sao Paulo', 'são Paulo', 'São Paulo']
+for i, lst in enumerate(df['stacks']):
+    df['stacks'][i] = \
+        [unidecode(string.lower().strip()) for string in df['stacks'][i]]
 
-for i, city in enumerate(df['cidade']):
-    df['cidade'][i] = unidecode(city.lower().strip())
-
-for i, city in enumerate(df['cidade']):
-    df['cidade'][i] = unidecode(city.lower().strip())
-
-# print(json.dumps(city_json, indent=2))
-for i, lst in enumerate(df['stacks'].values):
-    df['stacks'][i] = [unidecode(string.lower().strip()) for string in df['stacks'][i]]
-
-df['mercado'] = [unidecode(string.lower().strip()) for string in df['mercado'].values]
+df['cidade'] = \
+    [unidecode(string.lower().strip()) for string in df['cidade'].values]
+df['contato'] = \
+    [unidecode(string.lower().strip()) for string in df['contato'].values]
+df['mercado'] = \
+    [unidecode(string.lower().strip()) for string in df['mercado'].values]
 
 estados_dict = {
         "acre": "ac",
@@ -57,14 +64,12 @@ estados_dict = {
 df['estado'] = df['contato']
 for i, contato in enumerate(df['contato']):
     contato = unidecode(contato.split(',')[-2].lower().strip())
-    if unidecode(contato) in estados_dict.keys():
+    if contato in estados_dict.keys():
         df['estado'][i] = estados_dict[contato]
     else:
         df['estado'][i] = contato
-# df = df.loc[df['name'] != name]
-# df.to_csv('teste.csv', sep=',', index=False)
 
-load_dotenv('../../login.env')
+load_dotenv('./login.env')
 host = os.getenv('DBHOST')
 user = os.getenv('DBUSER')
 passwd = os.getenv('DBPASS')

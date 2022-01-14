@@ -26,7 +26,7 @@ bot = Codesh(
         implicit_wait=10,
         )
 bot.land_in_page(BASE_URL)
-bot.scroll_site(sleep_time=1)
+bot.scroll_site()
 companies = bot.get_first_page_infos()
 
 get_perfil_infos(companies)
@@ -41,6 +41,8 @@ df = pd.DataFrame(
             'contato', 'stacks',
             'mercado', 'tamanho',
             'redes', 'website'])
+
+print(df)
 
 send = S3(df=df)
 send.send_to_s3(

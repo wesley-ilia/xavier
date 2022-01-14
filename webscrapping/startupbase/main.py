@@ -30,6 +30,8 @@ df = pd.DataFrame(
             'modelo', 'modelo de receita',
             'momento', 'tamanho', 'segmento', 'redes', 'website'])
 
+print(df)
+
 send = S3(df=df)
 send.send_to_s3(
         bucker_name='ilia-ecole42-xavier',
