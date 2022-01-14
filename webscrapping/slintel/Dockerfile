@@ -7,15 +7,28 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
 #Download chromedriver version
 RUN apt-get update -y;\
-	apt-get install -y wget unzip chromium
+	apt-get install -y wget unzip curl
 
-ENV CHROMIUM_VERSION="https://chromedriver.storage.googleapis.com/90.0.4430.24/chromedriver_linux64.zip"
-ENV CHROMIUM_DRIVER_ZIP="chromedriver_linux64.zip"
+#SETUP CHROMIUM
+ENV CHROMIUM_DOWNLOAD="deb http://download.opensuse.org/repositories/home:/ungoogled_chromium/Debian_Bullseye/ /"
 
-RUN wget -O $CHROMIUM_DRIVER_ZIP $CHROMIUM_VERSION;\
-	unzip $CHROMIUM_DRIVER_ZIP;\
+ENV CHROMIUM_KEY="https://download.opensuse.org/repositories/home:/ungoogled_chromium/Debian_Bullseye/Release.key" 
+
+RUN echo $CHROMIUM_DOWNLOAD | tee /etc/apt/sources.list.d/home-ungoogled_chromium.list > /dev/null
+
+RUN curl -s $CHROMIUM_KEY | gpg --dearmor | tee /etc/apt/trusted.gpg.d/home-ungoogled_chromium.gpg > /dev/null
+
+RUN apt-get update -y;\
+	apt install -y ungoogled-chromium
+
+#SETUP CHROMEDRIVER
+ENV CHROMEDRIVER_VERSION="https://chromedriver.storage.googleapis.com/95.0.4638.54/chromedriver_linux64.zip"
+ENV CHROMEDRIVER_FILE="chromedriver_linux64.zip"
+
+RUN wget -O $CHROMEDRIVER_FILE $CHROMEDRIVER_VERSION;\
+	unzip $CHROMEDRIVER_FILE;\
 	mv chromedriver /usr/local/bin/;\
-	rm -f $CHROMIUM_DRIVER_ZIP
+	rm -f $CHROMEDRIVER_FILE
 
 #setup aws credentials
 COPY aws_script.sh /usr/local/bin/
