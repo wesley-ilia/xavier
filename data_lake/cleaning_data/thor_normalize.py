@@ -17,6 +17,7 @@ def lower_and_strip_datas(df: pd) -> None:
         df['stacks'][i] = ','.join([stack.lower().strip() for stack in array])
     return None
 
+
 def remove_duplicates(df: pd) -> None:
     df = df.drop_duplicates()
     df = df.reset_index(drop=True)

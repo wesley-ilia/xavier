@@ -28,19 +28,21 @@ class Codesh(webdriver.Chrome):
 
     def scroll_site(self) -> None:
         SCROLL_PAUSE_TIME = 1
-        last_element = self.find_elements(By.CSS_SELECTOR, "a[class='mb-5 card']")[-1]
+        last_element = self.find_elements(
+            By.CSS_SELECTOR, "a[class='mb-5 card']")[-1]
         i = 0
         while i < 5:
-            self.execute_script("arguments[0].scrollIntoView();", last_element)
+            self.execute_script(
+                "arguments[0].scrollIntoView();", last_element)
             sleep(SCROLL_PAUSE_TIME)
-            new_element = self.find_elements(By.CSS_SELECTOR, "a[class='mb-5 card']")[-1]
+            new_element = self.find_elements(
+                By.CSS_SELECTOR, "a[class='mb-5 card']")[-1]
             if new_element != last_element:
                 last_element = new_element
             else:
                 print(i)
                 i += 1
         return None
-
 
     def get_first_page_infos(self) -> list:
         container = self.find_element(

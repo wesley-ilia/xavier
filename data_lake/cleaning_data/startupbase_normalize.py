@@ -7,9 +7,10 @@ from dotenv import load_dotenv
 df = pd.read_parquet('./raw_data/startup.parquet')
 
 
-def normalize(column_name:str ,df: pd.DataFrame):
+def normalize(column_name: str, df: pd.DataFrame):
     df[column_name] = df[column_name].str.lower().str.strip()
     df[column_name] = [unidecode(one) for one in df[column_name]]
+
 
 df['name'] = df['name'].str.lower().str.strip()
 df['momento'] = df['momento'].str.lower().str.strip()
@@ -49,5 +50,7 @@ passwd = getenv('DBPASS')
 port = getenv('DBPORT')
 database = getenv('DBNAME')
 
-engine = create_engine(f'postgresql://{user}:{passwd}@{host}:{port}/{database}')
+engine = create_engine(f'postgresql://{user}:{passwd}\
+@{host}:{port}/{database}')
+
 df.to_sql("startupbase", engine, if_exists='replace', index=False)
