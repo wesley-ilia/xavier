@@ -1,14 +1,17 @@
+from gc import get_referents
 from os import path
 from io import BytesIO
 from pandas import DataFrame
 from configparser import ConfigParser
-from boto3 import setup_default_session, client
-
+from boto3 import setup_default_session, client, resource
 
 class S3:
-    def __init__(self, df: DataFrame):
+    def __init__(self, df: DataFrame, bucket_name = '/'):
         self.credentials = self.__parsing_config()
-        self.client = self.__create_session()
+        self.__create_session()
+        self.client = client('s3')
+        self.resource = resource('s3') 
+        self.bucket_name = bucket_name
         self.df = df
 
     def __parsing_config(self) -> dict:
@@ -30,17 +33,38 @@ class S3:
                 aws_access_key_id=self.credentials['aws_access_key_id'],
                 aws_secret_access_key=self.credentials['aws_secret_access_key']
                 )
-        return client('s3')
 
-    def send_to_s3(self, bucker_name: str, destination: str) -> int:
+    def send_to_s3(self, df: DataFrame, bucker_name: str, destination: str) -> int:
         with BytesIO() as buffer:
-            self.df.to_parquet(buffer, index=False)
-            response = self.client.put_object(
+            df.to_parquet(buffer, index=False)
+            responses = self.client.put_object(
                     Bucket=bucker_name,
                     Key=destination,
                     Body=buffer.getvalue()
                     )
-        return response.get("ResponseMetadata", {}).get("HTTPStatusCode")
+        return responses.get("ResponseMetadata", {}).get("HTTPStatusCode")
+
+    def get_objects(self, bucket_name=None, prefix=''):
+        if bucket_name == None:
+            bucket_name = self.bucket_name
+        objs = self.client.list_objects(
+        Bucket=bucket_name,
+        Prefix=prefix
+        )
+        return objs
+
+    def get_keys(self, bucket_name=None, prefix=''):
+        if bucket_name == None:
+            bucket_name = self.bucket_name
+        objs = self.get_objects(self, bucket_name, prefix)
+        return [obj['Key'] for obj in objs['Contents']]
+
+    def get_from_s3(self, bucket_name=None, key=''):
+        if bucket_name == None:
+            bucket_name = self.bucket_name
+        buffer = BytesIO()
+        self.resource.Object(bucket_name, key).download_fileobj(buffer)
+        return buffer
 
     def download_from_s3(self, bucket_name: str, name: str) -> None:
         self.client.download_file(

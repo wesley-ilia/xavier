@@ -15,9 +15,9 @@ class Slintel(webdriver.Chrome):
         self.teardown = teardown
         environ['PATH'] += driver_path
         chrome_options = Options()
-        if headless is True:
-            chrome_options.add_argument('--no-sandbox')
-            chrome_options.add_argument('--headless')
+        chrome_options.add_argument('--no-sandbox')
+        chrome_options.add_argument('--headless')
+        chrome_options.add_argument("--disable-dev-shm-usage")
         super(Slintel, self).__init__(
             options=chrome_options
         )

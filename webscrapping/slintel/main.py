@@ -4,8 +4,10 @@ from bs4 import BeautifulSoup
 from slintel_bot import Slintel
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
+from pyarrow import parquet as pq
 from s3 import S3
 import os
+
 
 S3(df=None).download_from_s3(
         bucket_name='ilia-ecole42-xavier',
@@ -86,21 +88,25 @@ def format_website(website: str) -> str:
         website = website[:-1]
     return website
 
+s3_con = S3(None, 'ilia-ecole42-xavier')
+buffer = s3_con.get_from_s3(key='raw_data/startup.parquet')
+df_startup = pq.read_table(buffer).to_pandas()
 
-df = pd.read_parquet('./startup.parquet')
-df['name'] = df['name'].str.lower()
-
+# df = pd.read_parquet('./startup.parquet')
+df_startup['name'] = df_startup['name'].str.lower()
 data = list()
 
-for i in range(len(df['name'])):
-    name = df['name'][i]
-    website = format_website(df['website'][i])
+for i in range(len(df_startup['name'])):
+    name = df_startup['name'][i]
+    website = format_website(df_startup['website'][i])
     soup = requests.get(
         f'https://www.slintel.com/directory/company?searchTerm={name})'
     ).content
     soup = BeautifulSoup(soup, 'html.parser')
     stacks = get_stacks(soup, website)
     data.append([name, stacks])
+    if (i > 3):
+        break
 
 df = pd.DataFrame(
     data,
@@ -109,8 +115,10 @@ df = pd.DataFrame(
             'stacks'
             ]
     )
+print(df)
 
-S3(df=df).send_to_s3(
+s3_con.send_to_s3(
+        df,
         bucker_name='ilia-ecole42-xavier',
         destination='raw_data/slintel.parquet'
         )

@@ -40,4 +40,5 @@ class S3:
                     Key=destination,
                     Body=buffer.getvalue()
                     )
+
         return response.get("ResponseMetadata", {}).get("HTTPStatusCode")
