@@ -9,4 +9,3 @@ login.env
 *.env
 env/
 raw_data/
-chromedriver
