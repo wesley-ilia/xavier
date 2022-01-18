@@ -3,7 +3,7 @@ services:
   backend:
     build: ./backend/
     env_file:
-      - ../environments_variables/backend.env
+      - ./backend/login.env
     ports:
       - "8000:8000"
     volumes:

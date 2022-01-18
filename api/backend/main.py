@@ -13,6 +13,7 @@ from sqlalchemy import create_engine, event
 from mysql import connector
 import time
 from io import StringIO
+from utils import save_pdf
 
 todas_capitais = ["Rio Branco", "Maceió", "Macapá", "Manaus", "Salvador", "Fortaleza", "Brasília", "Vitória", "Goiânia", "São Luís", "Cuiabá", "Campo Grande", "Belo Horizonte", "Belém", "João Pessoa", "Curitiba", "Recife", "Teresina", "Rio de Janeiro", "Natal", "Porto Alegre", "Porto Velho", "Boa Vista", "Florianópolis", "São Paulo", "Aracaju", "Palmas"]
 
@@ -294,6 +295,8 @@ def get_info(market: str, stack: str, state: str, capitais: str, colunas: str,
         df.to_csv(file_name, sep=',', index=False)
     elif extension == 'xlsx':
         df.to_excel(file_name, index=False)
+    elif extension == 'pdf':
+        save_pdf(df, file_name)
     return FileResponse(file_name, filename=file_name)
 
 @app.get("/cidades")

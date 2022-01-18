@@ -12,6 +12,7 @@ charset-normalizer==2.0.9
 click==8.0.3
 cryptography==36.0.1
 fastapi==0.70.1
+fpdf==1.7.2
 greenlet==1.1.2
 h11==0.12.0
 idna==3.3

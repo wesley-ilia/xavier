@@ -56,6 +56,9 @@ class App extends Component {
   };
   
   render() {
+    const a = [1, 2, 3, 4];
+    a.splice(0, 2);
+    console.log(typeof(42))
     return (
       <div>
       <ThemeProvider theme={{ mode: this.state.theme }}>

@@ -35,10 +35,16 @@ export var darkSelect = {
 		color: lightColor,
 		padding: 20,
 	}),
+
+	input: (provided, state) => ({
+		...provided,
+		color: lightColor,
+	}),
+
 	valueContainer: (provided, state) => ({
 		...provided,
 		background: darkColor,
-		color: 'darkblue',
+		color: lightColor,
 	}),
 	multiValueLabel: (provided, state) => ({
 		...provided,
@@ -68,7 +74,7 @@ export var darkSelect = {
 	control: (provided, state) => ({
 		...provided,
 		color: 'red',
-		background: darkColor
+		background: darkColor,
 	}),
   }
   

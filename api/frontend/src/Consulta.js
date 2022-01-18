@@ -292,7 +292,11 @@ class Consulta extends React.Component {
                 classNamePrefix='fileType'
                 name='fileType'
                 inputId='fileType'
-                options={[{label: ".csv", value: "csv"}, {label: ".xlsx", value: "xlsx"}]}
+                options={[
+                  {label: ".csv", value: "csv"},
+                  {label: ".xlsx", value: "xlsx"},
+                  {label: ".pdf", value: "pdf"},
+                ]}
                 defaultValue={{ label: ".csv", value: "csv" }}
                 onChange={ this.handleChangeExtension }
                 style={{width: "50%"}}
