@@ -92,7 +92,7 @@ def if_not_list_exists(data: dict, text: str):
     if text in data.keys():
         back = ", ".join([i for i in data[text] if i])
     else:
-        back = []
+        back = None
     return back
 
 real = list()
