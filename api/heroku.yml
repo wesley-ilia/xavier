@@ -1,0 +1,4 @@
+build:
+  docker:
+    frontend: "api/frontend/Dockerfile"
+    backend:  "api/backend/Dockerfile"

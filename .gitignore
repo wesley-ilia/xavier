@@ -11,5 +11,3 @@ raw_data/
 test/
 !modelo.csv
 chromedriver
-node_modules/
-build/

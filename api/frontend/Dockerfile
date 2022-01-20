@@ -4,6 +4,6 @@ WORKDIR /frontend/
 
 COPY . /frontend/
 
-RUN apk add --upgrade make
+RUN npm install
 
-ENTRYPOINT ["make"]
+ENTRYPOINT ["npm", "start"]
