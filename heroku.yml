@@ -1,6 +1,6 @@
 build:
   docker:
-    './api/frontend/Dockerfile'
+    frontend: "./api/frontend/Dockerfile"
 run:
   frontend: nginx -g daemon off;
   
