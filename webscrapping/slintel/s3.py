@@ -1,16 +1,16 @@
-from gc import get_referents
 from os import path
 from io import BytesIO
 from pandas import DataFrame
 from configparser import ConfigParser
 from boto3 import setup_default_session, client, resource
 
+
 class S3:
-    def __init__(self, df: DataFrame, bucket_name = '/'):
+    def __init__(self, df: DataFrame, bucket_name='/'):
         self.credentials = self.__parsing_config()
         self.__create_session()
         self.client = client('s3')
-        self.resource = resource('s3') 
+        self.resource = resource('s3')
         self.bucket_name = bucket_name
         self.df = df
 
@@ -34,7 +34,11 @@ class S3:
                 aws_secret_access_key=self.credentials['aws_secret_access_key']
                 )
 
-    def send_to_s3(self, df: DataFrame, bucker_name: str, destination: str) -> int:
+    def send_to_s3(
+                self, df: DataFrame,
+                bucker_name: str,
+                destination: str) -> int:
+
         with BytesIO() as buffer:
             df.to_parquet(buffer, index=False)
             responses = self.client.put_object(
@@ -45,22 +49,22 @@ class S3:
         return responses.get("ResponseMetadata", {}).get("HTTPStatusCode")
 
     def get_objects(self, bucket_name=None, prefix=''):
-        if bucket_name == None:
+        if bucket_name is None:
             bucket_name = self.bucket_name
         objs = self.client.list_objects(
-        Bucket=bucket_name,
-        Prefix=prefix
+            Bucket=bucket_name,
+            Prefix=prefix
         )
         return objs
 
     def get_keys(self, bucket_name=None, prefix=''):
-        if bucket_name == None:
+        if bucket_name is None:
             bucket_name = self.bucket_name
         objs = self.get_objects(self, bucket_name, prefix)
         return [obj['Key'] for obj in objs['Contents']]
 
     def get_from_s3(self, bucket_name=None, key=''):
-        if bucket_name == None:
+        if bucket_name is None:
             bucket_name = self.bucket_name
         buffer = BytesIO()
         self.resource.Object(bucket_name, key).download_fileobj(buffer)

@@ -1,11 +1,11 @@
-import pandas as pd
-import requests
 from bs4 import BeautifulSoup
 from slintel_bot import Slintel
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 from pyarrow import parquet as pq
 from s3 import S3
+import pandas as pd
+import requests
 import os
 
 
@@ -88,24 +88,23 @@ def format_website(website: str) -> str:
         website = website[:-1]
     return website
 
+
 s3_con = S3(None, 'ilia-ecole42-xavier')
 buffer = s3_con.get_from_s3(key='raw_data/startup.parquet')
 df_startup = pq.read_table(buffer).to_pandas()
 
-# df = pd.read_parquet('./startup.parquet')
 df_startup['name'] = df_startup['name'].str.lower()
 data = list()
-
-for i in range(len(df_startup['name'])):
-    name = df_startup['name'][i]
+for i, name in enumerate(df_startup['name']):
     website = format_website(df_startup['website'][i])
+    print(df_startup['website'][i], name)
     soup = requests.get(
         f'https://www.slintel.com/directory/company?searchTerm={name})'
     ).content
     soup = BeautifulSoup(soup, 'html.parser')
     stacks = get_stacks(soup, website)
     data.append([name, stacks])
-    if (i > 3):
+    if (i > 1500):
         break
 
 df = pd.DataFrame(
