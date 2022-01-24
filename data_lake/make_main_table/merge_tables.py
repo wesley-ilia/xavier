@@ -1,8 +1,7 @@
 import pandas as pd
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from dotenv import load_dotenv
 from os import getenv
-
 
 def convert_str_to_list(strin: str) -> list:
     strin = strin.replace('{', '')
@@ -11,7 +10,7 @@ def convert_str_to_list(strin: str) -> list:
     return strin.split(sep=',')
 
 
-load_dotenv(dotenv_path='../login.env')
+load_dotenv(dotenv_path='./login.env')
 host = getenv('DBHOST')
 user = getenv('DBUSER')
 passwd = getenv('DBPASS')
@@ -19,7 +18,7 @@ port = getenv('DBPORT')
 database = getenv('DBNAME')
 
 engine = create_engine(
-        url=f'postgresql://{user}:{passwd}@{host}:{port}/{database}')
+        url=f'postgresql://{user}:{passwd}@{host}:{port}/{database}', echo=False)
 
 data = dict()
 
@@ -61,18 +60,22 @@ for i, nome in enumerate(df_codesh['name']):
     if nome in data.keys():
         if 'mercado' not in data[nome].keys():
             data[nome]['mercado'] = []
+
         data[nome]['mercado'] = list(set(
-            data[nome]['mercado'] + [df_codesh['mercado'][i]]))
+            data[nome]['mercado'] + convert_str_to_list(
+                df_codesh['mercado'][i])))
+
         data[nome]['stacks'] = list(set(
             data[nome]['stacks'] + convert_str_to_list(
                 df_codesh['stacks'][i])))
+    
         data[nome]['website'] = df_codesh['website'][i]
         data[nome]['cidade'] = df_codesh['cidade'][i]
         data[nome]['estado'] = df_codesh['estado'][i]
         data[nome]['tamanho'] = df_codesh['tamanho'][i]
     else:
         data[nome] = {
-            'mercado':   [df_codesh['mercado'][i]],
+            'mercado':   convert_str_to_list(df_codesh['mercado'][i]),
             'stacks':   convert_str_to_list(df_codesh['stacks'][i]),
             'cidade':   df_codesh['cidade'][i],
             'estado':   df_codesh['estado'][i],
@@ -113,4 +116,10 @@ df = pd.DataFrame(real, columns=['nome','stacks',
                                  'cidade', 'estado', 'tamanho',
                                  'receita', 'mercado', 'momento', 'website'])
 
-df.to_sql("main", engine, if_exists='replace', index=False)
+print(df)
+# with engine.connect() as connection:
+#     result = connection.execute(text("DROP TABLE IF EXISTS main"))
+print('antes')
+
+df.to_sql("main2", engine, if_exists='replace', index=False)
+print('depois')
