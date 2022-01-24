@@ -1,7 +1,7 @@
 from selenium_bot import Codesh
 from beautiful_bot import get_perfil_infos, get_cidade_second_page
 import pandas as pd
-from s3 import S3
+from xavier_utils.connections.s3_connection import S3_conection
 
 BASE_URL = "https://coodesh.com/vagas"
 
@@ -44,8 +44,9 @@ df = pd.DataFrame(
 
 print(df)
 
-send = S3(df=df)
+send = S3_conection('ilia-ecole42-xavier')
 send.send_to_s3(
-        bucker_name='ilia-ecole42-xavier',
-        destination='raw_data/codesh.parquet'
+        df,
+        'ilia-ecole42-xavier',
+        'raw_data/codesh.parquet'
         )

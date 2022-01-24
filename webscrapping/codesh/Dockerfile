@@ -18,6 +18,6 @@ RUN chmod +x /usr/local/bin/aws_script.sh
 
 ENTRYPOINT ["aws_script.sh"]
 
-COPY ["main.py", "selenium_bot.py", "beautiful_bot.py", "s3.py", "/codesh/"]
+COPY ["main.py", "selenium_bot.py", "beautiful_bot.py", "/codesh/"]
 
 CMD ["python", "main.py"]
