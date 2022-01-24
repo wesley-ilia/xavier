@@ -9,12 +9,6 @@ import requests
 import os
 
 
-S3(df=None).download_from_s3(
-        bucket_name='ilia-ecole42-xavier',
-        name='startup'
-        )
-
-
 def get_links(soup: BeautifulSoup):
     box = soup.select_one('div[class="row show_intial_data_subcall"]')
     links = box.find_all('a')
@@ -97,12 +91,15 @@ df_startup['name'] = df_startup['name'].str.lower()
 data = list()
 for i, name in enumerate(df_startup['name']):
     website = format_website(df_startup['website'][i])
-    print(df_startup['website'][i], name)
+    print(name)
     soup = requests.get(
         f'https://www.slintel.com/directory/company?searchTerm={name})'
     ).content
     soup = BeautifulSoup(soup, 'html.parser')
-    stacks = get_stacks(soup, website)
+    try:
+        stacks = get_stacks(soup, website)
+    except BaseException:
+        continue
     data.append([name, stacks])
     if (i > 1500):
         break
@@ -114,7 +111,6 @@ df = pd.DataFrame(
             'stacks'
             ]
     )
-print(df)
 
 s3_con.send_to_s3(
         df,
