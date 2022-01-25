@@ -1,7 +1,8 @@
 import pandas as pd
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine
 from dotenv import load_dotenv
 from os import getenv
+import Levenshtein as lev
 
 def convert_str_to_list(strin: str) -> list:
     strin = strin.replace('{', '')
@@ -93,14 +94,14 @@ def if_not_exists(data: dict, text: str):
 
 def if_not_list_exists(data: dict, text: str):
     if text in data.keys():
-        back = ", ".join([i for i in data[text] if i])
+        back = ", ".join([i for i in data[text] if i and i != '-'])
     else:
         back = None
     return back
 
 real = list()
 
-for i, nome in enumerate(data):
+for nome in data:
     mercado = if_not_list_exists(data[nome], 'mercado')
     stacks = if_not_list_exists(data[nome], 'stacks')
     cidade = if_not_exists(data[nome], 'cidade')
@@ -112,14 +113,52 @@ for i, nome in enumerate(data):
     real.append([nome, stacks, cidade, estado,
                 tamanho, receita,  mercado, momento, website])
 
+def new_list(line, compare):
+    original = []
+    for i in range(len(line)):
+        if lev.ratio(line[i], compare) > 0.9:
+            original.append(line[i])
+            line[i] = compare
+            if (original != [] and (compare not in original or len(original) > 1)):
+                if compare in original:
+                    original.remove(compare)
+                print(original, compare)
+    return line
+
+def substitute_similar(df: pd.DataFrame, compare):
+    for i, line in enumerate(df):
+        line = line.split(', ')
+        
+        line = new_list(line, compare)
+
+        df[i] = ', '.join(line)
+
+def difflibfunction(df: pd.DataFrame):
+
+    palavras_unicas = ['node.js', 'react.js', 'next.js', 'vue.js', '.net',
+                'angular.js', 'vb.net', 'smart adserver',
+                'styled-components', 'design patterns']
+    for i, line in enumerate(df):
+        line = line.split(', ')
+        for stack in palavras_unicas:
+            line = new_list(line, stack)
+        df[i] = ', '.join(line)
+
+    # for i, line in enumerate(df):
+    #     line = line.split(', ')
+    #     for word in line:
+    #         if word not in palavras_unicas:
+    #             palavras_unicas.append(word)
+    #             substitute_similar(df, word)
+
+print(lev.ratio('react.js', 'node.js'))
+
 df = pd.DataFrame(real, columns=['nome','stacks',
                                  'cidade', 'estado', 'tamanho',
                                  'receita', 'mercado', 'momento', 'website'])
 
-print(df)
-# with engine.connect() as connection:
-#     result = connection.execute(text("DROP TABLE IF EXISTS main"))
-print('antes')
-
-df.to_sql("main2", engine, if_exists='replace', index=False)
-print('depois')
+print("antes da diff")
+difflibfunction(df['stacks'])
+print('start')
+df.to_sql("main4", engine, if_exists='replace', index=False)
+print('end')
