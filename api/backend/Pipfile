@@ -1,0 +1,28 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+mysql-connector-python = "*"
+fastapi = "*"
+pytest = "*"
+uvicorn = "*"
+pandas = "*"
+requests = "*"
+beautifulsoup4 = "*"
+selenium = "*"
+pyarrow = "*"
+boto3 = "*"
+sqlalchemy = "*"
+python-dotenv = "*"
+pymysql = "*"
+unidecode = "*"
+flake8 = "*"
+xavier-utils = "*"
+levenshtein = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"

@@ -9,11 +9,19 @@ import { GlobalStyle } from './themes'
 import { Appearance } from 'react-native';
 
 class App extends Component {
-  
-  state = {
-    theme: Appearance.getColorScheme(),
-    name: 'React'
-  };
+  constructor () {
+    super();
+    
+    this.state = {
+      theme: Appearance.getColorScheme(),
+      name: 'React',
+      width: window.innerWidth,
+    };
+  }
+
+  handleResize = () => {
+    this.setState({ width: window.innerWidth });
+  }
 
   Sol = () => {
     return (
@@ -56,9 +64,7 @@ class App extends Component {
   };
   
   render() {
-    const a = [1, 2, 3, 4];
-    a.splice(0, 2);
-    console.log(typeof(42))
+    window.addEventListener('resize', this.handleResize);
     return (
       <div>
       <ThemeProvider theme={{ mode: this.state.theme }}>

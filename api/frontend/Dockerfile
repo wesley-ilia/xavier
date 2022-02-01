@@ -1,21 +1,9 @@
-FROM node:lts-alpine3.15 as build-stage
+FROM node:lts-alpine3.15
 
-WORKDIR /usr/app
+WORKDIR /frontend/
 
-COPY . /usr/app
+COPY . /frontend/
 
-RUN npm install
+RUN apk add --upgrade make
 
-ENV PATH /usr/src/app/node_modules/.bin:$PATH
-
-RUN npm run build
-
-FROM nginx:alpine 
-
-WORKDIR /usr/share/nginx/html
-
-RUN rm -rf ./*
-
-COPY --from=build-stage /usr/app/build .
-
-ENTRYPOINT ["nginx", "-g", "daemon", "off"]
+ENTRYPOINT ["make"]

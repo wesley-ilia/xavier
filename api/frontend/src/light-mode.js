@@ -91,7 +91,7 @@ hr:not([size]) {
   height: 1px;
 }
 
-h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6, h7, .h7 {
+h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
   margin-top: 0;
   margin-bottom: 0.5rem;
   font-weight: 500;
@@ -143,10 +143,6 @@ h5, .h5 {
 }
 
 h6, .h6 {
-  font-size: 1rem;
-}
-
-h7, .h7 {
   font-size: 0.9rem;
 }
 

@@ -4,21 +4,21 @@ import shutil
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
-from Log import Log
 import pandas as pd
 import numpy as np
-import os
+from os import getenv, remove
 from unidecode import unidecode
-from sqlalchemy import create_engine, event
-from mysql import connector
+from sqlalchemy import create_engine
 import time
 from io import StringIO
 from utils import save_pdf
 
-todas_capitais = ["Rio Branco", "Maceió", "Macapá", "Manaus", "Salvador", "Fortaleza", "Brasília", "Vitória", "Goiânia", "São Luís", "Cuiabá", "Campo Grande", "Belo Horizonte", "Belém", "João Pessoa", "Curitiba", "Recife", "Teresina", "Rio de Janeiro", "Natal", "Porto Alegre", "Porto Velho", "Boa Vista", "Florianópolis", "São Paulo", "Aracaju", "Palmas"]
+# todas_capitais = ["Rio Branco", "Maceió", "Macapá", "Manaus", "Salvador", "Fortaleza", "Brasília", "Vitória", "Goiânia", "São Luís", "Cuiabá", "Campo Grande", "Belo Horizonte", "Belém", "João Pessoa", "Curitiba", "Recife", "Teresina", "Rio de Janeiro", "Natal", "Porto Alegre", "Porto Velho", "Boa Vista", "Florianópolis", "São Paulo", "Aracaju", "Palmas"]
+todas_capitais = ["rio branco", "maceio", "macapa", "manaus", "salvador", "fortaleza", "brasilia", "vitoria", "goiania", "sao luis", "cuiaba", "campo grande", "belo horizonte", "belem", "joao pessoa", "curitiba", "recife", "teresina", "rio de janeiro", "natal", "porto alegre", "porto velho", "boa vista", "florianopolis", "sao paulo", "aracaju", "palmas"]
 
 origins = [
     "http://localhost:3000",
+    "http://localhost:3001",
 ]
 
 load_dotenv(dotenv_path='login.env')
@@ -32,19 +32,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-log = Log()
-db = pd.read_sql_query("SELECT * FROM empresa_completa3 WHERE 1", log.con)
+host = getenv('DBHOST')
+user = getenv('DBUSER')
+passwd = getenv('DBPASS')
+port = getenv('DBPORT')
+database = getenv('DBNAME')
 
-host = os.getenv("DB_HOST")
-user = os.getenv("DB_USER")
-password = os.getenv("DB_PASSWD")
-sql = f'mysql+pymysql://{user}:{password}@{host}:3306/decasoft_xavier'
-engine = create_engine(sql, echo=False)
+engine = create_engine(f'postgresql://{user}:{passwd}\
+@{host}:{port}/{database}')
 
-@event.listens_for(engine, 'before_cursor_execute')
-def receive_before_cursor_execute(conn, cursor, statement, params, context, executemany):
-    if executemany:
-        cursor.fast_executemany = True
+db = pd.read_sql_table("main", engine)
 
 def agg(a):
     a = a.replace(np.nan, "")
@@ -53,7 +50,6 @@ def agg(a):
     s = [unidecode(i.strip().lower()) for i in ",".join(a).split(',') if i]
     ret = ", ".join(set(s))
     ret = ret.strip()
-
     return ret
 
 def initialize():
@@ -80,53 +76,6 @@ def initialize():
 
 initialize()
 """ DELETE FROM `empresa_merge_teste` WHERE `nome` like '%Cleimes%' or `nome` like '%JR%INFORMATICA%' """
- 
-def update_db_2(adicionar):
-    values = ""
-    query = "INSERT INTO empresa_merge_teste ("
-    for i, col in enumerate(db.columns):
-        if col != 'id':
-            query += col
-            values += '%s'
-            if i < len(db.columns) - 1 and db.columns[i + 1] != 'id':
-                query += ','
-                values += ','
-    query += f') values ({values})'
-
-    delete = "DELETE FROM `empresa_merge_teste` WHERE "
-
-    query_insert = 'INSERT INTO empresa_merge_teste (nome, estado, cidade, mercado, stacks) VALUES ("%s", "%s", "%s", "%s", "%s")'
-    update = []
-    insert = []
-    for i, el in enumerate(adicionar['nome']):
-        index = db.index[db['nome'] == el].tolist()
-        if index:
-            index = index[0]
-            if delete != "DELETE FROM `empresa_merge_teste` WHERE ":
-                delete += " or "
-            delete += f' `nome` like "%{el}%" '
-            update.append(db.iloc[index].tolist()[:-1])
-        else:
-            insert.append(adicionar.iloc[i][['nome', 'estado', 'cidade', 'mercado', 'stacks']].tolist())
-
-    print("iniciando")
-    log = Log()
-    if update:
-        log.cursor.execute(delete)
-        t2 = time.time()
-        total = t2-t0
-        print("delete = " + str(total))
-        log.cursor.executemany(query,update)
-        t3 = time.time()
-        total = t3-t2
-        print("update = " + str(total))
-    if insert:
-        log.cursor.executemany(query_insert,insert)
-        t4 = time.time()
-        total = t4-t3
-        print("insert = " + str(total))
-    if insert or update:
-        log.con.commit()
 
 def update_db(adicionar):
     t0 = time.time()
@@ -145,9 +94,9 @@ def update_db(adicionar):
     nome = cols.index('nome')
     cols = [cols[nome]] + cols[:nome] + cols[nome + 1:]
     adicionar = adicionar[cols]
-    adicionar.to_sql("empresa_merge_teste", engine, if_exists='replace', index=False)
-    with engine.connect() as con:
-        con.execute('ALTER TABLE `empresa_merge_teste` ADD PRIMARY KEY (id);')
+    adicionar.to_sql("main", engine, if_exists='replace', index=False)
+    """ with engine.connect() as con:
+        con.execute('ALTER TABLE `empresa_merge_teste` ADD PRIMARY KEY (id);') """
     t1 = time.time()
     total = t1-t0
     print("total time 2 = " + str(total))
@@ -169,12 +118,11 @@ def importFile (NomeArquivo):
         if col not in adicionar.columns:
             adicionar[col] = np.full(len(adicionar.index), np.nan)
 
-    adicionar['nome'] = adicionar['nome'].str.strip()
+    adicionar['nome'] = adicionar['nome'].str.strip().str.lower()
     aggregation_user = {'estado': 'first', 'cidade': 'first', 'mercado': agg, 'stacks': agg}
     
     t0 = time.time()
-    log = Log()
-    df = pd.read_sql_query("SELECT * FROM tb_usuario4 WHERE 1", log.con)
+    df = pd.read_sql_table("user", engine)
     adicionar = pd.concat([df, adicionar], axis=0, ignore_index=True)
     adicionar = adicionar.groupby(['nome'], as_index=False).aggregate(aggregation_user)
 
@@ -185,9 +133,9 @@ def importFile (NomeArquivo):
     nome = cols.index('nome')
     cols = [cols[nome]] + cols[:nome] + cols[nome + 1:]
     adicionar = adicionar[cols]
-    adicionar.to_sql("tb_usuario3", engine, if_exists='replace', index=False)
-    with engine.connect() as con:
-        con.execute('ALTER TABLE `tb_usuario3` ADD PRIMARY KEY (id);')
+    adicionar.to_sql("user", engine, if_exists='replace', index=False)
+    """ with engine.connect() as con:
+        con.execute('ALTER TABLE `user` ADD PRIMARY KEY (id);') """
     t1 = time.time()
     total = t1-t0
     print("total time 1 = " + str(total))
@@ -195,9 +143,21 @@ def importFile (NomeArquivo):
     global db
     db = update_db(adicionar)
     
-    os.remove(NomeArquivo)
+    remove(NomeArquivo)
     initialize()
     return True, erradas
+
+# @app.get('/api/get_env')
+# def get_env():
+# 	return {
+# 		'apiKey': getenv('APIKEY'),
+# 		'authDomain': getenv('AUTHDOMAIN'),
+# 		'projectId': getenv('PROJECTID'),
+# 		'storageBucket': getenv('STORAGEBUCKET'),
+# 		'messagingSenderId': getenv('MESSAGINGSENDERID'),
+# 		'appId': getenv('APPID'),
+# 		'measurementId': getenv('MEASUREMENTID')
+# 	}
 
 @app.post("/api/uploadfile")
 async def upload(file: UploadFile=File(...)):
@@ -208,10 +168,16 @@ async def upload(file: UploadFile=File(...)):
         erradas = ", ".join([str(i) for i in (erradas.index + 1)])
         if erradas:
             print(erradas)
-            return {"message" : "As linhas " + erradas + " são inválidas, as outras foram adicionadas com sucesso!!"}
+            return {"message" : "As linhas " + erradas + " são inválidas, as demais foram adicionadas com sucesso!!"}
         return {"message" : 'Cadastrados com sucesso'}
     else:
         return {"message" : "Coluna 'nome' está faltando"}
+
+@app.get("/api/download-user-table")
+def user_table():
+    df = pd.read_sql_table('user', engine)
+    df.to_csv('tabela_usuario.csv', sep=',', index=False)
+    return FileResponse('tabela_usuario.csv', filename='tabela_usuario.csv')
 
 @app.get("/dropdown")
 def dropdown():
@@ -221,14 +187,16 @@ def dropdown():
 def get_info(market: str, stack: str, state: str, capitais: str, colunas: str, 
              cidade: str = "", file_name: str='Untitled', extension: str = "csv"):
     
+    state = state.lower()
+
     if capitais == "sim":
         cidade = ""
     elif capitais == "nao":
         capitais_juntas = " ' and cidade!='".join(todas_capitais)
         cidade = "(cidade!='" + capitais_juntas + " ')"
     
-    stack = stack.replace("Cpp","C\+\+")
-    stack = stack.replace("Csharp","C#")
+    stack = stack.replace("cpp","c\+\+")
+    stack = stack.replace("csharp","c#")
 
     query = ""
     if not file_name:
@@ -236,7 +204,7 @@ def get_info(market: str, stack: str, state: str, capitais: str, colunas: str,
     file_name += '.' + extension
 
     if state and state != 'TODOS':
-        state_query = "(estado==' " + state.replace(',', "' or estado==' ") + "')"
+        state_query = "(estado=='" + state.replace(',', "' or estado=='") + "')"
         query += state_query
         if market:
             query += ' and '
@@ -301,7 +269,9 @@ def get_info(market: str, stack: str, state: str, capitais: str, colunas: str,
 
 @app.get("/cidades")
 def get_cidades(state: str):
-    state_query = "(estado==' " + state.replace(',', "' or estado==' ") + "')"
+    state = state.lower()
+
+    state_query = "(estado=='" + state.replace(',', "' or estado=='") + "')"
 
     df = db.query(state_query)
     cididades = list(set(df['cidade'].to_list()))
@@ -313,16 +283,18 @@ def get_preview(state: str, cidade: str, market:str, stack: str, capitais: str):
     if capitais == "sim":
         cidade = ""
     elif capitais == "nao":
-        capitais_juntas = " ' and cidade!='".join(todas_capitais)
-        cidade = "(cidade!='" + capitais_juntas + " ')"
+        capitais_juntas = "' and cidade!='".join(todas_capitais)
+        cidade = "(cidade!='" + capitais_juntas + "')"
+
+    state = state.lower()
 
     query = ""
 
-    stack = stack.replace("Cpp","C\+\+")
-    stack = stack.replace("Csharp","C#")
+    stack = stack.replace("cpp","c\+\+")
+    stack = stack.replace("csharp","c#")
 
     if state and state != 'TODOS':
-        state_query = "(estado==' " + state.replace(',', "' or estado==' ") + "')"
+        state_query = "(estado=='" + state.replace(',', "' or estado=='") + "')"
         query += state_query
 
         if market:

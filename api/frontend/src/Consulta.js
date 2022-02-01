@@ -10,13 +10,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { getCidades } from './Utils';
 import { darkSelect, lightSelect, darkGeneric, lightGeneric } from './themes';
 import { Navigate } from "react-router-dom";
-
+import { analytics } from '.';
+import { logEvent } from 'firebase/analytics';
 
 var i;
 
 class Consulta extends React.Component {
   constructor() {
-    console.log(localStorage.getItem('theme'));
     super();
     this.estadosExecute = [];
     this.mercadosExecute = [];
@@ -26,17 +26,28 @@ class Consulta extends React.Component {
     this.capitais = 'sim';
     this.state = {
       redirect: '',
-      cardTheme: "card bg-light mb-3",
       preview: "0",
       cidades: [],
       showCidades: false,
     }
     this.fileName = "Untitled";
-    this.extension = "csv";
+    this.extension = "xlsx";
     this.dropdown = new Dropdown();
   }
 
   download = async () => {
+    /* log event to firebase */
+    logEvent(analytics, 'download', {
+      estados: this.estadosExecute,
+      capitais: this.capitais,
+      cidades: this.cidadesExecute,
+      mercados: this.mercadosExecute,
+      stacks: this.stacksExecute,
+      preview: this.state.preview,
+      extension: this.extension,
+      colunas: this.colunasExecute,
+    });
+
     const req_options = {
       method: "GET",
     }
@@ -88,6 +99,12 @@ class Consulta extends React.Component {
   };
 
   handleChangeEstados = e => {
+    // logEvent(analytics, 'goal_completion', { name: 'lever_puzzle'})
+    /* log event to firebase */
+    logEvent(analytics, 'select_content', {
+      content_type: 'dropdown_selection',
+      content_id: 'select_estados',
+    });
     var values = [];
     for (i = 0; i < e.length; i++)
       values.push(e[i].value);
@@ -106,6 +123,11 @@ class Consulta extends React.Component {
   }
 
   handleChangeMercados = e => {
+    /* log event to firebase */
+    logEvent(analytics, 'select_content', {
+      content_type: 'dropdown_selection',
+      content_id: 'select_mercados',
+    });
     var values = [];
     for (i = 0; i < e.length; i++)
       values.push(e[i].value);
@@ -122,9 +144,14 @@ class Consulta extends React.Component {
   }
 
   handleChangeStacks = e => {
+    /* log event to firebase */
+    logEvent(analytics, 'select_content', {
+      content_type: 'dropdown_selection',
+      content_id: 'select_stacks',
+    });
     var values = [];
     for (i = 0; i < e.length; i++)
-      values.push(e[i].value.replace("C++", "Cpp").replace("C#", "Csharp"));
+      values.push(e[i].value.replace("c++", "cpp").replace("c#", "csharp"));
     this.stacksExecute = [...values];
     this.getPreview();
   }
@@ -172,6 +199,7 @@ class Consulta extends React.Component {
               <Select
               styles={ this.props.theme === 'light' ? lightSelect: darkSelect }
               classNamePrefix='estados'
+              id="estados"
               name="estados"
               inputId="estados"
               options={this.dropdown.estados}
@@ -185,19 +213,20 @@ class Consulta extends React.Component {
           <label htmlFor="cidades"><h2>Cidades</h2></label>
           <Row>
             <Col>
+            {/* btn-outline-primary */}
               <input type="radio" className="btn-check" id="btnradio1" value="sim" name="capitais" defaultChecked
               onChange={ this.handleCidadesRadio }></input>
-              <label className="btn btn-outline-primary" htmlFor="btnradio1"><h7>Com Capitais</h7></label>
+              <label className={this.props.theme === 'light' ? 'btn btn-outline-primary' : 'btn btn-outline-info'} htmlFor="btnradio1"><h6>Com Capitais</h6></label>
             </Col>
             <Col>
               <input type="radio" className="btn-check" id="btnradio2" value="nao" name="capitais"
               onChange={ this.handleCidadesRadio }></input>
-              <label className="btn btn-outline-primary" htmlFor="btnradio2"><h7>Sem Capitais</h7></label>
+              <label className={this.props.theme === 'light' ? 'btn btn-outline-primary' : 'btn btn-outline-info'} htmlFor="btnradio2"><h6>Sem Capitais</h6></label>
             </Col>
             <Col>
               <input type="radio" className="btn-check" id="btnradio3" value="esp" name="capitais"
               onChange={ this.handleCidadesRadio }></input>
-              <label className="btn btn-outline-primary" htmlFor="btnradio3"><h7>Específicas</h7></label>
+              <label className={this.props.theme === 'light' ? 'btn btn-outline-primary' : 'btn btn-outline-info'} htmlFor="btnradio3"><h6>Específicas</h6></label>
             </Col>
           </Row>
           { this.state.showCidades && <Row style={{paddingTop: '10px'}}>
@@ -293,13 +322,13 @@ class Consulta extends React.Component {
                 name='fileType'
                 inputId='fileType'
                 options={[
-                  {label: ".csv", value: "csv"},
-                  {label: ".xlsx", value: "xlsx"},
-                  {label: ".pdf", value: "pdf"},
+                  { label: "Excel", value: "xlsx" },
+                  { label: "CSV", value: "csv" },
+                  { label: "PDF", value: "pdf" },
                 ]}
-                defaultValue={{ label: ".csv", value: "csv" }}
+                defaultValue={{ label: "Excel", value: "xlsx" }}
                 onChange={ this.handleChangeExtension }
-                style={{width: "50%"}}
+                style={{ width: "50%" }}
                 />
               </form>
             </Col>
@@ -307,6 +336,7 @@ class Consulta extends React.Component {
           <Row>
             <Col style={{marginTop:"10px"}}>
               <Button
+              className={this.props.theme === 'light' ? 'btn-primary' : 'btn-info'}
               data-testid="download"
               variant="primary"
               style={{marginLeft: "0px"}}
@@ -318,6 +348,7 @@ class Consulta extends React.Component {
           <Row>
             <Col style ={{ paddingTop: "10px" }}>
               <Button
+              className={this.props.theme === 'light' ? 'btn-primary' : 'btn-info'}
               data-testid="upload"
               variant="primary"
               onClick={ this.upload }>

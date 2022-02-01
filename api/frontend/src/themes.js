@@ -3,8 +3,8 @@ import { createGlobalStyle } from 'styled-components';
 import { lightMode } from './light-mode.js';
 import { darkMode } from './dark-mode.js';
 
-const lightColor = "#fff"
-const darkColor = "#303030"
+export var lightColor = "#fff"
+export var darkColor = "#303030"
 
 export var GlobalStyle = createGlobalStyle`
   ${props => props.theme.mode === 'light' ? lightMode : darkMode};
@@ -80,12 +80,14 @@ export var darkSelect = {
   
   export var lightGeneric = {
 	background: lightColor,
+	backgroundColor: lightColor,
 	color: darkColor,
 	border: 'solid 1px lightgrey'
   }
   
   export var darkGeneric = {
 	background: darkColor,
+	backgroundColor: darkColor,
 	color: lightColor,
 	border: 'solid 1px white'
   }

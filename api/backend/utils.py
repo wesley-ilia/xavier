@@ -27,9 +27,9 @@ def save_pdf (df: pd.DataFrame, file_name: str):
     pdf.add_page()
     
     page_width = pdf.w - 2 * pdf.l_margin
-    
+
     pdf.set_font('Times','B',14.0) 
-    pdf.image("../frontend/public/Xavier_1_1.png", x = 80, y = 4, w = 15, h = 15, type = '', link = '')
+    # pdf.image("Xavier_1_1.png", x = 80, y = 4, w = 15, h = 15, type = '', link = '')
     pdf.cell(page_width, 0.0, 'Xavier - Ília', align='C')
     pdf.ln(10)
 
@@ -42,11 +42,12 @@ def save_pdf (df: pd.DataFrame, file_name: str):
     th = pdf.font_size
     
     for row in df.values:
-        cidade_estado = row[1] + " - " + row[2]
-        pdf.multi_cell(col_width*4, 5, "Empresa : "+row[0], border=1)
-        pdf.multi_cell(col_width*4, 5, "Localidade : "+cidade_estado, border=1)
-        pdf.multi_cell(col_width*4, 5, "Mercado : "+row[3], border=1)
-        pdf.multi_cell(col_width*4, 5, "Stacks : "+row[4], border=1)
+        for i, col in enumerate(df.columns):
+            pdf.multi_cell(col_width*4, 5, col + ': ' + row[i], border=1)
+        # cidade_estado = row[1] + " - " + row[2]
+        # pdf.multi_cell(col_width*4, 5, "Localidade : " + cidade_estado, border=1)
+        # pdf.multi_cell(col_width*4, 5, "Mercado : " + row[3], border=1)
+        # pdf.multi_cell(col_width*4, 5, "Stacks : " + row[4], border=1)
         pdf.ln(th)
     
     pdf.ln(12)
@@ -54,7 +55,7 @@ def save_pdf (df: pd.DataFrame, file_name: str):
     pdf.set_font('Times','',10.0)
     pdf.cell(page_width, 0.0, '- end of report -', align='C')
     pdf.output(name = file_name, dest = '')
-    #pdf.output(dest='S').encode('latin-1')
+    # pdf.output(dest='S').encode('latin-1')
     # pdf.output((dest='S').encode('latin-1'), mimetype='application/pdf', headers={'Content-Disposition':f'attachment;filename={file_name}.pdf'})
     
 
