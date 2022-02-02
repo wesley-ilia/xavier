@@ -149,8 +149,8 @@ def build_query(state: str, cidade: str, market:str, stack: str, capitais: str):
     if capitais == "sim":
         cidade = ""
     elif capitais == "nao":
-        capitais_juntas = " ' and cidade!='".join(todas_capitais)
-        cidade = "(cidade!='" + capitais_juntas + " ')"
+        capitais_juntas = "' and cidade!='".join(todas_capitais)
+        cidade = "(cidade!='" + capitais_juntas + "')"
     
     stack = stack.replace("cpp","c\+\+")
     stack = stack.replace("csharp","c#")
@@ -182,7 +182,6 @@ def build_query(state: str, cidade: str, market:str, stack: str, capitais: str):
                 query += cidade
             else:
                 cidade_query = "(cidade=='" + cidade.replace(',', "' or cidade=='") + "')"
-                print(cidade_query)
                 query += cidade_query
     elif market:
         query += '('
@@ -201,6 +200,10 @@ def build_query(state: str, cidade: str, market:str, stack: str, capitais: str):
                 if i < len(stacks) - 1:
                     query += ' or '
             query += ')'
+        if cidade:
+            if capitais == 'nao':
+                query += ' and '
+                query += cidade
 
     elif stack:
         stacks = stack.split(',')
@@ -208,6 +211,10 @@ def build_query(state: str, cidade: str, market:str, stack: str, capitais: str):
             query += f'stacks.str.contains("{stacks[i]}", na=False).values'
             if i < len(stacks) - 1:
                 query += ' or '
+        if cidade:
+            if capitais == 'nao':
+                query += ' and '
+                query += cidade
     else:
         return '0'
     
