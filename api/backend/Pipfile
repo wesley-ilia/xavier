@@ -21,6 +21,9 @@ unidecode = "*"
 flake8 = "*"
 xavier-utils = "*"
 levenshtein = "*"
+fpdf = "*"
+psycopg2-binary = "*"
+python-multipart = "*"
 
 [dev-packages]
 
