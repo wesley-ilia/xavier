@@ -12,6 +12,7 @@ import { darkSelect, lightSelect, darkGeneric, lightGeneric } from './themes';
 import { Navigate } from "react-router-dom";
 import { analytics } from '.';
 import { logEvent } from 'firebase/analytics';
+import Card from 'react-bootstrap/Card'
 
 var i;
 
@@ -47,6 +48,7 @@ class Consulta extends React.Component {
       extension: this.extension,
       colunas: this.colunasExecute,
     });
+
 
     const req_options = {
       method: "GET",
@@ -190,7 +192,8 @@ class Consulta extends React.Component {
       return <Navigate to={this.state.redirect} />
     }
     return (
-      <div className="Consulta">
+      <Card style={{this.props.style}}>
+        <Card.Body>
         <Container fluid style={{height: "inherit"}}>
           <Row>
             <Col>
@@ -275,89 +278,9 @@ class Consulta extends React.Component {
             </form>
             </Col>
           </Row>
-          <Row>
-            <Col>
-            <form data-testid="form-colunas">
-              <label htmlFor="colunas"><h2>Colunas</h2></label>
-              <Select
-              styles={ this.props.theme === 'light' ? lightSelect: darkSelect }
-              defaultValue={[
-                { label: "nome" , value: "nome" },
-                { label: "estado", value: "estado" },
-                { label: "cidade", value: "cidade" },
-                { label: "mercado", value: "mercado" },
-                { label: "stacks", value: "stacks" }
-              ]}
-              classNamePrefix='colunas'
-              name="colunas"
-              inputId="colunas"
-              options={ this.dropdown.colunas }
-              isMulti
-              onChange={ this.handleChangeColunas }
-              />
-            </form>
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              <div id="preview" style={{marginTop: "10px", marginBottom: "10px"}}>
-                <label htmlFor="previer"><h5>Preview: { this.state.preview } </h5></label>
-              </div>
-            </Col>
-          </Row>
-          <Row>
-            <Col>Nome do arquivo</Col>
-          </Row>
-          <Row>
-            <Col xs lg="7" >
-              <Form.Control name="teste" placeholder="Nome do arquivo"
-              onChange={ this.handleChangeFile } style={ this.props.theme === 'light' ? lightGeneric : darkGeneric }/>
-            </Col>
-            <Col xs lg="4">
-            <form data-testid='file-Type'>
-              <label hidden data-testid='label-type' htmlFor='fileType'>type</label>
-                <Select
-                styles={ this.props.theme === 'light' ? lightSelect: darkSelect }
-                classNamePrefix='fileType'
-                name='fileType'
-                inputId='fileType'
-                options={[
-                  { label: "Excel", value: "xlsx" },
-                  { label: "CSV", value: "csv" },
-                  { label: "PDF", value: "pdf" },
-                ]}
-                defaultValue={{ label: "Excel", value: "xlsx" }}
-                onChange={ this.handleChangeExtension }
-                style={{ width: "50%" }}
-                />
-              </form>
-            </Col>
-          </Row>
-          <Row>
-            <Col style={{marginTop:"10px"}}>
-              <Button
-              className={this.props.theme === 'light' ? 'btn-primary' : 'btn-info'}
-              data-testid="download"
-              variant="primary"
-              style={{marginLeft: "0px"}}
-              onClick={ this.download }>
-                Download
-              </Button>
-            </Col>
-          </Row>
-          <Row>
-            <Col style ={{ paddingTop: "10px" }}>
-              <Button
-              className={this.props.theme === 'light' ? 'btn-primary' : 'btn-info'}
-              data-testid="upload"
-              variant="primary"
-              onClick={ this.upload }>
-                Upload...
-              </Button>
-            </Col>
-          </Row>
-        </Container>
-      </div>
+          </Container>
+        </Card.Body>
+      </Card>
     );
   }
 }
