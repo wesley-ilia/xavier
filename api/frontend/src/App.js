@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Figure from "react-bootstrap/Figure";
 import Consulta from "./Consulta";
+import { Appearance } from "react-native";
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
@@ -51,7 +52,7 @@ class App extends Component {
     super();
 
     this.state = {
-      theme: "light",
+      theme: Appearance.getColorScheme(),
     };
   }
 
