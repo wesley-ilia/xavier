@@ -43,15 +43,15 @@ export var darkMode = `
   --bs-black-rgb: 0, 0, 0;
   --bs-body-color-rgb: 255, 255, 255;
   --bs-body-bg-rgb: 34, 34, 34;
-  --bs-font-sans-serif: Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+  --bs-font-sans-serif: Roboto, Lato, -apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   --bs-font-monospace: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
   --bs-body-font-family: var(--bs-font-sans-serif);
   --bs-body-font-size: 1rem;
   --bs-body-font-weight: 400;
   --bs-body-line-height: 1.5;
-  --bs-body-color: #fff;
-  --bs-body-bg: #222;
+  --bs-body-color: #FFF;
+  --bs-body-bg: #121212;
 }
 *,
 *::before,
@@ -87,61 +87,6 @@ body {
   
   hr:not([size]) {
 	height: 1px;
-  }
-  
-  h1, .h1, h2, .h2, h3, .h3, h4, .h4, h5, .h5, h6, .h6 {
-	margin-top: 0;
-	margin-bottom: 0.5rem;
-	font-weight: 500;
-	line-height: 1.2;
-  }
-  
-  h1, .h1 {
-	font-size: calc(1.425rem + 2.1vw);
-  }
-  
-  @media (min-width: 1200px) {
-	h1, .h1 {
-	  font-size: 3rem;
-	}
-  }
-  
-  h2, .h2 {
-	font-size: calc(1.375rem + 1.5vw);
-  }
-  
-  @media (min-width: 1200px) {
-	h2, .h2 {
-	  font-size: 2.5rem;
-	}
-  }
-  
-  h3, .h3 {
-	font-size: calc(1.325rem + 0.9vw);
-  }
-  
-  @media (min-width: 1200px) {
-	h3, .h3 {
-	  font-size: 2rem;
-	}
-  }
-  
-  h4, .h4 {
-	font-size: calc(1.275rem + 0.3vw);
-  }
-  
-  @media (min-width: 1200px) {
-	h4, .h4 {
-	  font-size: 1.5rem;
-	}
-  }
-  
-  h5, .h5 {
-	font-size: 1.25rem;
-  }
-  
-  h6, .h6 {
-	font-size: 0.9rem;
   }
   
   p {
@@ -313,17 +258,6 @@ body {
   th {
 	text-align: inherit;
 	text-align: -webkit-match-parent;
-  }
-  
-  thead,
-  tbody,
-  tfoot,
-  tr,
-  td,
-  th {
-	border-color: inherit;
-	border-style: solid;
-	border-width: 0;
   }
   
   label {
@@ -584,7 +518,7 @@ body {
 	flex-direction: column;
 	min-width: 0;
 	word-wrap: break-word;
-	background-color: #303030;
+	background-color: #202020;
 	background-clip: border-box;
 	border: 1px solid rgba(0, 0, 0, 0.125);
 	border-radius: 0.25rem;
@@ -2473,5 +2407,4 @@ label {
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
   }
-`
-;
+`;

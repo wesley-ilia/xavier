@@ -1,0 +1,44 @@
+.sections {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.upload-sections {
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+h3,
+.h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+h3,
+.h3 {
+  font-size: calc(1.325rem + 0.9vw);
+}
+
+@media (min-width: 1200px) {
+  h3,
+  .h3 {
+    font-size: 2rem;
+  }
+}
+
+thead,
+tbody,
+tfoot,
+tr,
+td,
+th {
+  border-color: inherit;
+  border-style: solid;
+  border-width: 0;
+}
+
+tbody {
+  font-size: 16px;
+}
