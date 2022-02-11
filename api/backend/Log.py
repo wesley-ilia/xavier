@@ -21,9 +21,9 @@ class Log():
             sys.exit(os.EX_IOERR)
         self.cursor = self.con.cursor()
 
-    def save_to_csv(self, query, con, file):
+    def save_to_parquet(self, query, con, file):
         results = pandas.read_sql_query(query, con)
-        results.to_csv(file, index=False)
+        results.to_parquet(file, index=False)
         """  except BaseException:
             print("Informações da query erradas")
             sys.exit(os.EX_IOERR) """

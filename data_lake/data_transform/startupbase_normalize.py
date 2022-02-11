@@ -2,9 +2,9 @@ import pandas as pd
 from unidecode import unidecode
 from sqlalchemy import create_engine
 from os import getenv
-from dotenv import load_dotenv
 
-df = pd.read_parquet('./raw_data/startup.parquet')
+df = pd.read_parquet('./raw_data/startupbase.parquet')
+df.to_csv("./startz.csv", index=False)
 
 
 def normalize(column_name: str, df: pd.DataFrame):
@@ -42,8 +42,8 @@ for i in range(len(df['name'])):
         df['cidade'][i] = unidecode(ci_es[0])
 
 df = df.drop(['cidade_estado', 'redes'], axis=1)
+print(df)
 
-load_dotenv('login.env')
 host = getenv('DBHOST')
 user = getenv('DBUSER')
 passwd = getenv('DBPASS')
@@ -52,5 +52,5 @@ database = getenv('DBNAME')
 
 engine = create_engine(f'postgresql://{user}:{passwd}\
 @{host}:{port}/{database}')
-
-df.to_sql("startupbase", engine, if_exists='replace', index=False)
+df.to_csv("./start.csv", index=False)
+df.to_parquet("./clean_data/startupbase.parquet", index=False)

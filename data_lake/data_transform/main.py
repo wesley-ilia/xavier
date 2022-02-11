@@ -21,7 +21,8 @@ engine = create_engine(
 
 data = dict()
 
-df_startup = pd.read_sql(sql='startupbase', con=engine)
+# df_startup = pd.read_sql(sql='startupbase', con=engine)
+df_startup = pd.read_parquet('./clean_data/startupbase.parquet')
 
 for i, nome in enumerate(df_startup['name']):
     data[nome] = {
@@ -35,47 +36,44 @@ for i, nome in enumerate(df_startup['name']):
             'momento': df_startup['momento'][i]
             }
 
-df_slintel = pd.read_sql(sql='slintel_test', con=engine)
-
+df_slintel = pd.read_parquet('./clean_data/slintel.parquet')
 
 for i, nome in enumerate(df_slintel['name']):
-    data[nome]['stacks'] = convert_str_to_list(df_slintel['stacks'][i])
+    if nome in data.keys():
+        data[nome]['stacks'] = df_slintel['stacks'][i]
 
-df_thor = pd.read_sql(sql='programathor', con=engine)
+df_thor = pd.read_parquet('./clean_data/programathor.parquet')
 
 for i, nome in enumerate(df_thor['name']):
-    if nome in data.keys():
+    if nome in data.keys() and 'stacks' in data.keys():
         data[nome]['stacks'] = \
             list(set(data[nome]['stacks'] +
-                 convert_str_to_list(df_thor['stacks'][i])))
+                df_thor['stacks'][i]))
     else:
         data[nome] = dict()
-        data[nome]['stacks'] = list(set(convert_str_to_list(
-            df_thor['stacks'][i])))
+        data[nome]['stacks'] = list(set(
+            df_thor['stacks'][i]))
 
-df_codesh = pd.read_sql(sql='codesh', con=engine)
-
+# df_codesh = pd.read_sql(sql='codesh', con=engine)
+df_codesh = pd.read_parquet('./clean_data/codesh.parquet')
 for i, nome in enumerate(df_codesh['name']):
     if nome in data.keys():
         if 'mercado' not in data[nome].keys():
-            data[nome]['mercado'] = []
+            data[nome]['mercado'] = list()
 
         data[nome]['mercado'] = list(set(
-            data[nome]['mercado'] + convert_str_to_list(
-                df_codesh['mercado'][i])))
-
-        data[nome]['stacks'] = list(set(
-            data[nome]['stacks'] + convert_str_to_list(
-                df_codesh['stacks'][i])))
-    
+            data[nome]['mercado'] + 
+                list(df_codesh['mercado'][i])))
+        if 'stacks' in data[nome]:
+            data[nome]['stacks'] = set(data[nome]['stacks'] + list(df_codesh['stacks'][i]))
         data[nome]['website'] = df_codesh['website'][i]
         data[nome]['cidade'] = df_codesh['cidade'][i]
         data[nome]['estado'] = df_codesh['estado'][i]
         data[nome]['tamanho'] = df_codesh['tamanho'][i]
     else:
         data[nome] = {
-            'mercado':   convert_str_to_list(df_codesh['mercado'][i]),
-            'stacks':   convert_str_to_list(df_codesh['stacks'][i]),
+            'mercado':   df_codesh['mercado'][i],
+            'stacks':   df_codesh['stacks'][i],
             'cidade':   df_codesh['cidade'][i],
             'estado':   df_codesh['estado'][i],
             'tamanho':   df_codesh['tamanho'][i],
@@ -120,15 +118,12 @@ def new_list(line, compare):
             if (original != [] and (compare not in original or len(original) > 1)):
                 if compare in original:
                     original.remove(compare)
-                print(original, compare)
     return line
 
 def substitute_similar(df: pd.DataFrame, compare):
     for i, line in enumerate(df):
         line = line.split(', ')
-        
         line = new_list(line, compare)
-
         df[i] = ', '.join(line)
 
 def difflibfunction(df: pd.DataFrame):
@@ -137,22 +132,14 @@ def difflibfunction(df: pd.DataFrame):
                 'angular.js', 'vb.net', 'smart adserver',
                 'styled-components', 'design patterns']
     for i, line in enumerate(df):
-        line = line.split(', ')
-        for stack in palavras_unicas:
-            line = new_list(line, stack)
-        df[i] = ', '.join(line)
-
-    # for i, line in enumerate(df):
-    #     line = line.split(', ')
-    #     for word in line:
-    #         if word not in palavras_unicas:
-    #             palavras_unicas.append(word)
-    #             substitute_similar(df, word)
+        if line is not None:
+            line = line.split(', ')
+            for stack in palavras_unicas:
+                line = new_list(line, stack)
+            df[i] = ', '.join(line)
 
 df = pd.DataFrame(real, columns=['nome','stacks',
                                  'cidade', 'estado', 'tamanho',
                                  'receita', 'mercado', 'momento', 'website'])
-
 difflibfunction(df['stacks'])
-df.to_csv("main.csv", index=False)
 df.to_sql("main", engine, if_exists='replace', index=False)

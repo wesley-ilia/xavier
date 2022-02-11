@@ -1,7 +1,7 @@
+from operator import index
 import pandas as pd
 from sqlalchemy import create_engine
 from collections import Counter
-from dotenv import load_dotenv
 import os
 
 
@@ -31,7 +31,6 @@ def merge_duplicates(array: pd):
     return new_list
 
 
-load_dotenv('../../login.env')
 host = os.getenv('DBHOST')
 user = os.getenv('DBUSER')
 passwd = os.getenv('DBPASS')
@@ -59,8 +58,7 @@ for i, name in enumerate(to_merge):
     df = df.loc[df['name'] != name]
     df2 = pd.DataFrame(
         [[name, array]], columns=['name', 'stacks'])
-    df = df.append(df2)
+    df = pd.concat((df, df2), axis=0)
 
 df = df.reset_index(drop=True)
-
-df.to_sql('programathor', engine, if_exists='replace', index=False)
+df.to_parquet("./clean_data/programathor.parquet", index=False)

@@ -247,7 +247,7 @@ async def upload(file: UploadFile=File(...)):
 @app.get("/api/download-user-table")
 def user_table():
     df = pd.read_sql_table('user', engine)
-    df.to_csv('tabela_usuario.csv', sep=',', index=False)
+    df.to_parquet('tabela_usuario.csv', sep=',', index=False)
     return FileResponse('tabela_usuario.csv', filename='tabela_usuario.csv')
 
 @app.get("/dropdown")
@@ -272,7 +272,7 @@ def get_info(market: str, stack: str, state: str, capitais: str, colunas: str,
         colunas = colunas.split(',')
         df = df[colunas]
     if extension == 'csv':
-        df.to_csv(file_name, sep=',', index=False)
+        df.to_parquet(file_name, sep=',', index=False)
     elif extension == 'xlsx':
         df.to_excel(file_name, index=False)
     elif extension == 'pdf':

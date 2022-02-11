@@ -1,6 +1,5 @@
 import pandas as pd
 from sqlalchemy import create_engine
-from dotenv import load_dotenv
 from unidecode import unidecode
 import os
 
@@ -69,7 +68,6 @@ for i, contato in enumerate(df['contato']):
     else:
         df['estado'][i] = contato
 
-load_dotenv('./login.env')
 host = os.getenv('DBHOST')
 user = os.getenv('DBUSER')
 passwd = os.getenv('DBPASS')
@@ -78,5 +76,4 @@ database = os.getenv('DBNAME')
 
 engine = create_engine(f'postgresql://{user}:{passwd}\
 @{host}:{port}/{database}')
-
-df.to_sql("codesh", engine, if_exists='replace', index=False)
+df.to_parquet("./clean_data/codesh.parquet", index=False)
