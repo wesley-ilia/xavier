@@ -2,7 +2,12 @@ import pandas as pd
 from sqlalchemy import create_engine
 import Levenshtein as lev
 from const import *
+import numpy as np
 
+def convert_list(lst) -> list:
+    if type(lst) == str:
+        return convert_str_to_list(lst)
+    return list(lst)
 
 def convert_str_to_list(strin: str) -> list:
     strin = strin.replace('{', '')
@@ -70,12 +75,13 @@ for i, nome in enumerate(df_thor['name']):
     if nome in data.keys() and 'stacks' in data.keys():
         data[nome]['stacks'] = \
             list(set(data[nome]['stacks'] +
-                df_thor['stacks'][i]))
+                convert_list(df_thor['stacks'][i])))
     else:
         data[nome] = dict()
         data[nome]['stacks'] = list(set(
-            df_thor['stacks'][i]))
+            convert_list(df_thor['stacks'][i])))
 
+teste = []
 df_codesh = pd.read_parquet('./clean_data/codesh.parquet')
 for i, nome in enumerate(df_codesh['name']):
     if nome in data.keys():
@@ -84,27 +90,24 @@ for i, nome in enumerate(df_codesh['name']):
 
         data[nome]['mercado'] = list(set(
             data[nome]['mercado'] + 
-                list(df_codesh['mercado'][i])))
+                convert_list(df_codesh['mercado'][i])))
         if 'stacks' in data[nome]:
-            data[nome]['stacks'] = set(data[nome]['stacks'] + list(df_codesh['stacks'][i]))
+            data[nome]['stacks'] = set(data[nome]['stacks'] + convert_list(df_codesh['stacks'][i]))
         data[nome]['website'] = df_codesh['website'][i]
         data[nome]['cidade'] = df_codesh['cidade'][i]
         data[nome]['estado'] = df_codesh['estado'][i]
         data[nome]['tamanho'] = df_codesh['tamanho'][i]
     else:
         data[nome] = {
-            'mercado':   df_codesh['mercado'][i],
-            'stacks':   df_codesh['stacks'][i],
-            'cidade':   df_codesh['cidade'][i],
-            'estado':   df_codesh['estado'][i],
-            'tamanho':   df_codesh['tamanho'][i],
-            'website':   df_codesh['website'][i]
+            'mercado':   convert_list(df_codesh['mercado'][i]),
+            'stacks':   convert_list(df_codesh['stacks'][i]),
+            'cidade':   convert_list(df_codesh['cidade'][i]),
+            'estado':   convert_list(df_codesh['estado'][i]),
+            'tamanho':   convert_list(df_codesh['tamanho'][i]),
+            'website':   convert_list(df_codesh['website'][i])
         }
 
 df_user = pd.read_sql(sql='user', con=engine)
-
-print(df_user['stacks'])
-print(df_user['mercado'])
 
 for i, nome in enumerate(df_user['nome']):
     if nome in data.keys():
@@ -124,7 +127,6 @@ for i, nome in enumerate(df_user['nome']):
             'cidade':   df_user['cidade'][i],
             'estado':   df_user['estado'][i],
         }
-        print(data[nome]['stacks'])
 
 def if_not_exists(data: dict, text: str):
     if text in data.keys():

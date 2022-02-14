@@ -1,7 +1,8 @@
 import pandas as pd
 from unidecode import unidecode
+import os
 
-df = pd.read_parquet('./raw_data/startupbase.parquet')
+df = pd.read_parquet('./raw_data/startup.parquet')
 
 def normalize(column_name: str, df: pd.DataFrame):
     df[column_name] = df[column_name].str.lower().str.strip()
@@ -38,5 +39,9 @@ for i in range(len(df['name'])):
         df['cidade'][i] = unidecode(ci_es[0])
 
 df = df.drop(['cidade_estado', 'redes'], axis=1)
+
+path = './clean_data'
+if os.path.exists(path) is False:
+    os.makedirs(path)
 
 df.to_parquet("./clean_data/startupbase.parquet", index=False)

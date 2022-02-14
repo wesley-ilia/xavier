@@ -50,7 +50,7 @@ database = getenv('DBNAME')
 engine = create_engine(f'postgresql://{user}:{passwd}\
 @{host}:{port}/{database}')
 
-db = pd.read_sql_table("backup", engine)
+db = pd.read_sql_table("main", engine)
 
 
 def agg(a):
@@ -91,8 +91,6 @@ def initialize():
 
 
 initialize()
-""" DELETE FROM `empresa_merge_teste` WHERE `nome` like '%Cleimes%' or `nome` like '%JR%INFORMATICA%' """
-
 
 def update_db(adicionar):
     # t0 = time.time()

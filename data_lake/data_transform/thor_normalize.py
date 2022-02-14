@@ -39,7 +39,7 @@ lower_and_strip_datas(df)
 df = remove_duplicates(df)
 
 for i, stack in enumerate(df['stacks']):
-    df['stacks'][i] = list(stack.split(','))
+    df['stacks'][i] = stack.split(',')
 
 to_merge = df['name'].tolist()
 to_merge = [item for item, count in Counter(to_merge).items() if count > 1]
@@ -52,6 +52,9 @@ for i, name in enumerate(to_merge):
         [[name, array]], columns=['name', 'stacks'])
     df = pd.concat((df, df2), axis=0)
 
+path = './clean_data'
+if os.path.exists(path) is False:
+    os.makedirs(path)
 
 df = df.reset_index(drop=True)
 df.to_parquet("./clean_data/programathor.parquet", index=False)

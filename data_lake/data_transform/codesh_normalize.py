@@ -1,6 +1,7 @@
 import pandas as pd
 from sqlalchemy import create_engine
 from unidecode import unidecode
+import os
 
 def narray_colunm_to_list(column: pd) -> None:
     for i in range(len(column)):
@@ -65,5 +66,9 @@ for i, contato in enumerate(df['contato']):
         df['estado'][i] = estados_dict[contato]
     else:
         df['estado'][i] = contato
+
+path = './clean_data'
+if os.path.exists(path) is False:
+    os.makedirs(path)
 
 df.to_parquet("./clean_data/codesh.parquet", index=False)
