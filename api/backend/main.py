@@ -71,6 +71,7 @@ def initialize():
     dropdown_list = {"mercados": mercados, "stacks": stacks, "colunas": db.columns.tolist()}
 
 initialize()
+""" DELETE FROM `empresa_merge_teste` WHERE `nome` like '%Cleimes%' or `nome` like '%JR%INFORMATICA%' """
 
 def update_db(adicionar):
     t0 = time.time()
@@ -94,7 +95,7 @@ def update_db(adicionar):
         con.execute('ALTER TABLE `empresa_merge_teste` ADD PRIMARY KEY (id);') """
     t1 = time.time()
     total = t1-t0
-    # print("total time 2 = " + str(total))
+    print("total time 2 = " + str(total))
     return adicionar
 
 def importFile (NomeArquivo):
@@ -133,7 +134,7 @@ def importFile (NomeArquivo):
         con.execute('ALTER TABLE `user` ADD PRIMARY KEY (id);') """
     t1 = time.time()
     total = t1-t0
-    # print("total time 1 = " + str(total))
+    print("total time 1 = " + str(total))
 
     global db
     db = update_db(adicionar)
@@ -161,8 +162,9 @@ def build_query(state: str, cidade: str, market:str, stack: str, capitais: str):
         if market:
             query += ' and ('
             markets = market.split(',')
+            print(markets)
             for i in range(len(markets)):
-                query += f'mercado.str.contains("(?:\W|^){markets[i]}(?! *\w)", na=False, regex=True).values'
+                query += f'mercado.str.contains("{markets[i]}", na=False).values'
                 if i < len(markets) - 1:
                     query += ' or '
             query += ')'
@@ -170,7 +172,7 @@ def build_query(state: str, cidade: str, market:str, stack: str, capitais: str):
             query += ' and ('
             stacks = stack.split(',')
             for i in range(len(stacks)):
-                query += f'stacks.str.contains("(?:\W|^){stacks[i]}(?! *\w)", na=False, regex=True).values'
+                query += f'stacks.str.contains("{stacks[i]}", na=False).values'
                 if i < len(stacks) - 1:
                     query += ' or '
             query += ')'
@@ -185,7 +187,7 @@ def build_query(state: str, cidade: str, market:str, stack: str, capitais: str):
         query += '('
         markets = market.split(',')
         for i in range(len(markets)):
-            query += f'mercado.str.contains("(?:\W|^){markets[i]}(?! *\w)", na=False, regex=True).values'
+            query += f'mercado.str.contains("{markets[i]}", na=False).values'
             if i < len(markets) - 1:
                 query += ' or '
         query += ')'
@@ -194,7 +196,7 @@ def build_query(state: str, cidade: str, market:str, stack: str, capitais: str):
             query += ' and ('
             stacks = stack.split(',')
             for i in range(len(stacks)):
-                query += f'stacks.str.contains("(?:\W|^){stacks[i]}(?! *\w)", na=False, regex=True).values'
+                query += f'stacks.str.contains("{stacks[i]}", na=False).values'
                 if i < len(stacks) - 1:
                     query += ' or '
             query += ')'
@@ -206,7 +208,7 @@ def build_query(state: str, cidade: str, market:str, stack: str, capitais: str):
     elif stack:
         stacks = stack.split(',')
         for i in range(len(stacks)):
-            query += f'stacks.str.contains("(?:\W|^){stacks[i]}(?! *\w)", na=False, regex=True).values'
+            query += f'stacks.str.contains("{stacks[i]}", na=False).values'
             if i < len(stacks) - 1:
                 query += ' or '
         if cidade:
@@ -238,7 +240,7 @@ async def upload(file: UploadFile=File(...)):
     if worked:
         erradas = ", ".join([str(i) for i in (erradas.index + 1)])
         if erradas:
-            # print(erradas)
+            print(erradas)
             return {"message" : "As linhas " + erradas + " são inválidas, as demais foram adicionadas com sucesso!!"}
         return {"message" : 'Cadastrados com sucesso'}
     else:
@@ -247,7 +249,7 @@ async def upload(file: UploadFile=File(...)):
 @app.get("/api/download-user-table")
 def user_table():
     df = pd.read_sql_table('user', engine)
-    df.to_parquet('tabela_usuario.csv', sep=',', index=False)
+    df.to_csv('tabela_usuario.csv', sep=',', index=False)
     return FileResponse('tabela_usuario.csv', filename='tabela_usuario.csv')
 
 @app.get("/dropdown")
@@ -272,7 +274,7 @@ def get_info(market: str, stack: str, state: str, capitais: str, colunas: str,
         colunas = colunas.split(',')
         df = df[colunas]
     if extension == 'csv':
-        df.to_parquet(file_name, sep=',', index=False)
+        df.to_csv(file_name, sep=',', index=False)
     elif extension == 'xlsx':
         df.to_excel(file_name, index=False)
     elif extension == 'pdf':
