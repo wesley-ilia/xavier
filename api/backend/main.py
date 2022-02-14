@@ -37,7 +37,7 @@ database = getenv('DBNAME')
 engine = create_engine(f'postgresql://{user}:{passwd}\
 @{host}:{port}/{database}')
 
-db = pd.read_sql_table("main", engine)
+db = pd.read_sql_table("backup", engine)
 
 def agg(a):
     a = a.replace(np.nan, "")
@@ -90,7 +90,7 @@ def update_db(adicionar):
     nome = cols.index('nome')
     cols = [cols[nome]] + cols[:nome] + cols[nome + 1:]
     adicionar = adicionar[cols]
-    adicionar.to_sql("main", engine, if_exists='replace', index=False)
+    adicionar.to_sql("backup", engine, if_exists='replace', index=False)
     """ with engine.connect() as con:
         con.execute('ALTER TABLE `empresa_merge_teste` ADD PRIMARY KEY (id);') """
     t1 = time.time()
