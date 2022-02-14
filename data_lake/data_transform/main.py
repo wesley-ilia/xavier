@@ -1,29 +1,11 @@
 import pandas as pd
 from sqlalchemy import create_engine
-from os import getenv
 import Levenshtein as lev
-
-def convert_str_to_list(strin: str) -> list:
-    strin = strin.replace('{', '')
-    strin = strin.replace('}', '')
-    strin = strin.replace('"', '')
-    return strin.split(sep=',')
-
-
-host = getenv('DBHOST')
-user = getenv('DBUSER')
-passwd = getenv('DBPASS')
-port = getenv('DBPORT')
-database = getenv('DBNAME')
-
-engine = create_engine(
-        url=f'postgresql://{user}:{passwd}@{host}:{port}/{database}', echo=False)
+from const import *
 
 data = dict()
 
-# df_startup = pd.read_sql(sql='startupbase', con=engine)
 df_startup = pd.read_parquet('./clean_data/startupbase.parquet')
-
 for i, nome in enumerate(df_startup['name']):
     data[nome] = {
             'mercado': [df_startup['mercado'][i], df_startup['segmento'][i]],
@@ -37,7 +19,6 @@ for i, nome in enumerate(df_startup['name']):
             }
 
 df_slintel = pd.read_parquet('./clean_data/slintel.parquet')
-
 for i, nome in enumerate(df_slintel['name']):
     if nome in data.keys():
         data[nome]['stacks'] = df_slintel['stacks'][i]
@@ -54,7 +35,6 @@ for i, nome in enumerate(df_thor['name']):
         data[nome]['stacks'] = list(set(
             df_thor['stacks'][i]))
 
-# df_codesh = pd.read_sql(sql='codesh', con=engine)
 df_codesh = pd.read_parquet('./clean_data/codesh.parquet')
 for i, nome in enumerate(df_codesh['name']):
     if nome in data.keys():
@@ -142,4 +122,8 @@ df = pd.DataFrame(real, columns=['nome','stacks',
                                  'cidade', 'estado', 'tamanho',
                                  'receita', 'mercado', 'momento', 'website'])
 difflibfunction(df['stacks'])
-df.to_sql("main", engine, if_exists='replace', index=False)
+
+engine = create_engine(
+        url=f'postgresql://{USER}:{PASSWD}@{HOST}:{PORT}/{DATABASE}', echo=False)
+
+df.to_sql("backup", engine, if_exists='replace', index=False)

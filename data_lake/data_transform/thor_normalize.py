@@ -31,14 +31,6 @@ def merge_duplicates(array: pd):
     return new_list
 
 
-host = os.getenv('DBHOST')
-user = os.getenv('DBUSER')
-passwd = os.getenv('DBPASS')
-port = os.getenv('DBPORT')
-database = os.getenv('DBNAME')
-
-engine = create_engine(f'postgresql://{user}:{passwd}\
-@{host}:{port}/{database}')
 
 df = pd.read_parquet('./raw_data/thor.parquet')
 
@@ -59,6 +51,7 @@ for i, name in enumerate(to_merge):
     df2 = pd.DataFrame(
         [[name, array]], columns=['name', 'stacks'])
     df = pd.concat((df, df2), axis=0)
+
 
 df = df.reset_index(drop=True)
 df.to_parquet("./clean_data/programathor.parquet", index=False)

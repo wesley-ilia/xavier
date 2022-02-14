@@ -1,8 +1,6 @@
 import pandas as pd
 from sqlalchemy import create_engine
 from unidecode import unidecode
-import os
-
 
 def narray_colunm_to_list(column: pd) -> None:
     for i in range(len(column)):
@@ -68,12 +66,4 @@ for i, contato in enumerate(df['contato']):
     else:
         df['estado'][i] = contato
 
-host = os.getenv('DBHOST')
-user = os.getenv('DBUSER')
-passwd = os.getenv('DBPASS')
-port = os.getenv('DBPORT')
-database = os.getenv('DBNAME')
-
-engine = create_engine(f'postgresql://{user}:{passwd}\
-@{host}:{port}/{database}')
 df.to_parquet("./clean_data/codesh.parquet", index=False)
