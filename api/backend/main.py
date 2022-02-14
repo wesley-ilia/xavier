@@ -50,7 +50,7 @@ database = getenv('DBNAME')
 engine = create_engine(f'postgresql://{user}:{passwd}\
 @{host}:{port}/{database}')
 
-db = pd.read_sql_table("main", engine)
+db = pd.read_sql_table("backup", engine)
 
 
 def agg(a):
@@ -91,6 +91,7 @@ def initialize():
 
 
 initialize()
+""" DELETE FROM `empresa_merge_teste` WHERE `nome` like '%Cleimes%' or `nome` like '%JR%INFORMATICA%' """
 
 
 def update_db(adicionar):
@@ -115,7 +116,7 @@ def update_db(adicionar):
     nome = cols.index('nome')
     cols = [cols[nome]] + cols[:nome] + cols[nome + 1:]
     adicionar = adicionar[cols]
-    adicionar.to_sql("main", engine, if_exists='replace', index=False)
+    adicionar.to_sql("backup", engine, if_exists='replace', index=False)
     """ with engine.connect() as con:
         con.execute('ALTER TABLE `empresa_merge_teste` ADD PRIMARY KEY (id);') """
     # t1 = time.time()
@@ -191,6 +192,7 @@ def build_query(state: str, cidade: str, market: str, stack: str, capitais: str)
         if market:
             query += ' and ('
             markets = market.split(',')
+            print(markets)
             for i in range(len(markets)):
                 query += f'mercado.str.contains("(,|^) *{markets[i]}(?! *\w)", na=False, regex=True).values'
                 if i < len(markets) - 1:
