@@ -1,4 +1,4 @@
-FROM python:3.8.12-bullseye
+FROM python:3.8.12-buster
 
 WORKDIR /startup
 
@@ -17,15 +17,6 @@ RUN wget -O $CHROMIUM_DRIVER_ZIP $CHROMIUM_VERSION;\
 	mv chromedriver /usr/local/bin/;\
 	rm -f $CHROMIUM_DRIVER_ZIP
 
-#setup aws credentials
-COPY aws_script.sh /usr/local/bin/
-
-RUN chmod +x /usr/local/bin/aws_script.sh
-
-ENTRYPOINT ["aws_script.sh"]
-
-ENV PYTHONPATH="/startup"
-
-COPY ["main.py", "selenium_bot.py", "beautiful_bot.py", "s3.py", "/startup/"]
+COPY ["main.py", "utils.py", "selenium_bot.py", "beautiful_bot.py", "s3.py", "/startup/"]
 
 CMD ["python", "main.py"]
