@@ -7,6 +7,8 @@ import numpy as np
 def convert_list(lst) -> list:
     if type(lst) == str:
         return convert_str_to_list(lst)
+    if lst is None:
+        return []
     return list(lst)
 
 def convert_str_to_list(strin: str) -> list:
@@ -61,7 +63,8 @@ for i, nome in enumerate(df_startup['name']):
             'website': df_startup['website'][i],
             'tamanho': df_startup['tamanho'][i],
             'modelo': df_startup['modelo'][i],
-            'momento': df_startup['momento'][i]
+            'momento': df_startup['momento'][i],
+            'referencia': 'startupbase'
             }
 
 df_slintel = pd.read_parquet('./clean_data/slintel.parquet')
@@ -80,8 +83,8 @@ for i, nome in enumerate(df_thor['name']):
         data[nome] = dict()
         data[nome]['stacks'] = list(set(
             convert_list(df_thor['stacks'][i])))
+        data[nome]['referencia'] = 'thor'
 
-teste = []
 df_codesh = pd.read_parquet('./clean_data/codesh.parquet')
 for i, nome in enumerate(df_codesh['name']):
     if nome in data.keys():
@@ -101,11 +104,13 @@ for i, nome in enumerate(df_codesh['name']):
         data[nome] = {
             'mercado':   convert_list(df_codesh['mercado'][i]),
             'stacks':   convert_list(df_codesh['stacks'][i]),
-            'cidade':   convert_list(df_codesh['cidade'][i]),
-            'estado':   convert_list(df_codesh['estado'][i]),
-            'tamanho':   convert_list(df_codesh['tamanho'][i]),
-            'website':   convert_list(df_codesh['website'][i])
+            'cidade':   df_codesh['cidade'][i],
+            'estado':   df_codesh['estado'][i],
+            'tamanho':   df_codesh['tamanho'][i],
+            'website':   df_codesh['website'][i],
+            'referencia': 'coodesh'
         }
+
 
 df_user = pd.read_sql(sql='user', con=engine)
 
@@ -126,6 +131,7 @@ for i, nome in enumerate(df_user['nome']):
             'stacks':   convert_str_to_list(df_user['stacks'][i]),
             'cidade':   df_user['cidade'][i],
             'estado':   df_user['estado'][i],
+            'referencia': 'usuario'
         }
 
 def if_not_exists(data: dict, text: str):
@@ -153,12 +159,14 @@ for nome in data:
     receita = if_not_exists(data[nome], 'modelo de receita')
     momento = if_not_exists(data[nome], 'momento')
     website = if_not_exists(data[nome], 'website')
+    referencia = data[nome]['referencia']
+    if nome == 'netfoods':
+        print(estado)
     real.append([nome, stacks, cidade, estado,
-                tamanho, receita,  mercado, momento, website])
-
+                tamanho, receita,  mercado, momento, website, referencia])
 df = pd.DataFrame(real, columns=['nome','stacks',
                                  'cidade', 'estado', 'tamanho',
-                                 'receita', 'mercado', 'momento', 'website'])
+                                 'receita', 'mercado', 'momento', 'website', 'referencia'])
 difflibfunction(df['stacks'])
 
 df.to_sql("main", engine, if_exists='replace', index=False)

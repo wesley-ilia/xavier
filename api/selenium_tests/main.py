@@ -1,12 +1,9 @@
-
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import os
 from time import sleep
 from selenium.webdriver.chrome.options import Options
 
-
-DOWNLOAD_URL = "https://github.com/chandrashekhargoka/python_samples/archive/master.zip"
 home = os.path.expanduser('~')
 download_dir = f"{home}/Downloads"
 

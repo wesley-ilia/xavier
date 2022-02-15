@@ -43,5 +43,5 @@ if os.path.exists(path) is False:
 
 download_file_from_s3('thor')
 download_file_from_s3('codesh')
-download_file_from_s3('startup')
+download_file_from_s3('startupbase')
 download_file_from_s3('slintel')

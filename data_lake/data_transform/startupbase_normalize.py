@@ -2,7 +2,7 @@ import pandas as pd
 from unidecode import unidecode
 import os
 
-df = pd.read_parquet('./raw_data/startup.parquet')
+df = pd.read_parquet('./raw_data/startupbase.parquet')
 
 def normalize(column_name: str, df: pd.DataFrame):
     df[column_name] = df[column_name].str.lower().str.strip()
