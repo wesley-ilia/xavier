@@ -70,7 +70,8 @@ for i, nome in enumerate(df_startup['name']):
 df_slintel = pd.read_parquet('./clean_data/slintel.parquet')
 for i, nome in enumerate(df_slintel['name']):
     if nome in data.keys():
-        data[nome]['stacks'] = df_slintel['stacks'][i]
+        data[nome]['stacks'] = list(df_slintel['stacks'][i])
+        data[nome]['referencia'] += ', slintel'
 
 df_thor = pd.read_parquet('./clean_data/programathor.parquet')
 
