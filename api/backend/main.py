@@ -11,6 +11,8 @@ from sqlalchemy import create_engine
 # import time
 from utils import save_pdf
 
+front_host = getenv('FRONT_HOST')
+
 todas_capitais = [
         "rio branco", "maceio",
         "macapa", "manaus",
@@ -30,6 +32,7 @@ todas_capitais = [
 
 origins = [
     "http://localhost:3000",
+    f"http://frontend:3000",
 ]
 
 app = FastAPI()

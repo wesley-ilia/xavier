@@ -10,5 +10,7 @@ RUN apk add --no-cache bash
 RUN chmod +x ./wait-for-it.sh ./docker-entrypoint.sh
 EXPOSE 3000
 
+RUN export BASE_URL
+
 ENTRYPOINT ["./docker-entrypoint.sh"]
 CMD ["make"]

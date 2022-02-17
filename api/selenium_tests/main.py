@@ -7,8 +7,7 @@ from selenium.webdriver.chrome.options import Options
 home = os.path.expanduser('~')
 download_dir = f"{home}/Downloads"
 host = os.getenv('FRONT_HOST')
-
-
+sleep(10)
 def enable_download(driver):
     driver.command_executor._commands["send_command"] = (
             "POST", '/session/$sessionId/chromium/send_command')
@@ -29,10 +28,15 @@ enable_download(drive)
 
 
 def download_file(filename: str, extension: str):
-    drive.get('http://localhost:3000')
+    drive.get(f'http://{host}:3000')
+    print('log =', drive.get_log('browser'))
 
-    drive.find_element(By.CLASS_NAME, 'mercados__input-container').click()
+    mercados = drive.find_element(By.CLASS_NAME, 'mercados__input-container')
+    print('mercados', mercados)
+    # drive.execute_script("arguments[0].scrollIntoView();", mercados)
+    mercados.click()
     elements_mercados = drive.find_elements(By.CLASS_NAME,  'mercados__option')
+    print('elements mercados', elements_mercados)
     list_mercados = [mercado.text for mercado in elements_mercados]
     print(list_mercados)
     location = list_mercados.index('financas')

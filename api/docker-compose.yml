@@ -2,6 +2,8 @@ version: "3.9"
 services:
   backend:
     build: ./backend/
+    environment:
+      - FRONT_HOST=frontend
     env_file:
       - ~/.secret/psql.env
     ports:
@@ -16,6 +18,11 @@ services:
       - "3000:3000"
     depends_on:
       - "backend"
+    links:
+      - backend
+    volumes:
+      - node_modules:/frontend/node_modules
+
   tests:
     profiles: ["test"]
     build: ./selenium_tests/
@@ -23,4 +30,8 @@ services:
       - FRONT_HOST=frontend
     depends_on:
       - "frontend"
+    links:
+      - frontend
     
+volumes:
+  node_modules:
