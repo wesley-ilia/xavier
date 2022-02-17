@@ -9,8 +9,18 @@ services:
   frontend:
     build: ./frontend/
     env_file:
-    - ~/.secret/firebase.env
+      - ~/.secret/firebase.env
+    environment:
+      - BACK_HOST=backend
     ports:
       - "3000:3000"
-    depends_on: [backend]
-
+    depends_on:
+      - "backend"
+  tests:
+    profiles: ["test"]
+    build: ./selenium_tests/
+    environment:
+      - FRONT_HOST=frontend
+    depends_on:
+      - "frontend"
+    

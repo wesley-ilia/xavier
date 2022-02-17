@@ -4,9 +4,11 @@ import os
 from time import sleep
 from selenium.webdriver.chrome.options import Options
 
+sleep(1)
 # chrome_path = os.getenv('CPATH')
 home = os.path.expanduser('~')
 download_dir = f"{home}/Downloads"
+host = os.getenv('FRONT_HOST')
 
 def enable_download(driver):
     driver.command_executor._commands["send_command"] = ("POST", '/session/$sessionId/chromium/send_command')
@@ -29,6 +31,7 @@ def download_file(filename: str, extension: str):
     drive.find_element(By.CLASS_NAME, 'mercados__input-container').click()
     elements_mercados = drive.find_elements(By.CLASS_NAME,  'mercados__option')
     list_mercados = [mercado.text for mercado in elements_mercados]
+    print(list_mercados)
     location = list_mercados.index('financas')
     elements_mercados[location].click()
 

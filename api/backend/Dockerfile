@@ -7,4 +7,4 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt
 
 COPY . /backend
 
-ENTRYPOINT ["uvicorn", "main:app", "--host", "0.0.0.0", "--reload"]
+ENTRYPOINT ["uvicorn", "main:app", "--host", "0.0.0.0"]

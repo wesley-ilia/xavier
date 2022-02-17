@@ -1,6 +1,6 @@
 FROM python:3.8.12-buster
 
-WORKDIR /selenium_tests
+WORKDIR /selenium_tests/
 
 COPY requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
@@ -17,8 +17,13 @@ RUN wget -O $CHROMIUM_DRIVER_ZIP $CHROMIUM_VERSION;\
 	mv chromedriver /usr/local/bin/;\
 	rm -f $CHROMIUM_DRIVER_ZIP
 
-COPY . /selenium_tests
-
 RUN mkdir ~/Downloads
 
-ENTRYPOINT ["pytest", "main.py"]
+COPY . /selenium_tests/
+
+# RUN apk add --no-cache bash
+
+RUN chmod +x ./wait-for-it.sh ./docker-entrypoint.sh
+
+ENTRYPOINT ["./docker-entrypoint.sh"]
+CMD ["pytest", "main.py"]
