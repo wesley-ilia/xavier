@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 def get_cidade_and_estado(soup: BeautifulSoup):
     try:
         cidade_estado = soup.select(
-                'div.publ-card.startup-addrr__grow > p.publ-text')[-1].text
+                '.publ-header__location')[-1].text
     except IndexError:
         return ''
     return cidade_estado
