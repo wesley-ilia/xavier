@@ -2,7 +2,7 @@ from os import environ
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
-from time import sleep
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 class Codesh(webdriver.Chrome):
@@ -16,9 +16,12 @@ class Codesh(webdriver.Chrome):
 
         self.teardown = teardown
         options = Options()
-        options.add_argument('--no-sandbox')
-        options.add_argument("--headless")
-        options.add_argument("--disable-dev-shm-usage")
+        if headless is True:
+            options.add_argument('--no-sandbox')
+            options.add_argument("--headless")
+            options.add_argument("--disable-dev-shm-usage")
+            options.add_argument('--disable-gpu')
+            options.add_argument('--window-size=1920,1080')
         environ['PATH'] += driver_path
         super(Codesh, self).__init__(options=options)
         self.implicitly_wait(implicit_wait)
@@ -26,23 +29,20 @@ class Codesh(webdriver.Chrome):
     def land_in_page(self, page: str = None):
         self.get(page)
 
-    def scroll_site(self) -> None:
-        SCROLL_PAUSE_TIME = 1
-        last_element = self.find_elements(
-            By.CSS_SELECTOR, "a[class='mb-5 card']")[-1]
-        i = 0
-        while i < 5:
-            self.execute_script(
-                "arguments[0].scrollIntoView();", last_element)
-            sleep(SCROLL_PAUSE_TIME)
-            new_element = self.find_elements(
-                By.CSS_SELECTOR, "a[class='mb-5 card']")[-1]
-            if new_element != last_element:
-                last_element = new_element
-            else:
-                print(i)
-                i += 1
-        return None
+    def scroll_site(self):
+        while True:
+            last_element = self.find_elements(
+                    By.CSS_SELECTOR, "a[class='mb-5 card']")[-1]
+            self.execute_script("arguments[0].scrollIntoView();", last_element)
+            try:
+                WebDriverWait(self, 5).until(
+                        method=lambda x: x.find_elements(
+                            by=By.CSS_SELECTOR,
+                            value="a[class='mb-5 card']"
+                            )[-1] != last_element
+                        )
+            except BaseException:
+                break
 
     def get_first_page_infos(self) -> list:
         container = self.find_element(
