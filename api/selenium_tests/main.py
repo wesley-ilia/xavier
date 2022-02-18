@@ -9,7 +9,6 @@ home = os.path.expanduser('~')
 download_dir = f"{home}/Downloads"
 host = os.getenv('FRONT_HOST')
 BASE_URL = f'http://{host}:3000'
-# sleep(10)
 
 
 def enable_download(driver):
@@ -42,7 +41,7 @@ def download_file(filename: str, extension: str):
     elements_mercados[location].click()
 
     drive.find_element(By.CLASS_NAME, 'form-control').send_keys(f'{filename}')
-    ftype = drive.find_element(By.CLASS_NAME, 'fileType__input-container')
+    ftype = drive.find_element(By.CLASS_NAME, 'fileType__control')
     ftype.click()
 
     elements_fileType = drive.find_elements(By.CLASS_NAME, 'fileType__option')
