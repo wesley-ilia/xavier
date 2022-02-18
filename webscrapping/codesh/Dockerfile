@@ -1,4 +1,4 @@
-FROM python:3.8.12-bullseye
+FROM python:3.8.12-buster
 
 WORKDIR /codesh
 
@@ -9,15 +9,14 @@ RUN pip install --no-cache-dir -r /tmp/requirements.txt
 RUN apt-get update -y;\
 	apt-get install -y wget unzip chromium
 
-COPY chromedriver /usr/local/bin/
+ENV CHROMIUM_VERSION="https://chromedriver.storage.googleapis.com/90.0.4430.24/chromedriver_linux64.zip"
+ENV CHROMIUM_DRIVER_ZIP="chromedriver_linux64.zip"
 
-#setup aws credentials
-COPY aws_script.sh /usr/local/bin/
+RUN wget -O $CHROMIUM_DRIVER_ZIP $CHROMIUM_VERSION;\
+	unzip $CHROMIUM_DRIVER_ZIP;\
+	mv chromedriver /usr/local/bin/;\
+	rm -f $CHROMIUM_DRIVER_ZIP
 
-RUN chmod +x /usr/local/bin/aws_script.sh
+COPY ["main.py", "s3.py", "selenium_bot.py", "beautiful_bot.py", "/codesh/"]
 
-ENTRYPOINT ["aws_script.sh"]
-
-COPY ["main.py", "selenium_bot.py", "beautiful_bot.py", "/codesh/"]
-
-CMD ["python", "main.py"]
+ENTRYPOINT ["python", "main.py"]
