@@ -1,13 +1,17 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
 import os
 from time import sleep
+from pandas import read_excel
+from selenium import webdriver
+from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
 home = os.path.expanduser('~')
 download_dir = f"{home}/Downloads"
 host = os.getenv('FRONT_HOST')
-sleep(10)
+BASE_URL = f'http://{host}:3000'
+# sleep(10)
+
+
 def enable_download(driver):
     driver.command_executor._commands["send_command"] = (
             "POST", '/session/$sessionId/chromium/send_command')
@@ -28,64 +32,90 @@ enable_download(drive)
 
 
 def download_file(filename: str, extension: str):
-    drive.get(f'http://{host}:3000')
-    print('log =', drive.get_log('browser'))
+    drive.get(BASE_URL)
 
     mercados = drive.find_element(By.CLASS_NAME, 'mercados__input-container')
-    print('mercados', mercados)
-    # drive.execute_script("arguments[0].scrollIntoView();", mercados)
     mercados.click()
-    elements_mercados = drive.find_elements(By.CLASS_NAME,  'mercados__option')
-    print('elements mercados', elements_mercados)
+    elements_mercados = drive.find_elements(By.CLASS_NAME, 'mercados__option')
     list_mercados = [mercado.text for mercado in elements_mercados]
-    print(list_mercados)
     location = list_mercados.index('financas')
     elements_mercados[location].click()
 
     drive.find_element(By.CLASS_NAME, 'form-control').send_keys(f'{filename}')
-    ftype = drive.find_element(By.CLASS_NAME, 'fileType__single-value')
-    drive.execute_script("arguments[0].scrollIntoView();", ftype)
-    sleep(1)
+    ftype = drive.find_element(By.CLASS_NAME, 'fileType__input-container')
     ftype.click()
 
-    sleep(1)
-    elements_fileType = drive.find_elements(By.CLASS_NAME,  'fileType__option')
+    elements_fileType = drive.find_elements(By.CLASS_NAME, 'fileType__option')
     list_fileType = [tp.text for tp in elements_fileType]
-    # print(list_fileType)
     index = list_fileType.index(extension)
-    # print(index)
     elements_fileType[index].click()
 
     download = drive.find_element(
-            By.CSS_SELECTOR, 'button.btn-primary:nth-child(4)')
+            By.CSS_SELECTOR, 'button.btn-primary.btn')
     download.click()
-    sleep(10)
+    sleep(4)
 
 
 def test_download_file_xlsx():
     filename = 'banana'
     extension = 'Excel'
     download_file(filename, extension)
-    home = os.path.expanduser('~')
-    assert os.path.exists(f'{home}/Downloads/{filename}.xlsx') is True
-    os.remove(f'{home}/Downloads/{filename}.xlsx')
+    assert os.path.exists(f'{download_dir}/{filename}.xlsx') is True
+    os.remove(f'{download_dir}/{filename}.xlsx')
 
 
 def test_download_file_csv():
     filename = 'banana'
     extension = 'CSV'
     download_file(filename, extension)
-    home = os.path.expanduser('~')
     assert os.path.exists(
-            f'{home}/Downloads/{filename}.{extension.lower()}') is True
-    os.remove(f'{home}/Downloads/{filename}.{extension.lower()}')
+            f'{download_dir}/{filename}.{extension.lower()}') is True
+    os.remove(f'{download_dir}/{filename}.{extension.lower()}')
 
 
 def test_download_file_pdf():
     filename = 'banana'
     extension = 'PDF'
     download_file(filename, extension)
-    home = os.path.expanduser('~')
     assert os.path.exists(
-            f'{home}/Downloads/{filename}.{extension.lower()}') is True
-    os.remove(f'{home}/Downloads/{filename}.{extension.lower()}')
+            f'{download_dir}/{filename}.{extension.lower()}') is True
+    os.remove(f'{download_dir}/{filename}.{extension.lower()}')
+
+
+def test_get_csv_with_dot_net_stacks_expected_only_companies_with_dot_net():
+    drive.get(BASE_URL)
+    sleep(1)
+    drive.find_element(
+            by=By.CSS_SELECTOR,
+            value='div.stacks__input-container'
+            ).click()
+    dot_net = filter(
+            lambda x: x.text == '.net',
+            drive.find_elements(
+                by=By.CSS_SELECTOR,
+                value='div.stacks__option'
+                )
+            )
+    next(dot_net).click()
+    drive.find_element(
+            by=By.CSS_SELECTOR,
+            value='input.form-control'
+            ).send_keys("dot_net")
+    drive.find_element(
+            by=By.CSS_SELECTOR,
+            value='button.btn-primary.btn'
+            ).click()
+    sleep(1)
+    df = read_excel(f'{download_dir}/dot_net.xlsx')
+    elements = filter(
+            lambda x: '.net' not in x,
+            df['stacks'].tolist()
+            )
+    try:
+        next(elements)
+        assert False
+    except StopIteration:
+        assert True
+    drive.close()
+    if (os.path.exists(f'{download_dir}/dot_net.xlsx')):
+        os.remove(f'{download_dir}/dot_net.xlsx')
