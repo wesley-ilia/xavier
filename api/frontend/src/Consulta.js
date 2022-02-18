@@ -45,8 +45,9 @@ class Consulta extends React.Component {
   }
 
   download = async () => {
+	let analyticsHere = await analytics;
     /* log event to firebase */
-    logEvent(analytics, "download", {
+    logEvent(analyticsHere, "download", {
       estados: this.estadosExecute,
       capitais: this.capitais,
       cidades: this.cidadesExecute,
@@ -128,10 +129,11 @@ class Consulta extends React.Component {
     this.setState({ preview: data });
   };
 
-  handleChangeEstados = (e) => {
+  handleChangeEstados = async (e) => {
     // logEvent(analytics, 'goal_completion', { name: 'lever_puzzle'})
     /* log event to firebase */
-    logEvent(analytics, "select_content", {
+	let analyticsHere = await analytics;
+    logEvent(analyticsHere, "select_content", {
       content_type: "dropdown_selection",
       content_id: "select_estados",
     });
@@ -149,9 +151,10 @@ class Consulta extends React.Component {
     this.getPreview();
   };
 
-  handleChangeMercados = (e) => {
+  handleChangeMercados = async (e) => {
     /* log event to firebase */
-    logEvent(analytics, "select_content", {
+	let analyticsHere = await analytics;
+    logEvent(analyticsHere, "select_content", {
       content_type: "dropdown_selection",
       content_id: "select_mercados",
     });
@@ -167,9 +170,10 @@ class Consulta extends React.Component {
     this.colunasExecute = [...values];
   };
 
-  handleChangeStacks = (e) => {
+  handleChangeStacks = async (e) => {
     /* log event to firebase */
-    logEvent(analytics, "select_content", {
+	let analyticsHere = await analytics;
+    logEvent(analyticsHere, "select_content", {
       content_type: "dropdown_selection",
       content_id: "select_stacks",
     });
