@@ -18,6 +18,6 @@ RUN wget -O $CHROMEDRIVER_FILE $CHROMEDRIVER_VERSION;\
 	mv chromedriver /usr/bin/;\
 	rm -f $CHROMEDRIVER_FILE
 
-COPY ["main.py", "slintel_bot.py", "s3.py", "/slintel/"]
+COPY ["main.py", "utils_get_by_website.py", "slintel_bot.py", "s3.py", "/slintel/"]
 
 CMD ["python", "main.py"]
