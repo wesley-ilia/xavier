@@ -4,7 +4,7 @@ from pandas import DataFrame
 from boto3 import setup_default_session, client, resource
 
 
-class S3Slintel:
+class S3:
     def __init__(self):
         self.__create_session()
         self.client = client('s3')
