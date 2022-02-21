@@ -10,7 +10,7 @@ class Codesh(webdriver.Chrome):
         self,
         teardown: bool = False,
         implicit_wait: int = 0,
-        driver_path: str = ':/home/luigi/selenium_drivers',
+        driver_path: str = None,
         headless: bool = False
             ) -> None:
 
