@@ -11,6 +11,8 @@ from sqlalchemy import create_engine
 # import time
 from utils import save_pdf
 
+front_host = getenv('FRONT_HOST')
+
 todas_capitais = [
         "rio branco", "maceio",
         "macapa", "manaus",
@@ -30,6 +32,7 @@ todas_capitais = [
 
 origins = [
     "http://localhost:3000",
+    f"http://frontend:3000",
 ]
 
 app = FastAPI()
@@ -115,7 +118,7 @@ def update_db(adicionar):
     nome = cols.index('nome')
     cols = [cols[nome]] + cols[:nome] + cols[nome + 1:]
     adicionar = adicionar[cols]
-    adicionar.to_sql("main", engine, if_exists='replace', index=False)
+    adicionar.to_sql("backup", engine, if_exists='replace', index=False)
     """ with engine.connect() as con:
         con.execute('ALTER TABLE `empresa_merge_teste` ADD PRIMARY KEY (id);') """
     # t1 = time.time()
@@ -191,6 +194,7 @@ def build_query(state: str, cidade: str, market: str, stack: str, capitais: str)
         if market:
             query += ' and ('
             markets = market.split(',')
+            print(markets)
             for i in range(len(markets)):
                 query += f'mercado.str.contains("(,|^) *{markets[i]}(?! *\w)", na=False, regex=True).values'
                 if i < len(markets) - 1:
@@ -248,17 +252,18 @@ def build_query(state: str, cidade: str, market: str, stack: str, capitais: str)
         return '0'
     return query
 
-# @app.get('/api/get_env')
-# def get_env():
-# 	return {
-# 		'apiKey': getenv('APIKEY'),
-# 		'authDomain': getenv('AUTHDOMAIN'),
-# 		'projectId': getenv('PROJECTID'),
-# 		'storageBucket': getenv('STORAGEBUCKET'),
-# 		'messagingSenderId': getenv('MESSAGINGSENDERID'),
-# 		'appId': getenv('APPID'),
-# 		'measurementId': getenv('MEASUREMENTID')
-# 	}
+
+@app.get('/api/get_env')
+def get_env():
+    return {
+            'apiKey': getenv('APIKEY'),
+            'authDomain': getenv('AUTHDOMAIN'),
+            'projectId': getenv('PROJECTID'),
+            'storageBucket': getenv('STORAGEBUCKET'),
+            'messagingSenderId': getenv('MESSAGINGSENDERID'),
+            'appId': getenv('APPID'),
+            'measurementId': getenv('MEASUREMENTID')
+            }
 
 
 @app.post("/api/uploadfile")

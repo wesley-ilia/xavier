@@ -1,6 +1,7 @@
 import React from "react";
 
-export var BASE_URL = "http://localhost:8000";
+console.log(process.env.REACT_APP_BASE_URL)
+export var BASE_URL = `http://${process.env.REACT_APP_BASE_URL}:8000`;
 
 var estados_ori = [
   "AC",

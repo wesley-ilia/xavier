@@ -1,11 +1,8 @@
 import pandas as pd
 from unidecode import unidecode
-from sqlalchemy import create_engine
-from os import getenv
-from dotenv import load_dotenv
+import os
 
-df = pd.read_parquet('./raw_data/startup.parquet')
-
+df = pd.read_parquet('./raw_data/startupbase.parquet')
 
 def normalize(column_name: str, df: pd.DataFrame):
     df[column_name] = df[column_name].str.lower().str.strip()
@@ -43,14 +40,8 @@ for i in range(len(df['name'])):
 
 df = df.drop(['cidade_estado', 'redes'], axis=1)
 
-load_dotenv('login.env')
-host = getenv('DBHOST')
-user = getenv('DBUSER')
-passwd = getenv('DBPASS')
-port = getenv('DBPORT')
-database = getenv('DBNAME')
+path = './clean_data'
+if os.path.exists(path) is False:
+    os.makedirs(path)
 
-engine = create_engine(f'postgresql://{user}:{passwd}\
-@{host}:{port}/{database}')
-
-df.to_sql("startupbase", engine, if_exists='replace', index=False)
+df.to_parquet("./clean_data/startupbase.parquet", index=False)

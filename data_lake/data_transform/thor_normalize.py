@@ -1,7 +1,7 @@
+from operator import index
 import pandas as pd
 from sqlalchemy import create_engine
 from collections import Counter
-from dotenv import load_dotenv
 import os
 
 
@@ -31,15 +31,6 @@ def merge_duplicates(array: pd):
     return new_list
 
 
-load_dotenv('../../login.env')
-host = os.getenv('DBHOST')
-user = os.getenv('DBUSER')
-passwd = os.getenv('DBPASS')
-port = os.getenv('DBPORT')
-database = os.getenv('DBNAME')
-
-engine = create_engine(f'postgresql://{user}:{passwd}\
-@{host}:{port}/{database}')
 
 df = pd.read_parquet('./raw_data/thor.parquet')
 
@@ -48,7 +39,7 @@ lower_and_strip_datas(df)
 df = remove_duplicates(df)
 
 for i, stack in enumerate(df['stacks']):
-    df['stacks'][i] = list(stack.split(','))
+    df['stacks'][i] = stack.split(',')
 
 to_merge = df['name'].tolist()
 to_merge = [item for item, count in Counter(to_merge).items() if count > 1]
@@ -59,8 +50,11 @@ for i, name in enumerate(to_merge):
     df = df.loc[df['name'] != name]
     df2 = pd.DataFrame(
         [[name, array]], columns=['name', 'stacks'])
-    df = df.append(df2)
+    df = pd.concat((df, df2), axis=0)
+
+path = './clean_data'
+if os.path.exists(path) is False:
+    os.makedirs(path)
 
 df = df.reset_index(drop=True)
-
-df.to_sql('programathor', engine, if_exists='replace', index=False)
+df.to_parquet("./clean_data/programathor.parquet", index=False)
