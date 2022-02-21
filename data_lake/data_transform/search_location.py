@@ -5,6 +5,27 @@ from sqlalchemy import create_engine
 import pandas as pd
 from unidecode import unidecode
 
+def search_text(empresa: str, apiKey: str):
+    url = ("https://maps.googleapis.com/maps/api/place/textsearch/json?" +
+    f'query="{empresa}"&key={apiKey}')
+
+    payload={}
+    headers = {}
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+    return response.json()
+
+def get_city_state(formatted_address: str):
+    address_list = formatted_address.split(',')
+    city_state = address_list[-3].strip().split('-')
+    try:
+        city = city_state[0].strip()
+        state = city_state[1].strip()
+        return city, state
+    except:
+        print(formatted_address)
+        return '', city_state[0].strip()
+
 def search_location(limit: int = 10000):
     load_dotenv(".env")
     apiKey = getenv('APIKEY')
@@ -20,79 +41,11 @@ def search_location(limit: int = 10000):
 
     db = pd.read_sql_table("main", engine)
 
-    # def search_address(empresa: str):
-    # 	url = ("https://maps.googleapis.com/maps/api/place/findplacefromtext/json?" + 
-    # 	f"input={empresa}&inputtype=textquery&fields=formatted_address&key={apiKey}")
-
-    # 	payload={}
-    # 	headers = {}
-
-    # 	response = requests.request("GET", url, headers=headers, data=payload)
-    # 	return response.json()
-
-    # def search_autocomplete(empresa: str):
-    # 	url = ("https://maps.googleapis.com/maps/api/place/autocomplete/json?" +
-    # 	f"input={empresa}&types=establishment&key={apiKey}")
-
-    # 	payload={}
-    # 	headers = {}
-
-    # 	response = requests.request("GET", url, headers=headers, data=payload)
-    # 	return response.json()
-
-    def search_text(empresa: str):
-        url = ("https://maps.googleapis.com/maps/api/place/textsearch/json?" +
-        f'query="{empresa}"&key={apiKey}')
-
-        payload={}
-        headers = {}
-
-        response = requests.request("GET", url, headers=headers, data=payload)
-        return response.json()
-
-    # def get_city_state2(description: str):
-    # 	address_list = description.split(',')
-    # 	print(address_list)
-    # 	city_state = address_list[-2].strip().split('-')
-    # 	city = city_state[0].strip()
-    # 	state = city_state[1].replace('State of', '').strip()
-    # 	return city, state
-
-    def get_city_state(formatted_address: str):
-        address_list = formatted_address.split(',')
-        city_state = address_list[-3].strip().split('-')
-        try:
-            city = city_state[0].strip()
-            state = city_state[1].strip()
-            return city, state
-        except:
-            print(formatted_address)
-            return '', city_state[0].strip()
-
-    # counter = 0
-    # for i, nome in enumerate(db['nome']):
-    # 	response = search_text(nome + ' in Brasil')
-    # 	city, state = 'nada', 'nada'
-        
-    # 	if response['status'] == 'OK':
-    # 		city, state = get_city_state(response['results'][0]['formatted_address'])
-    # 	if not pd.isna(db['cidade'][i]):
-    # 		print('---------------------------')
-    # 		print('nome = ', db['nome'][i])
-    # 		print('cidade achada = ', city)
-    # 		print('cidade do banco = ', db['cidade'][i])
-    # 		if db['cidade'][i]== city.lower():
-    # 			counter += 1
-    # 	if i == 20:
-    # 		break
-    # print('acertos ', counter)
-
-
     counter = 0
     for i, nome in enumerate(db['nome']):
         if pd.isna(db['estado'][i]):
             print(nome)
-            response = search_text(nome + ' in Brasil')
+            response = search_text(nome + ' in Brasil', apiKey)
             
             if response['status'] == 'OK':
                 city, state = get_city_state(response['results'][0]['formatted_address'])
