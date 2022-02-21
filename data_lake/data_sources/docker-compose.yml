@@ -15,4 +15,4 @@ services:
   # thor:
   #   build: ./thor/
   #   env_file:
-  #     # - ./template_enviroments_variables.env
+  #     - ./template_enviroments_variables.env
