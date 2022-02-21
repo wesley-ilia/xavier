@@ -26,6 +26,5 @@ def get_all() -> list:
         if (data == []):
             break
         all_data.extend(data)
-        print(i)
         i += 1
     return all_data
