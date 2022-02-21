@@ -43,8 +43,8 @@ df = pd.DataFrame(
             'mercado', 'tamanho',
             'redes', 'website'])
 
-send = S3(df)
-send.send_to_s3(
+send = S3()
+send.send_to_s3(df=df,
         bucket_name=getenv('BUCKET_NAME'),
         destination=getenv('DESTINATION')
         )
