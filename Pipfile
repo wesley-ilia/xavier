@@ -15,7 +15,6 @@ python-dotenv = "*"
 psycopg2-binary = "*"
 unidecode = "*"
 flake8 = "*"
-xavier-utils = "*"
 levenshtein = "*"
 
 [dev-packages]

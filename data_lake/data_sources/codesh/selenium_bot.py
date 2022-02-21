@@ -10,7 +10,6 @@ class Codesh(webdriver.Chrome):
         self,
         teardown: bool = False,
         implicit_wait: int = 0,
-        driver_path: str = None,
         headless: bool = False
             ) -> None:
 
@@ -22,7 +21,6 @@ class Codesh(webdriver.Chrome):
             options.add_argument("--disable-dev-shm-usage")
             options.add_argument('--disable-gpu')
             options.add_argument('--window-size=1920,1080')
-        environ['PATH'] += driver_path
         super(Codesh, self).__init__(options=options)
         self.implicitly_wait(implicit_wait)
 
