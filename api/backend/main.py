@@ -9,7 +9,7 @@ from os import getenv, remove
 from unidecode import unidecode
 from sqlalchemy import create_engine
 # import time
-from utils import save_pdf
+from utils import save_pdf, difflibfunction
 
 front_host = getenv('FRONT_HOST')
 
@@ -118,6 +118,7 @@ def update_db(adicionar):
     nome = cols.index('nome')
     cols = [cols[nome]] + cols[:nome] + cols[nome + 1:]
     adicionar = adicionar[cols]
+    difflibfunction(adicionar['stacks'])
     adicionar.to_sql("backup", engine, if_exists='replace', index=False)
     """ with engine.connect() as con:
         con.execute('ALTER TABLE `empresa_merge_teste` ADD PRIMARY KEY (id);') """

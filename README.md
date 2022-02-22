@@ -13,12 +13,12 @@ Clone o repositório.
 
 ### Colete os dados  
 
-Vá para a pasta data_lake/data_sources e escreva no terminal:  
+Vá para a pasta data_lake/data_sources e mude os env_file para o arquivo .env com as credenciais da AWS. Além disso, deve-se alterar a variável DESTINATION de cada um dos serviços do docker-compose, para o destino do arquivo parquet no S3.
+Então, digite no terminal:  
 ```sh
-docker-compose up.
+docker-compose up
 ```  
-Espere terminar de pegar os dados.
-Vá para pasta data_lake/data_transform e escreva no terminal:
+Após terminar de pegar os dados, vá para pasta data_lake/data_transform e escreva no terminal:
 ```sh
 docker build -t xavier
 docker run --rm --env-file <path-to-credentials> xavier
