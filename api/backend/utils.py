@@ -1,5 +1,6 @@
 import pandas as pd
 from fpdf import FPDF
+import Levenshtein as lev
 
 """ def save_pdf(df: pd.DataFrame, filename: str):
     filename = 'out.tex'
@@ -59,4 +60,27 @@ def save_pdf (df: pd.DataFrame, file_name: str):
     # pdf.output((dest='S').encode('latin-1'), mimetype='application/pdf', headers={'Content-Disposition':f'attachment;filename={file_name}.pdf'})
     
 
-    
+def new_list(line, compare):
+    original = []
+    for i in range(len(line)):
+        if lev.ratio(line[i], compare) > 0.9:
+            original.append(line[i])
+            line[i] = compare
+            if (original != [] and (
+                    compare not in original or len(original) > 1)):
+                if compare in original:
+                    original.remove(compare)
+    return line
+
+def difflibfunction(df: pd.DataFrame):
+
+    palavras_unicas = [
+            'node.js', 'react.js', 'next.js', 'vue.js', '.net',
+            'angular.js', 'vb.net', 'smart adserver',
+            'styled-components', 'design patterns']
+    for i, line in enumerate(df):
+        if line is not None:
+            line = line.split(', ')
+            for stack in palavras_unicas:
+                line = new_list(line, stack)
+            df[i] = ', '.join(line)

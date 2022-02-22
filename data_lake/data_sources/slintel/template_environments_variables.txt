@@ -1,7 +1,0 @@
-AWS_ACCESS_KEY_ID,
-AWS_SECRET_ACCESS_KEY_ID,
-AWS_REGION,
-BUCKET_NAME,
-OBJ_NAME = "s3 OBJ to get the links from startupbase scrapping",
-FILE_NAME = "name of the file to salve on local machine",
-DESTINATION = "The destination on s3 to result of scrapping",
