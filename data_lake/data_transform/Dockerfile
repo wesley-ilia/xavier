@@ -7,4 +7,4 @@ WORKDIR /data_transform
 
 COPY . .
 
-ENTRYPOINT [ "bash", "run.sh" ]
+ENTRYPOINT [ "make" ]

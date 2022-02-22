@@ -1,8 +1,8 @@
 import pandas as pd
 from sqlalchemy import create_engine
 import Levenshtein as lev
-from const import *
-import numpy as np
+from const import HOST, USER, PASSWD, PORT, DATABASE
+
 
 def convert_list(lst) -> list:
     if type(lst) == str:
@@ -11,6 +11,7 @@ def convert_list(lst) -> list:
         return []
     return list(lst)
 
+
 def convert_str_to_list(strin: str) -> list:
     strin = strin.replace('{', '')
     strin = strin.replace('}', '')
@@ -18,17 +19,20 @@ def convert_str_to_list(strin: str) -> list:
     strin = [s.strip() for s in strin.split(sep=',')]
     return strin
 
+
 def substitute_similar(df: pd.DataFrame, compare):
     for i, line in enumerate(df):
         line = line.split(', ')
         line = new_list(line, compare)
         df[i] = ', '.join(line)
 
+
 def difflibfunction(df: pd.DataFrame):
 
-    palavras_unicas = ['node.js', 'react.js', 'next.js', 'vue.js', '.net',
-                'angular.js', 'vb.net', 'smart adserver',
-                'styled-components', 'design patterns']
+    palavras_unicas = [
+            'node.js', 'react.js', 'next.js', 'vue.js', '.net',
+            'angular.js', 'vb.net', 'smart adserver',
+            'styled-components', 'design patterns']
     for i, line in enumerate(df):
         if line is not None:
             line = line.split(', ')
@@ -36,19 +40,23 @@ def difflibfunction(df: pd.DataFrame):
                 line = new_list(line, stack)
             df[i] = ', '.join(line)
 
+
 def new_list(line, compare):
     original = []
     for i in range(len(line)):
         if lev.ratio(line[i], compare) > 0.9:
             original.append(line[i])
             line[i] = compare
-            if (original != [] and (compare not in original or len(original) > 1)):
+            if (original != [] and (
+                    compare not in original or len(original) > 1)):
                 if compare in original:
                     original.remove(compare)
     return line
 
+
 engine = create_engine(
-        url=f'postgresql://{USER}:{PASSWD}@{HOST}:{PORT}/{DATABASE}', echo=False)
+        url=f'postgresql://{USER}:{PASSWD}@{HOST}:{PORT}/{DATABASE}',
+        echo=False)
 
 
 data = dict()
@@ -77,9 +85,8 @@ df_thor = pd.read_parquet('./clean_data/programathor.parquet')
 
 for i, nome in enumerate(df_thor['name']):
     if nome in data.keys() and 'stacks' in data.keys():
-        data[nome]['stacks'] = \
-            list(set(data[nome]['stacks'] +
-                convert_list(df_thor['stacks'][i])))
+        data[nome]['stacks'] = list(set(
+            data[nome]['stacks'] + convert_list(df_thor['stacks'][i])))
     else:
         data[nome] = dict()
         data[nome]['stacks'] = list(set(
@@ -93,10 +100,11 @@ for i, nome in enumerate(df_codesh['name']):
             data[nome]['mercado'] = list()
 
         data[nome]['mercado'] = list(set(
-            data[nome]['mercado'] + 
-                convert_list(df_codesh['mercado'][i])))
+            data[nome]['mercado'] + convert_list(df_codesh['mercado'][i])))
         if 'stacks' in data[nome]:
-            data[nome]['stacks'] = set(data[nome]['stacks'] + convert_list(df_codesh['stacks'][i]))
+            data[nome]['stacks'] = set(data[nome]['stacks'] + convert_list(
+                df_codesh['stacks'][i]))
+
         data[nome]['website'] = df_codesh['website'][i]
         data[nome]['cidade'] = df_codesh['cidade'][i]
         data[nome]['estado'] = df_codesh['estado'][i]
@@ -120,10 +128,12 @@ for i, nome in enumerate(df_user['nome']):
         if 'mercado' not in data[nome].keys():
             data[nome]['mercado'] = list()
         data[nome]['mercado'] = list(set(
-            data[nome]['mercado'] + 
-                convert_str_to_list(df_user['mercado'][i])))
+            data[nome]['mercado'] + convert_str_to_list(
+                df_user['mercado'][i])))
         if 'stacks' in data[nome]:
-            data[nome]['stacks'] = set(data[nome]['stacks'] + convert_str_to_list(df_user['stacks'][i]))
+            data[nome]['stacks'] = set(
+                    data[nome]['stacks'] + convert_str_to_list(
+                        df_user['stacks'][i]))
         data[nome]['cidade'] = df_user['cidade'][i]
         data[nome]['estado'] = df_user['estado'][i]
     else:
@@ -135,6 +145,7 @@ for i, nome in enumerate(df_user['nome']):
             'referencia': 'usuario'
         }
 
+
 def if_not_exists(data: dict, text: str):
     if text in data.keys():
         back = data[text]
@@ -142,12 +153,14 @@ def if_not_exists(data: dict, text: str):
         back = None
     return back
 
+
 def if_not_list_exists(data: dict, text: str):
     if text in data.keys():
         back = ", ".join([i for i in data[text] if i and i != '-'])
     else:
         back = None
     return back
+
 
 real = list()
 
@@ -165,9 +178,11 @@ for nome in data:
         print(estado)
     real.append([nome, stacks, cidade, estado,
                 tamanho, receita,  mercado, momento, website, referencia])
-df = pd.DataFrame(real, columns=['nome','stacks',
-                                 'cidade', 'estado', 'tamanho',
-                                 'receita', 'mercado', 'momento', 'website', 'referencia'])
+df = pd.DataFrame(
+        real, columns=[
+            'nome', 'stacks',
+            'cidade', 'estado', 'tamanho',
+            'receita', 'mercado', 'momento', 'website', 'referencia'])
 difflibfunction(df['stacks'])
 
 df.to_sql("main", engine, if_exists='replace', index=False)

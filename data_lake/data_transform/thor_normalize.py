@@ -1,8 +1,5 @@
-from operator import index
 import pandas as pd
-from sqlalchemy import create_engine
 from collections import Counter
-import os
 
 
 def narray_colunm_to_list(column: pd) -> None:
@@ -31,7 +28,6 @@ def merge_duplicates(array: pd):
     return new_list
 
 
-
 df = pd.read_parquet('./raw_data/thor.parquet')
 
 narray_colunm_to_list(df['stacks'])
@@ -51,10 +47,6 @@ for i, name in enumerate(to_merge):
     df2 = pd.DataFrame(
         [[name, array]], columns=['name', 'stacks'])
     df = pd.concat((df, df2), axis=0)
-
-path = './clean_data'
-if os.path.exists(path) is False:
-    os.makedirs(path)
 
 df = df.reset_index(drop=True)
 df.to_parquet("./clean_data/programathor.parquet", index=False)
