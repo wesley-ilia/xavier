@@ -1,10 +1,10 @@
-import pandas as pd
 import Levenshtein as lev
 from sqlalchemy import create_engine
 from thor_normalize import thor_normalize
 from codesh_normalize import codesh_normalize
 from slintel_normalize import slintel_normalize
 from const import HOST, USER, PASSWD, PORT, DATABASE
+from pandas import read_sql, read_parquet, DataFrame
 from startupbase_normalize import startupbase_normalize
 
 
@@ -29,14 +29,14 @@ def convert_str_to_list(strin: str) -> list:
     return strin
 
 
-def substitute_similar(df: pd.DataFrame, compare):
+def substitute_similar(df: DataFrame, compare):
     for i, line in enumerate(df):
         line = line.split(', ')
         line = new_list(line, compare)
         df[i] = ', '.join(line)
 
 
-def difflibfunction(df: pd.DataFrame):
+def difflibfunction(df: DataFrame):
 
     palavras_unicas = [
             'node.js', 'react.js', 'next.js', 'vue.js', '.net',
@@ -64,7 +64,7 @@ def new_list(line, compare):
 
 
 def startupbase_fill_data(data) -> dict:
-    df_startup = pd.read_parquet('./clean_data/startupbase.parquet')
+    df_startup = read_parquet('./clean_data/startupbase.parquet')
     for i, nome in enumerate(df_startup['name']):
         data[nome] = {
                 'mercado': [df_startup['mercado'][i],
@@ -81,7 +81,7 @@ def startupbase_fill_data(data) -> dict:
 
 
 def slintel_fill_data(data) -> dict:
-    df_slintel = pd.read_parquet('./clean_data/slintel.parquet')
+    df_slintel = read_parquet('./clean_data/slintel.parquet')
     for i, nome in enumerate(df_slintel['name']):
         if nome in data.keys():
             data[nome]['stacks'] = list(df_slintel['stacks'][i])
@@ -89,7 +89,7 @@ def slintel_fill_data(data) -> dict:
 
 
 def thor_fill_data(data) -> dict:
-    df_thor = pd.read_parquet('./clean_data/programathor.parquet')
+    df_thor = read_parquet('./clean_data/programathor.parquet')
 
     for i, nome in enumerate(df_thor['name']):
         if nome in data.keys() and 'stacks' in data.keys():
@@ -103,7 +103,7 @@ def thor_fill_data(data) -> dict:
 
 
 def codesh_fill_data(data) -> dict:
-    df_codesh = pd.read_parquet('./clean_data/codesh.parquet')
+    df_codesh = read_parquet('./clean_data/codesh.parquet')
     for i, nome in enumerate(df_codesh['name']):
         if nome in data.keys():
             if 'mercado' not in data[nome].keys():
@@ -132,7 +132,7 @@ def codesh_fill_data(data) -> dict:
 
 
 def user_fill_data(data) -> dict:
-    df_user = pd.read_sql(sql='user', con=engine)
+    df_user = read_sql(sql='user', con=engine)
 
     for i, nome in enumerate(df_user['nome']):
         if nome in data.keys():
@@ -191,7 +191,7 @@ def make_list_to_send_to_sql(data):
 
 
 def delivery_to_sql(list_to_send_to_sql: list):
-    df = pd.DataFrame(
+    df = DataFrame(
             list_to_send_to_sql,
             columns=[
                 'nome', 'stacks',
