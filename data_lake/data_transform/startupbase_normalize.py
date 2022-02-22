@@ -33,7 +33,7 @@ def startupbase_normalize():
     df = read_parquet('./raw_data/startupbase.parquet')
     df['name'] = df['name'].str.lower().str.strip()
     df['momento'] = df['momento'].str.lower().str.strip()
-    for column in df.columns:
+    for column in filter(lambda x: x not in {'name', 'redes'}, df.columns):
         format_to_ascii_characters(column, df)
     remove_null_values(df)
     make_columns_city_state(df)

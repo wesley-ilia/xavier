@@ -64,8 +64,8 @@ def codesh_normalize():
         df['stacks'][i] = [unidecode(
             string.lower().strip()) for string in df['stacks'][i]]
 
-    for column in filter(lambda x: x not in {'stacks', 'redes'}, df.columns):
-        print(column)
+    for column in filter(
+            lambda x: x not in {'name', 'stacks', 'redes'}, df.columns):
         format_to_ascii_characters(df, column)
 
     make_column_state(df)
