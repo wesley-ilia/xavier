@@ -7,11 +7,11 @@ services:
   # startupbase:
   #   build: ./startupbase/
   #   env_file:
-  #     # - ./template_enviroments_variables.env
+  #     - ./template_enviroments_variables.env
   # slintel:
   #   build: ./slintel/
   #   env_file:
-  #     # - ./template_enviroments_variables.env
+  #     - ./template_enviroments_variables.env
   # thor:
   #   build: ./thor/
   #   env_file:
