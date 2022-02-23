@@ -13,6 +13,7 @@ import Upload from "./Upload";
 import { ThemeProvider } from "styled-components";
 import { GlobalStyle } from "./themes";
 import "./consulta.css";
+import axios from "axios";
 
 var i;
 
@@ -45,23 +46,21 @@ class Consulta extends React.Component {
   }
 
   download = async () => {
-	let analyticsHere = await analytics;
+    let analyticsHere = await analytics;
     /* log event to firebase */
-    logEvent(analyticsHere, "download", {
-      estados: this.estadosExecute,
-      capitais: this.capitais,
-      cidades: this.cidadesExecute,
-      mercados: this.mercadosExecute,
-      stacks: this.stacksExecute,
-      preview: this.state.preview,
-      extension: this.extension,
-      colunas: this.colunasExecute,
-    });
+    if (analyticsHere !== "Error") {
+      logEvent(analyticsHere, "download", {
+        estados: this.estadosExecute,
+        capitais: this.capitais,
+        cidades: this.cidadesExecute,
+        mercados: this.mercadosExecute,
+        stacks: this.stacksExecute,
+        preview: this.state.preview,
+        extension: this.extension,
+        colunas: this.colunasExecute,
+      });
+    }
 
-
-    const req_options = {
-      method: "GET",
-    };
     if (
       this.mercadosExecute.length === 0 &&
       this.estadosExecute.length === 0 &&
@@ -86,7 +85,7 @@ class Consulta extends React.Component {
         this.capitais +
         "&colunas=" +
         this.colunasExecute,
-      req_options
+      { method: "GET" }
     )
       .then((response) => response.blob())
       .then((blob) => {
@@ -108,10 +107,7 @@ class Consulta extends React.Component {
   };
 
   getPreview = async () => {
-    const req_options = {
-      method: "GET",
-    };
-    const response = await fetch(
+    const response = await axios.get(
       BASE_URL +
         "/preview?market=" +
         this.mercadosExecute +
@@ -122,22 +118,25 @@ class Consulta extends React.Component {
         "&cidade=" +
         this.cidadesExecute +
         "&capitais=" +
-        this.capitais,
-      req_options
+        this.capitais
     );
 
-    const data = await response.json();
+    console.log("getPreview");
+    console.log(response);
+    const data = await response.data;
     this.setState({ preview: data });
   };
 
   handleChangeEstados = async (e) => {
     // logEvent(analytics, 'goal_completion', { name: 'lever_puzzle'})
     /* log event to firebase */
-	let analyticsHere = await analytics;
-    logEvent(analyticsHere, "select_content", {
-      content_type: "dropdown_selection",
-      content_id: "select_estados",
-    });
+    let analyticsHere = await analytics;
+    if (analyticsHere !== "Error") {
+      logEvent(analyticsHere, "select_content", {
+        content_type: "dropdown_selection",
+        content_id: "select_estados",
+      });
+    }
     var values = [];
     for (i = 0; i < e.length; i++) values.push(e[i].value);
     this.estadosExecute = [...values];
@@ -154,11 +153,13 @@ class Consulta extends React.Component {
 
   handleChangeMercados = async (e) => {
     /* log event to firebase */
-	let analyticsHere = await analytics;
-    logEvent(analyticsHere, "select_content", {
-      content_type: "dropdown_selection",
-      content_id: "select_mercados",
-    });
+    let analyticsHere = await analytics;
+    if (analyticsHere !== "Error") {
+      logEvent(analyticsHere, "select_content", {
+        content_type: "dropdown_selection",
+        content_id: "select_mercados",
+      });
+    }
     var values = [];
     for (i = 0; i < e.length; i++) values.push(e[i].value);
     this.mercadosExecute = [...values];
@@ -173,11 +174,13 @@ class Consulta extends React.Component {
 
   handleChangeStacks = async (e) => {
     /* log event to firebase */
-	let analyticsHere = await analytics;
-    logEvent(analyticsHere, "select_content", {
-      content_type: "dropdown_selection",
-      content_id: "select_stacks",
-    });
+    let analyticsHere = await analytics;
+    if (analyticsHere !== "Error") {
+      logEvent(analyticsHere, "select_content", {
+        content_type: "dropdown_selection",
+        content_id: "select_stacks",
+      });
+    }
     var values = [];
     for (i = 0; i < e.length; i++)
       values.push(e[i].value.replace("c++", "cpp").replace("c#", "csharp"));

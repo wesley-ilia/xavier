@@ -34,10 +34,12 @@ class Upload extends Component {
     let analyticsHere = await analytics;
     if (this.state.selectedFile === null) {
       alert("Por favor, selecione algum arquivo");
-      logEvent(analyticsHere, "upload", {
-        error: true,
-        message: "sem_arquivo",
-      });
+      if (analyticsHere !== "Error") {
+        logEvent(analyticsHere, "upload", {
+          error: true,
+          message: "sem_arquivo",
+        });
+      }
       return;
     }
     const extension = this.state.selectedFile.name.slice(-4);
@@ -45,10 +47,12 @@ class Upload extends Component {
     console.log(this.state.selectedFile.name);
     if (extension !== ".csv") {
       alert("Por favor, selecione um arquivo CSV");
-      logEvent(analyticsHere, "upload", {
-        error: true,
-        message: "non_csv",
-      });
+      if (analyticsHere !== "Error") {
+        logEvent(analyticsHere, "upload", {
+          error: true,
+          message: "non_csv",
+        });
+      }
       return;
     }
 
@@ -74,15 +78,19 @@ class Upload extends Component {
       error = true;
       message = "problema_interno";
     }
-    logEvent(analyticsHere, "upload", {
-      error: error,
-      message: message,
-    });
+    if (analyticsHere !== "Error") {
+      logEvent(analyticsHere, "upload", {
+        error: error,
+        message: message,
+      });
+    }
   };
 
   downloadModelo = async () => {
-	let analyticsHere = await analytics;
-    logEvent(analyticsHere, "download_modelo", {});
+    let analyticsHere = await analytics;
+    if (analyticsHere !== "Error") {
+      logEvent(analyticsHere, "download_modelo", {});
+    }
     const link = document.createElement("a");
     link.href = modelo;
     link.setAttribute("download", "modelo.csv");
@@ -98,13 +106,11 @@ class Upload extends Component {
   };
 
   downloadTabelaUsuario = async () => {
-	let analyticsHere = await analytics;
+    let analyticsHere = await analytics;
     this.setState({ isDownloading: true, val: 0 });
-    const req_options = {
-      method: "GET",
-    };
 
-    fetch(BASE_URL + "/api/download-user-table", req_options)
+    axios
+      .get(BASE_URL + "/api/download-user-table")
       .then((response) => response.blob())
       .then((blob) => {
         // Create blob link to download
@@ -122,15 +128,19 @@ class Upload extends Component {
         // Clean up and remove the link
         link.parentNode.removeChild(link);
         this.setState({ isDownloading: false, val: 100 });
-        logEvent(analyticsHere, "download_usuario", {
-          error: false,
-        });
+        if (analyticsHere !== "Error") {
+          logEvent(analyticsHere, "download_usuario", {
+            error: false,
+          });
+        }
       })
       .catch((error) => {
         alert("Ocorreu um problema com o Download");
-        logEvent(analyticsHere, "download_usuario", {
-          error: true,
-        });
+        if (analyticsHere !== "Error") {
+          logEvent(analyticsHere, "download_usuario", {
+            error: true,
+          });
+        }
       });
   };
 

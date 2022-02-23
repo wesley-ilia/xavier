@@ -13,6 +13,7 @@ def search_text(empresa: str, apiKey: str):
     headers = {}
 
     response = requests.request("GET", url, headers=headers, data=payload)
+    
     return response.json()
 
 

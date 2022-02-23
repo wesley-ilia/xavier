@@ -256,6 +256,7 @@ def build_query(state: str, cidade: str, market: str, stack: str, capitais: str)
 
 @app.get('/api/get_env')
 def get_env():
+    print("api key", getenv('APIKEY'))
     return {
             'apiKey': getenv('APIKEY'),
             'authDomain': getenv('AUTHDOMAIN'),
