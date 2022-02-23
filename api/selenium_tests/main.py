@@ -1,6 +1,6 @@
 import os
 from time import sleep
-from pandas import read_excel
+from pandas import read_excel, read_csv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
@@ -52,7 +52,7 @@ def download_file(filename: str, extension: str):
     download = drive.find_element(
             By.CSS_SELECTOR, 'button.btn-primary.btn')
     download.click()
-    sleep(4)
+    sleep(2)
 
 
 def test_download_file_xlsx():
@@ -81,7 +81,7 @@ def test_download_file_pdf():
     os.remove(f'{download_dir}/{filename}.{extension.lower()}')
 
 
-def test_get_csv_with_dot_net_stacks_expected_only_companies_with_dot_net():
+def test_get_xlsx_with_dot_net_stacks_expected_only_companies_with_dot_net():
     drive.get(BASE_URL)
     sleep(1)
     drive.find_element(
@@ -115,6 +115,88 @@ def test_get_csv_with_dot_net_stacks_expected_only_companies_with_dot_net():
         assert False
     except StopIteration:
         assert True
-    drive.close()
     if (os.path.exists(f'{download_dir}/dot_net.xlsx')):
         os.remove(f'{download_dir}/dot_net.xlsx')
+
+
+def test_get_xlsx_with_python_stack_expected_only_companies_with_python():
+    drive.get(BASE_URL)
+    sleep(1)
+    drive.find_element(
+            by=By.CSS_SELECTOR,
+            value='div.stacks__input-container'
+            ).click()
+    python = filter(
+            lambda x: x.text == 'python',
+            drive.find_elements(
+                by=By.CSS_SELECTOR,
+                value='div.stacks__option'
+                )
+            )
+    next(python).click()
+    drive.find_element(
+            by=By.CSS_SELECTOR,
+            value='input.form-control'
+            ).send_keys("python")
+    drive.find_element(
+            by=By.CSS_SELECTOR,
+            value='button.btn-primary.btn'
+            ).click()
+    sleep(1)
+    df = read_excel(f'{download_dir}/python.xlsx')
+    elements = filter(
+            lambda x: 'python' not in x,
+            df['stacks'].tolist()
+            )
+    try:
+        next(elements)
+        assert False
+    except StopIteration:
+        assert True
+    if (os.path.exists(f'{download_dir}/python.xlsx')):
+        os.remove(f'{download_dir}/python.xlsx')
+
+
+def test_get_csv_with_sp_state_and_expected_only_sp_state():
+    drive.get(BASE_URL)
+    drive.find_element(
+            by=By.CSS_SELECTOR,
+            value='div.estados__input-container'
+            ).click()
+    sp = filter(
+            lambda x: x.text == 'SP',
+            drive.find_elements(
+                by=By.CSS_SELECTOR,
+                value='div.estados__option'
+                )
+            )
+    next(sp).click()
+    drive.find_element(
+            by=By.CSS_SELECTOR,
+            value='input.form-control'
+            ).send_keys("sp")
+    drive.find_element(By.CLASS_NAME, 'fileType__control').click()
+    csv = filter(
+            lambda x: x.text == 'CSV',
+            drive.find_elements(
+                by=By.CLASS_NAME,
+                value='fileType__option'
+                )
+            )
+    next(csv).click()
+    drive.find_element(
+            By.CSS_SELECTOR,
+            'button.btn-primary.btn').click()
+    sleep(1)
+    df = read_csv(f'{download_dir}/sp.csv')
+    element = filter(
+            lambda x: 'sp' not in x,
+            df['estado'].tolist()
+            )
+    try:
+        next(element)
+        assert False
+    except StopIteration:
+        assert True
+    if (os.path.exists(f'{download_dir}/sp.csv')):
+        os.remove(f'{download_dir}/sp.csv')
