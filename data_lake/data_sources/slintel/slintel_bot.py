@@ -7,11 +7,9 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 class Slintel(webdriver.Chrome):
     def __init__(
         self,
-        driver_path: str = './',
         headless: bool = False
             ) -> None:
 
-        environ['PATH'] += driver_path
         chrome_options = Options()
         capabilities = DesiredCapabilities().CHROME
         if headless is True:
