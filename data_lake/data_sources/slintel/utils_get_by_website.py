@@ -25,8 +25,9 @@ stacks_box_needed = {
 
 def loading():
     with cf.ProcessPoolExecutor() as worker:
-        data = worker.map(packaging, loading_info_from_startupbase_parquet())
-    return {name: stacks for name, stacks in data}
+        data = worker.map(packaging, loading_info_from_parquet())
+    dt = {name: stacks for name, stacks in data}
+    return dt
 
 
 def delivery(data):
@@ -91,9 +92,9 @@ def get_first_element_name_on_dropdown(bot: Slintel):
     return first_element_in_dropdown
 
 
-def loading_info_from_startupbase_parquet():
+def loading_info_from_parquet():
     with S3() as connection:
-        name = getenv("FILE_NAME")
+        name = 'scrappy.parquet'
         connection.download_from_s3(
             bucket_name=getenv('BUCKET_NAME'),
             obj_name=getenv("OBJ_NAME"),
