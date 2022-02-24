@@ -4,7 +4,7 @@ import concurrent.futures as cf
 from beautiful_bot import get_all_infos
 from utils import get_links, get_bodys_pages, delivery
 
-name_parquet = "links_startupbase.parquet"
+name_parquet = "links.parquet"
 
 
 def loading() -> list:
