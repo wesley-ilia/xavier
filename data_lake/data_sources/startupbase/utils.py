@@ -16,10 +16,11 @@ def delivery(data: list):
                 'modelo', 'modelo de receita',
                 'momento', 'tamanho', 'segmento', 'redes', 'website'
                 ])
-    s3 = S3(df=df)
+    s3 = S3()
     s3.send_to_s3(
+            df=df,
             bucker_name=getenv("BUCKET_NAME"),
-            destination=getenv("DEST_PARQUET")
+            destination=getenv("DESTINATION")
             )
 
 
