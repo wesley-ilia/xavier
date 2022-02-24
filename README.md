@@ -39,6 +39,7 @@ docker run --rm --env-file <path-to-credentials> xavier
 Vá para a pasta api e escreva no terminal:
 
 ```sh
+echo REACT_APP_BASE_URL="localhost" > frontend/.env
 docker-compose up
 ```
 
