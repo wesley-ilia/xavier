@@ -37,11 +37,11 @@ Agora a aplicação está rodando no localhost:3000
 
 Ao entrar na aplicação, preencha os dados que deseja buscar no primeiro card.  
 
-![dsflkj](imgs/img1.png)  
+![dsflkj](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img1.png)  
 
 A quantidade de dados gerados vai aparecer no topo do segundo card.  
 
-![dsflkj](imgs/img2.png)  
+![dsflkj](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img2.png)  
 
 Agora, escolha as colunas e o nome e clique em download.  
 
@@ -49,21 +49,21 @@ Agora, escolha as colunas e o nome e clique em download.
 
 No terceiro card da aplicação, é possível baixar o modelo de tabela para adicionar dados. Logo acima, há um exemplo de como os dados devem ser inseridos no arquivo.
 
-![dsflkj](imgs/img3.png)  
+![dsflkj](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img3.png)  
 
 Baixe o modelo e coloque os dados como o exemplo.
 
-![dsflkj](imgs/img4.png)  
+![dsflkj](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img4.png)  
 
 Clique em **Choose File** (Escolha Arquivo) e escolha um arquivo. 
 
-![dsflkj](imgs/img5.png)  
+![dsflkj](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img5.png)  
 
 Agora é só enviar clicando em **Upload**.  
 
 Você também pode ver dados que já foram enviados em **Tabela do Usuario**.  
 
-![dsflkj](imgs/img6.png)  
+![dsflkj](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img6.png)  
 
 ## Sobre os dados  
 
