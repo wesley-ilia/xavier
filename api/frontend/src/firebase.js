@@ -5,7 +5,6 @@ import { getAnalytics } from "firebase/analytics";
 
 export const getFirebaseCredentials = async () => {
   let response = await axios.get(BASE_URL + "/api/get_env");
-  console.log(response);
   const data = await response.data;
 
   try {

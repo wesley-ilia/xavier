@@ -121,8 +121,6 @@ class Consulta extends React.Component {
         this.capitais
     );
 
-    console.log("getPreview");
-    console.log(response);
     const data = await response.data;
     this.setState({ preview: data });
   };
@@ -199,7 +197,6 @@ class Consulta extends React.Component {
 
   clearCidades = () => {
     this.cidadesExecute = this.cidadesExecute.reduce(() => []);
-    console.log(this.cidadesExecute);
     this.selectRef.clearValue();
   };
 

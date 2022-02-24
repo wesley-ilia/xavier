@@ -54,7 +54,6 @@ export default class Dropdown extends React.Component {
     }
 
     const response = await axios.get(BASE_URL + "/dropdown");
-    console.log(response);
     const data = response.data;
     for (i = 0; i < data.mercados.length; i++) {
       this.mercados.push({

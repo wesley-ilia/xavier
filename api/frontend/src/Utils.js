@@ -8,12 +8,9 @@ export const getCidades = async (app) => {
     app.setState({ cidades: [] });
     return;
   }
-  console.log("teste");
   const response = await axios.get(
     BASE_URL + "/cidades?state=" + app.estadosExecute
   );
-  console.log("getCidades");
-  console.log(response);
   const data = await response.data;
   var opt = [];
   for (i = 0; i < data.length; i++) {

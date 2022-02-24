@@ -43,8 +43,6 @@ class Upload extends Component {
       return;
     }
     const extension = this.state.selectedFile.name.slice(-4);
-    console.log(extension);
-    console.log(this.state.selectedFile.name);
     if (extension !== ".csv") {
       alert("Por favor, selecione um arquivo CSV");
       if (analyticsHere !== "Error") {

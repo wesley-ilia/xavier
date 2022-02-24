@@ -22,7 +22,7 @@ services:
       - node_modules:/frontend/node_modules
 
   tests:
-    profiles: ["test"]
+    profiles: ["tests"]
     build: ./selenium_tests/
     environment:
       - FRONT_HOST=frontend
@@ -30,6 +30,6 @@ services:
       - "frontend"
     links:
       - frontend
-    
+
 volumes:
   node_modules:
