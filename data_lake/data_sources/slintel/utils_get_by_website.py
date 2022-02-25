@@ -2,7 +2,6 @@ from s3 import S3
 from os import getenv
 from time import sleep
 from bs4 import BeautifulSoup
-import concurrent.futures as cf
 from slintel_bot import Slintel
 from pandas import read_parquet, DataFrame
 from selenium.webdriver.common.by import By
@@ -21,13 +20,6 @@ stacks_box_needed = {
         "Operations Software",
         "Testing And QA"
         }
-
-
-def loading():
-    with cf.ProcessPoolExecutor() as worker:
-        data = worker.map(packaging, loading_info_from_parquet())
-    dt = {name: stacks for name, stacks in data}
-    return dt
 
 
 def delivery(data):
@@ -49,12 +41,6 @@ def format_website(website):
     website = website.replace("https:", '').replace("http:", '')
     website = website.replace("www.", '').replace("//", '').replace('/', '')
     return website
-
-
-def format_names(name):
-    name = name.replace(".com", '').replace('[', '')
-    name = name.replace('[', '').replace(':', '')
-    return name
 
 
 def select_itens_in_dropbox(bot: Slintel):
@@ -101,12 +87,12 @@ def loading_info_from_parquet():
             name=name
             )
         sleep(1)
-        df_startup = read_parquet(name)
-        df_startup["website"] = df_startup["website"].str.lower()
-        return zip(
-            map(format_website, df_startup['website']),
-            map(format_names, df_startup['name'])
-            )
+    df_startup = read_parquet(name)
+    df_startup["website"] = df_startup["website"].str.lower()
+    return zip(
+        map(format_website, df_startup['website']),
+        df_startup['name']
+        )
 
 
 def packaging(values: tuple) -> dict:
