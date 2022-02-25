@@ -1,24 +1,27 @@
 version: "3.9"
 services:
-  # codesh:
-  #   build: ./codesh/
-  #   env_file:
-  #     - ~/.secret/psql.env
-  #   environment:
-  #     - DESTINATION=raw_data/codesh.parquet
-  # startupbase:
-  #   build: ./startupbase/
-  #   env_file:
-  #     - ~/.secret/psql.env
-  #   environment:
-  #     - DESTINATION=raw_data/startupbase.parquet
-  # slintel:
-  #   build: ./slintel/
-  #   env_file:
-  #     - ./template_enviroments_variables.env
+  codesh:
+    build: ./codesh/
+    env_file:
+      # - path/to/env/file
+      - ../.env
+    environment:
+      - DESTINATION=raw_data/codesh.parquet
+  startupbase:
+    build: ./startupbase/
+    env_file:
+      # - path/to/env/file
+      - ../.env
+    environment:
+      - DESTINATION=raw_data/startupbase.parquet
+  slintel:
+    build: ./slintel/
+    env_file:
+      - ./template_enviroments_variables.env
   thor:
     build: ./thor/
     env_file:
-      - ~/.secret/psql.env
+      # - path/to/env/file
+      - ../.env
     environment:
       - DESTINATION=raw_data/thor.parquet

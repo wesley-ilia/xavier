@@ -5,7 +5,8 @@ services:
     environment:
       - FRONT_HOST=frontend
     env_file:
-      - ~/.secret/psql.env
+      # - path/to/database/env/file
+      - ../.env
     ports:
       - "8000:8000"
   frontend:
@@ -30,6 +31,6 @@ services:
       - "frontend"
     links:
       - frontend
-    
+
 volumes:
   node_modules:
