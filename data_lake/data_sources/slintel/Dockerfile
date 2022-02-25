@@ -18,6 +18,11 @@ RUN wget -O $CHROMEDRIVER_FILE $CHROMEDRIVER_VERSION;\
 	mv chromedriver /usr/bin/;\
 	rm -f $CHROMEDRIVER_FILE
 
+ENV TINI_VERSION v0.19.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+
 COPY ["main.py", "utils_get_by_website.py", "slintel_bot.py", "s3.py", "/slintel/"]
 
+ENTRYPOINT ["/tini", "--"]
 CMD ["python", "main.py"]
