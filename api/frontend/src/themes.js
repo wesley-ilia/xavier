@@ -35,7 +35,7 @@ export var darkSelect = {
 
   input: (provided, state) => ({
     ...provided,
-    color: lightColor,
+    color: darkColor,
   }),
 
   valueContainer: (provided, state) => ({

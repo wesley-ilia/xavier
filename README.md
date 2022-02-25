@@ -2,7 +2,7 @@
 
 ## Overview
 
-![dsflkj](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img7.png)
+![Arquitetura](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img7.png)
 
 Xavier é um aplicativo capaz de fornecer vários dados sobre uma empresa como suas stacks, área de atuação e localização. O intuito do produto é centralizar as informações desejadas por recrutadores em uma única base de dados e que sua pesquisa seja simples e fácil. Para isso, foi utilizado um banco de dados do tipo PostgreSQL e a pesquisa do usuário é feita por três campos principais: localização, área de atuação e tecnologias.
 
@@ -12,7 +12,7 @@ Na interface, é possível pesquisar por estados, cidades, mercados e stacks des
 
 1. Criar um bucket na aws s3.
 2. Criar um banco de dados do tipo PostgreSQL.
-3. Colocar as credenciais das contas seguindo o modelo template_environments_variables.txt e salvando em arquivo .env
+3. Colocar as credenciais das contas seguindo o modelo template_environments_variables.txt e salvando em um arquivo .env
 
 ## Como usar
 
@@ -39,6 +39,7 @@ docker run --rm --env-file <path-to-credentials> xavier
 Vá para a pasta api e escreva no terminal:
 
 ```sh
+echo REACT_APP_BASE_URL="localhost" > frontend/.env
 docker-compose up
 ```
 
@@ -50,11 +51,11 @@ Agora a aplicação está rodando no localhost:3000
 
 Ao entrar na aplicação, preencha os dados que deseja buscar no primeiro card.
 
-![dsflkj](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img1.png)
+![Primeiro card](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img1.png)
 
 A quantidade de dados gerados vai aparecer no topo do segundo card.
 
-![dsflkj](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img2.png)
+![Segundo card](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img2.png)
 
 Agora, escolha as colunas e o nome e clique em download.
 
@@ -62,21 +63,21 @@ Agora, escolha as colunas e o nome e clique em download.
 
 No terceiro card da aplicação, é possível baixar o modelo de tabela para adicionar dados. Logo acima, há um exemplo de como os dados devem ser inseridos no arquivo.
 
-![dsflkj](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img3.png)
+![img3](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img3.png)
 
 Baixe o modelo e coloque os dados como o exemplo.
 
-![dsflkj](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img4.png)
+![img4](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img4.png)
 
 Clique em **Choose File** (Escolha Arquivo) e escolha um arquivo.
 
-![dsflkj](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img5.png)
+![img5](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img5.png)
 
 Agora é só enviar clicando em **Upload**.
 
 Você também pode ver dados que já foram enviados em **Tabela do Usuario**.
 
-![dsflkj](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img6.png)
+![img6](https://raw.githubusercontent.com/wesley-ilia/xavier/main/.github/images/img6.png)
 
 ## Sobre os dados
 
